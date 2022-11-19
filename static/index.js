@@ -59,7 +59,8 @@ function delFile(fileName) {
   })
 }
 
-<<<<<<< HEAD
+// ui
+
 function add_file(id, file){
   var template = $('#files-template').text();
   template = template.replace('%%filename%%', file.name);
@@ -67,15 +68,4 @@ function add_file(id, file){
   template.prop('id', 'file-' + id);
 
   $id('uploading-list').appendChild(template[0]);
-=======
-// ui
-
-function add_file(id, file){
-  var template = $('#files-template').text();
-  template = template.replace('%%filename%%', file);
-  template.prop('id', 'file' + id);
-  console.log(template);
-
-  document.getElementById("uploading-list").innerHTML += template;
->>>>>>> 1b0e21149b1dbad222611c4d73ff744dc7b4622e
 }
