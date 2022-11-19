@@ -18,24 +18,26 @@
     <title>Uploader</title>
 </head>
 
-<body>
+<body onload="upload()">
     <div class="popup">
         <a class="popbg" onclick="popopoff();"></a>
         <div class="popup-content">
             <div class="upload-area" id="upload-area">
                 <p class="popupTitle">Upload File</p>
-                <div id="drop-area">
+                <div id="drop-area" style="display: none;">
                     <form class="upload-form">
                         <p><span id="dragText" style="color:white">將檔案拖曳到此處 或</span></p>
                         <input type="file" id="fileElem" multiple onchange="handleFiles(this.files)">
                         <label class="file-button" for="fileElem">選取檔案</label>
                     </form>
                 </div>
-                <div id="uploading-list" class="uploading-list" style="display: none;">
-                    <div class="uploading-file">
-                        <p class="uploading-file-name">WTF.exe</p>
-                        <div class="progressbar" id="progressbar"></div>
-                    </div>
+                <div id="uploading-list" class="uploading-list">
+                    <script type="text/html" id="files-template">
+                        <div class="uploading-file">
+                            <p class="uploading-file-name">%%filename%%</p>
+                            <div class="progressbar" id="progressbar"></div>
+                        </div>
+                    </script>
                 </div>
             </div>
         </div>

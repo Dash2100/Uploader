@@ -58,3 +58,14 @@ function delFile(fileName) {
     }
   })
 }
+
+// ui
+
+function add_file(id, file){
+  var template = $('#files-template').text();
+  template = template.replace('%%filename%%', file);
+  template.prop('id', 'file' + id);
+  console.log(template);
+
+  document.getElementById("uploading-list").innerHTML += template;
+}

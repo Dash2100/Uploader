@@ -1,6 +1,5 @@
 // Creates a new file and add it to our list
-function ui_multi_add_file(id, file)
-{
+function ui_multi_add_file(id, file){
   var template = $('#files-template').text();
   template = template.replace('%%filename%%', file.name);
 
@@ -8,7 +7,7 @@ function ui_multi_add_file(id, file)
   template.prop('id', 'uploaderFile' + id);
   template.data('file-id', id);
 
-  $('#files').find('li.empty').fadeOut(); // remove the 'no files yet'
+  $('#files').find('li.empty').fadeOut();
   $('#files').prepend(template);
 }
 
