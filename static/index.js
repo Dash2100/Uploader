@@ -1,4 +1,4 @@
-uploading = 0
+downloading = 0
 
 function $id(id) {
   return document.getElementById(id);
@@ -12,7 +12,7 @@ function upload() {
 }
 
 function popopoff() {
-  if (uploading == 0) {
+  if (downloading == 0) {
     var x = document.getElementsByClassName("popup")[0];
     x.classList.remove("popup--opened");
   }
@@ -59,11 +59,13 @@ function delFile(fileName) {
   })
 }
 
+// ui
+
 function add_file(id, file){
   var template = $('#files-template').text();
-  template = template.replace('%%filename%%', file.name);
-  template = $(template);
-  template.prop('id', 'file-' + id);
+  template = template.replace('%%filename%%', file);
+  template.prop('id', 'file' + id);
+  console.log(template);
 
-  $id('uploading-list').appendChild(template[0]);
+  document.getElementById("uploading-list").innerHTML += template;
 }
