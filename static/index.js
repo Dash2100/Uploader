@@ -1,4 +1,4 @@
-downloading = 0
+uploading = 0
 
 function $id(id) {
   return document.getElementById(id);
@@ -12,7 +12,7 @@ function upload() {
 }
 
 function popopoff() {
-  if (downloading == 0) {
+  if (uploading == 0) {
     var x = document.getElementsByClassName("popup")[0];
     x.classList.remove("popup--opened");
   }
@@ -57,4 +57,13 @@ function delFile(fileName) {
       });
     }
   })
+}
+
+function add_file(id, file){
+  var template = $('#files-template').text();
+  template = template.replace('%%filename%%', file.name);
+  template = $(template);
+  template.prop('id', 'file-' + id);
+
+  $id('uploading-list').appendChild(template[0]);
 }

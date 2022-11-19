@@ -14,9 +14,10 @@ $(function () {
     },
     onNewFile: function (id, file) {
       console.log(id, file);
-      // ui_multi_add_file(id, file);
+      add_file(id, file);
     },
     onBeforeUpload: function (id) {
+      uploading = 1;
       document.getElementById("drop-area").style.display = "none";
       document.getElementById("uploading-list").style.display = "block";
       console.log('Starting upload');

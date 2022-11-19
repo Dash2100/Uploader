@@ -55,6 +55,19 @@
   animation: swal2-show 0.2s !important;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: #7083d9; 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3c4a88; 
+}
+
 /* disable password show/hide button */
 input::-ms-reveal,
 input::-ms-clear {
@@ -216,10 +229,11 @@ p {
   opacity: 0.5;
 }
 
-/* .uploading-list {
-  margin: 25px;
-  padding: 20px 0;
-} */
+.uploading-list {
+  max-height: 600px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
 
 .uploading-file {
   position: relative;
@@ -248,7 +262,6 @@ p {
   position: absolute;
   background-color: #2f44ad;
   height: 100%;
-  width: 10%;
   max-width: 500px;
   top: 0;
   left: 0;
