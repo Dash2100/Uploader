@@ -1,4 +1,6 @@
-uploading = 0
+let uploading = 0;
+let file_count = 0;
+let uploaded_count = 0;
 
 function $id(id) {
   return document.getElementById(id);
@@ -62,10 +64,24 @@ function delFile(fileName) {
 // ui
 
 function add_file(id, file){
+  file_count++;
   var template = $('#files-template').text();
   template = template.replace('%%filename%%', file.name);
   template = $(template);
   template.prop('id', 'file-' + id);
 
   $id('uploading-list').appendChild(template[0]);
+}
+
+function file_progress(id, percent){
+  var file = $id('file-' + id);
+  var progress = file.querySelector('.progressbar');
+  progress.style.width = percent + '%';
+  if(percent===100){
+    uploaded_count++;
+    if(uploaded_count >= file_count){
+      location.reload();
+    }
+    progress.style.backgroundColor = '#546ad8';
+  }
 }

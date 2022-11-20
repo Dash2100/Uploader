@@ -18,7 +18,7 @@
     <title>Uploader</title>
 </head>
 
-<body onload="upload();">
+<body>
     <div class="popup">
         <a class="popbg" onclick="popopoff();"></a>
         <div class="popup-content">
@@ -50,10 +50,10 @@
             <button class="button add" onclick="upload();"> + </button>
         </div>
 
-        <div class="files">
+        <div class="file-list">
             {% for file in all_files %}
             <div class="file">
-                <div class="file--card" onclick="downloadFile('{{file.0}}')"">
+                <div class="file-card" onclick="downloadFile('{{file.0}}')"">
                     <div class="detials">
                         <div class="file-name">{{file.0}}</div>
                         <div class="file-size">{{file.2}} | {{file.1}}</div>

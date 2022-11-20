@@ -14,11 +14,10 @@ def test():
 @app.route('/')
 def index():
     all_files = []
-    mypath = "./Uploads"
-    files = os.listdir(mypath)
+    files = os.listdir(path)
     for f in files:
         file_data = list()
-        fullpath = os.path.join(mypath, f)
+        fullpath = os.path.join(path, f)
         if os.path.isfile(fullpath):
             if f not in exclude:
                 file_data.append(f)
@@ -42,8 +41,10 @@ def upload_file():
         if file.filename == '':
             return ('No selected file')
         if file:
+            if file.filename in os.listdir(path):
+                file.filename = file.filename + '-'
             file.save(os.path.join(path, file.filename))
-            return "File uploaded successfully"
+            return "success"
 
 
 @app.route('/download/<string:name>')

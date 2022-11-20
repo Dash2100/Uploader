@@ -9,36 +9,28 @@ $(function () {
     onDragLeave: function(){
       this.removeClass('drop-active');
     },
-    onComplete: function () {
-      console.log('All pending tranfers');
-    },
+    // onComplete: function () {
+    //   console.log('All pending tranfers');
+    // },
     onNewFile: function (id, file) {
-      console.log(id, file);
+      // console.log(id, file);
       add_file(id, file);
     },
     onBeforeUpload: function (id) {
       uploading = 1;
       document.getElementById("drop-area").style.display = "none";
       document.getElementById("uploading-list").style.display = "block";
-      console.log('Starting upload');
-    },
-    onUploadCanceled: function (id) {
-      // ui_multi_update_file_status(id, 'warning', 'Canceled by User');
-      // ui_multi_update_file_progress(id, 0, 'warning', false);
+      console.log('Starting upload ' + id);
     },
     onUploadProgress: function (id, percent) {
-      // ui_multi_update_file_progress(id, percent);
-      console.log(id, percent);
+      file_progress(id, percent);
     },
     onUploadSuccess: function (id, data) {
       console.log('Server Response for file #' + id + ': ' + JSON.stringify(data));
-      console.log('Upload of file #' + id + ' COMPLETED');
-      // ui_multi_update_file_status(id, 'success', 'Upload Complete');
-      // ui_multi_update_file_progress(id, 100, 'success', false);
+      // console.log('Upload of file #' + id + ' COMPLETED');
     },
     onUploadError: function (id, xhr, status, message) {
-      // ui_multi_update_file_status(id, 'danger', message);
-      // ui_multi_update_file_progress(id, 0, 'danger', false);
+      Swal.fire("Error", "Something went wrong", "error");
     },
     onFallbackMode: function () {
       Swal.fire("Error", "Something went wrong", "error");
