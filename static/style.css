@@ -129,13 +129,13 @@ body::-webkit-scrollbar {
 
 .file-name {
   font-size: 16px;
-  /* max-width: 80%; */
+  max-width: 80%;
   color: #7AA2F7;
   font-weight: bold;
   /* margin: 0 40px; */
   /* padding: 0 20px; */
-  /* overflow: hidden; */
-  
+  overflow: hidden;
+  white-space: nowrap;;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
