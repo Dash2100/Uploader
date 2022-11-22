@@ -78,10 +78,6 @@ function file_progress(id, percent){
   var progress = file.querySelector('.progressbar');
   progress.style.width = percent + '%';
   if(percent===100){
-    uploaded_count++;
-    if(uploaded_count >= file_count){
-      location.reload();
-    }
     progress.style.backgroundColor = '#546ad8';
   }
 }

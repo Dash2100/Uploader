@@ -13,7 +13,6 @@ $(function () {
     //   console.log('All pending tranfers');
     // },
     onNewFile: function (id, file) {
-      // console.log(id, file);
       add_file(id, file);
     },
     onBeforeUpload: function (id) {
@@ -27,7 +26,12 @@ $(function () {
     },
     onUploadSuccess: function (id, data) {
       console.log('Server Response for file #' + id + ': ' + JSON.stringify(data));
-      // console.log('Upload of file #' + id + ' COMPLETED');
+      uploaded_count++
+      if(uploaded_count >= file_count){
+        setTimeout(function(){
+          location.reload();
+        }, 500);
+      }
     },
     onUploadError: function (id, xhr, status, message) {
       Swal.fire("Error", "Something went wrong", "error");
