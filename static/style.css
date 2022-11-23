@@ -274,6 +274,22 @@ p {
   background: #5c6eb8;
 }
 
+.logout {
+  font-size: 13px;
+  margin-top: 30px;
+  margin-left: 20px;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.login {
+  font-size: 13px;
+  margin-top: 30px;
+  margin-left: auto;
+  padding: 10px;
+  font-weight: bold;
+}
+
 .add {
   font-size: 18px;
   padding: 0 15px;

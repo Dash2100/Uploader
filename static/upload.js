@@ -30,7 +30,7 @@ $(function () {
       if(uploaded_count >= file_count){
         setTimeout(function(){
           location.reload();
-        }, 500);
+        }, 300);
       }
     },
     onUploadError: function (id, xhr, status, message) {
