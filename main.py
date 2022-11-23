@@ -41,8 +41,8 @@ def upload_file():
         if file.filename == '':
             return ('No selected file')
         if file:
-            if file.filename in os.listdir(path):
-                file.filename = file.filename + '-'
+            while file.filename in os.listdir(path):
+                file.filename = '-' + file.filename
             file.save(os.path.join(path, file.filename))
             return "success"
 

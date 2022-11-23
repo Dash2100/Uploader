@@ -54,10 +54,8 @@
             {% for file in all_files %}
             <div class="file">
                 <div class="file-card" onclick="downloadFile('{{file.0}}')"">
-                    <div class="detials">
-                        <div class="file-name">{{file.0}}</div>
-                        <div class="file-size">{{file.2}} | {{file.1}}</div>
-                    </div>
+                    <div class="file-name">{{file.0}}</div>
+                    <div class="file-size">{{file.1}} | {{file.2}}</div>
                 </div>
                 <i class="trash fa-solid fa-trash" onclick="delFile('{{file.0}}');"></i>
             </div>
