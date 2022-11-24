@@ -22,9 +22,8 @@
     <div class="popup">
         <a class="popbg" onclick="popopoff();"></a>
         <div class="popup-content">
-            <div class="upload-area" id="upload-area">
+            <div class="upload-area" id="upload-area" style="display: none;">
                 <p class="popupTitle">Upload File</p>
-                <!-- <div id="drop-area" style="display: none;"> -->
                 <div id="drop-area">
                     <form class="upload-form">
                         <p><span id="dragText" style="color:white">Drop files here or</span></p>
@@ -41,6 +40,31 @@
                     </script>
                 </div>
             </div>
+            <div class="modfile-area" id="modfile-area">
+                <p class="popupTitle">Modify File</p>
+                <div class="modfile-form">
+                    <p class="modfile-name" id="modfile-name"></p>
+                    <div class="modfile-options">
+                        <p class="modfile-option-lable">Share</p>
+                        <label class="switch">
+                            <input type="checkbox" id="Share-check">
+                            <span class="slider round"></span>
+                        </label>
+                        <p class="modfile-option-lable">Share link</p>
+                        <label class="switch">
+                            <input type="checkbox" id="Share-link-switch">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="share-link" id="link-input" style="display: none;">
+                        <input type="text" class="link-input" placeholder="Link"></input>
+                    </div>
+                    <div class="modfile-buttons">
+                        <button id="delfile" class="button modfile-btn delete">Delete</button>
+                        <button class="button modfile-btn save" onclick="save();">Save</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -55,14 +79,24 @@
             {% for file in all_files %}
             <div class="file">
                 <div class="file-card" onclick="downloadFile('{{file.0}}')"">
-                    <div class="file-name">{{file.0}}</div>
-                    <div class="file-size">{{file.1}} | {{file.2}}</div>
-                </div>
-                <i class="trash fa-solid fa-trash" onclick="delFile('{{file.0}}');"></i>
+                    <div class=" file-name">{{file.0}}</div>
+                <div class="file-size">{{file.1}} | {{file.2}}</div>
             </div>
-            {% endfor %}
+            <i class="modfile-icon fa-solid fa-pen-to-square" onclick="modify('{{file.0}}');"></i>
         </div>
+        {% endfor %}
+    </div>
     </div>
 </body>
+<script>
+    $('#Share-link-switch').change(
+        function () {
+            if (this.checked) {
+                $('#link-input').show();
+            } else {
+                $('#link-input').hide();
+            }
+        });
+</script>
 
 </html>

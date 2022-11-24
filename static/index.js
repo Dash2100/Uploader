@@ -8,7 +8,18 @@ function $id(id) {
 
 // popup
 function upload() {
+  $id('modfile-area').style.display = 'none';
   $id('upload-area').style.display = 'block';
+  var x = document.getElementsByClassName("popup")[0];
+  x.classList.add("popup--opened");
+}
+
+function modify(name) {
+  $('#link-input').hide();
+  $id('upload-area').style.display = 'none';
+  $id('modfile-area').style.display = 'block';
+  $id('delfile').onclick = function () { delFile(name); };
+  $id('modfile-name').innerHTML = name;
   var x = document.getElementsByClassName("popup")[0];
   x.classList.add("popup--opened");
 }

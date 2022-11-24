@@ -297,6 +297,28 @@ p {
   margin-left: auto;
 }
 
+.modfile-btn{
+  font-size: 15px;
+  padding: 0 10px;
+  margin: 0 20px;
+}
+
+.delete{
+  background-color: #7e403e;
+}
+
+.delete:hover{
+  background-color: #b62a25;
+}
+
+.save{
+  background-color: #3e8359;
+}
+
+.save:hover{
+  background-color: #1aaa51;
+}
+
 /* filecard */
 
 .file-list {
@@ -335,15 +357,138 @@ p {
   color: rgb(131, 150, 194);
 }
 
-.trash{
+.modfile-icon{
   position: absolute;
   right: 13px;
   top: 16px;
-  color: #222437;
+  color: #7b85d3;
   font-size: 20px;
   transition: all .2s ease-in-out;
 }
 
-.trash:hover{
-  color: #e95252
+.modfile-icon:hover{
+  color: #c5c6d3
+}
+
+
+/* modfile */
+.modfile-area{
+  display: none;
+}
+
+.modfile-name{
+  color: #7ca3f5;
+  font-size: 20px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 0;
+  overflow: hidden;
+}
+
+/* toggle button */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  transform: scale(0.8);
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #3a426d;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: #ffffff;
+  -webkit-transition: .43s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #5b8df8;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #5b8df8;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.modfile-buttons{
+  margin-top: 20px;
+}
+
+.modfile-option-lable{
+  color: #FFFFFF;
+}
+
+.modfile-options{
+  display: grid;
+  grid-template-columns: 0.5fr 60px;
+  justify-content: center;
+  text-align: left;
+  margin-bottom: 20px;
+  gap: 10px 0;
+}
+
+.modfile-option-lable{
+  font-size: 20px;
+  line-height: 34px;
+  margin-bottom: 0;
+}
+
+.option-p{
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.link-input{
+  border: none;
+  border-bottom: 2px solid #7ea4f3;
+  border-radius: 0;
+  width: 190px;
+  background-color: #1f2335;
+  font-size: 20px;
+  color:#ffffff;
+}
+
+.link-input:focus{
+  outline: none;
+}
+
+.share-link{
+  display: flex;
+  justify-content: center;
 }
