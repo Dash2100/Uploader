@@ -26,32 +26,46 @@ def execute_db(command, vals):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    #get all share=1 files in database
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM files WHERE share=1")
+    all_files = cur.fetchall()
+    con.close()
+    all_files.reverse()
+    return render_template('index.html', **locals())
+
+@app.route('/download/<filename>')
+def download(filename):
+    #check if file exists
+    if filename in os.listdir(path):
+        #check file share state
+        con = sqlite3.connect('database.db')
+        cur = con.cursor()
+        cur.execute("SELECT share FROM files WHERE name=?", (filename,))
+        share = cur.fetchone()[0]
+        con.close()
+        if share == 1:
+            return send_from_directory(path, filename, as_attachment=True)
+        else:
+            return Response(status=404)
+    else:
+        return Response(status=404)
 
 @app.route('/admin')
-# @login_required
+@login_required
 def admin():
-    all_files = []
-    files = os.listdir(path)
-    for f in files:
-        file_data = list()
-        fullpath = os.path.join(path, f)
-        if os.path.isfile(fullpath):
-            if f not in exclude:
-                file_data.append(f)
-                file_data.append(datetime.fromtimestamp(
-                    os.path.getmtime(fullpath)).strftime('%Y-%m-%d %H:%M:%S'))
-                size_bytes = os.path.getsize(fullpath)
-                file_data.append(
-                    round(size_bytes / 1000000, 3).__str__() + ' MB')
-                all_files.append(file_data)
-    all_files.sort(key=lambda x: x[1])
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM files")
+    all_files = cur.fetchall()
+    con.close()
     all_files.reverse()
     return render_template('admin.html', **locals())
 
 
-@app.route('/upload', methods=['POST'])
-# @login_required
+@app.route('/admin/upload', methods=['POST'])
+@login_required
 def upload_file():
     if request.method == 'POST':
         if 'file' not in request.files:
@@ -78,20 +92,43 @@ def upload_file():
             return "success"
 
 
-@app.route('/download/<string:name>')
-# @login_required
-def download_file(name):
-    return send_from_directory(path, name)
+@app.route('/admin/download/<string:filename>')
+@login_required
+def download_file(filename):
+    #check if file exists
+    if filename in os.listdir(path):
+        return send_from_directory(path, filename, as_attachment=True)
+    else:
+        return Response(status=404)
 
 
-@app.route('/delfile/<string:file>')
-# @login_required
+@app.route('/admin/delfile/<string:file>')
+@login_required
 def del_file(file):
     try:
         os.remove(os.path.join(path, file))
         execute_db('DELETE FROM files WHERE name = ?', (file,))
         return "OK"
     except FileNotFoundError:
+        return "Not Found"
+
+#use get to change share status in database
+@app.route('/share/<string:file>')
+@login_required
+def share_file(file):
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM files WHERE name=?", (file,))
+    data = cur.fetchone()
+    con.close()
+    if data:
+        if data[3] == 0:
+            execute_db('UPDATE files SET share=1 WHERE name = ?', (file,))
+            return "ON"
+        else:
+            execute_db('UPDATE files SET share=0 WHERE name = ?', (file,))
+            return "OFF"
+    else:
         return "Not Found"
 
 ## Login

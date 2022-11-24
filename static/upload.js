@@ -1,6 +1,6 @@
 $(function () {
   $('#drop-area').dmUploader({
-    url: '/upload',
+    url: '/admin/upload',
     auto: true,
     queue: false,
     onDragEnter: function(){

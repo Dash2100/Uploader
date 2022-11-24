@@ -36,7 +36,7 @@ function popopoff() {
 }
 
 function downloadFile(fileName) {
-  let url = '/download/' + fileName;
+  let url = '/admin/download/' + fileName;
   let a = document.createElement('a');
   a.href = url;
   a.download = fileName;
@@ -55,7 +55,7 @@ function delFile(fileName) {
   }).then((result) => {
     if (result.isConfirmed) {
       $.ajax({
-        url: "/delfile/" + fileName,
+        url: "/admin/delfile/" + fileName,
         method: "get",
         success: function (res) {
           if (res == "OK") {
