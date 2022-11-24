@@ -1,7 +1,9 @@
 from flask import Flask, request, send_from_directory, render_template, jsonify, make_response, redirect, url_for, Response
-from flask_login import LoginManager, UserMixin, login_user,  login_required, logout_user 
+from flask_login import LoginManager, UserMixin, login_user,  login_required, logout_user, current_user
 from datetime import datetime
 from getpass import getpass
+from sql_init import sqlinit
+import sqlite3
 import hashlib
 import sys
 import json
@@ -15,12 +17,19 @@ app.config['SECRET_KEY'] = os.urandom(24)
 login_manager = LoginManager(app)  # Create login manager
 login_manager.login_view = 'login'  # Set login view
 
+def execute_db(command, vals):
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute(command, vals)
+    con.commit()
+    con.close()
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/admin')
-@login_required
+# @login_required
 def admin():
     all_files = []
     files = os.listdir(path)
@@ -42,7 +51,7 @@ def admin():
 
 
 @app.route('/upload', methods=['POST'])
-@login_required
+# @login_required
 def upload_file():
     if request.method == 'POST':
         if 'file' not in request.files:
@@ -55,20 +64,32 @@ def upload_file():
             while file.filename in os.listdir(path):
                 file.filename = '-' + file.filename
             file.save(os.path.join(path, file.filename))
+            # Add file to database
+            now = datetime.now()
+            date = now.strftime("%Y-%m-%d %H:%M:%S")
+            #get file size in MB
+            size_bytes = os.path.getsize(os.path.join(path, file.filename))
+            #if size less than 1 MB, show in KB
+            if size_bytes < 1000000:
+                size = round(size_bytes / 1000, 3).__str__() + ' KB'
+            else:
+                size = round(size_bytes / 1000000, 3).__str__() + ' MB'
+            execute_db('INSERT INTO files VALUES (?, ?, ?, ?)', (file.filename, date, size, 0))
             return "success"
 
 
 @app.route('/download/<string:name>')
-@login_required
+# @login_required
 def download_file(name):
     return send_from_directory(path, name)
 
 
 @app.route('/delfile/<string:file>')
-@login_required
+# @login_required
 def del_file(file):
     try:
         os.remove(os.path.join(path, file))
+        execute_db('DELETE FROM files WHERE name = ?', (file,))
         return "OK"
     except FileNotFoundError:
         return "Not Found"
@@ -79,8 +100,6 @@ def del_file(file):
 class User(UserMixin):  
     pass 
 
-#
-
 @login_manager.user_loader  
 def user_loader(userid):    
     user = User() #繼承UserMixin
@@ -90,7 +109,9 @@ def user_loader(userid):
 @app.route('/login', methods=['GET', 'POST'])  
 def login():  
     if request.method == 'GET':  
-           return render_template('login.html')
+            if current_user.is_authenticated:  
+                return redirect(url_for('admin'))
+            return render_template('login.html')
     request_pas = request.get_json()
     #load password from json
     with open('data.json', 'r') as f:
@@ -108,8 +129,8 @@ def logout():
     logout_user()  
     return redirect(url_for('index'))
 
-
 if __name__ == "__main__":
+    sqlinit()
     if len(sys.argv) == 2:
         if sys.argv[1] == 'passwd':
             password = getpass('Password: ')

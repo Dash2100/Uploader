@@ -18,7 +18,7 @@
     <title>Uploader</title>
 </head>
 
-<body>
+<body onload="init();">
     <div class="popup">
         <a class="popbg" onclick="popopoff();"></a>
         <div class="popup-content">
@@ -43,7 +43,7 @@
             <div class="modfile-area" id="modfile-area">
                 <p class="popupTitle">Modify File</p>
                 <div class="modfile-form">
-                    <p class="modfile-name" id="modfile-name"></p>
+                    <p id="modfile-name"></p>
                     <div class="modfile-options">
                         <p class="modfile-option-lable">Share</p>
                         <label class="switch">
@@ -56,8 +56,9 @@
                             <span class="slider round"></span>
                         </label>
                     </div>
-                    <div class="share-link" id="link-input" style="display: none;">
-                        <input type="text" class="link-input" placeholder="Link"></input>
+                    <div id="link-input" style="display: none;">
+                        <p class="modfile-option-lable">todev.me /</p>
+                        <input type="text" class="link-input"></input>
                     </div>
                     <div class="modfile-buttons">
                         <button id="delfile" class="button modfile-btn delete">Delete</button>

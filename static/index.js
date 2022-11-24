@@ -6,6 +6,10 @@ function $id(id) {
   return document.getElementById(id);
 }
 
+function init(){
+  // modify("test.exe");
+}
+
 // popup
 function upload() {
   $id('modfile-area').style.display = 'none';

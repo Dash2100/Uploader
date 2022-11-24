@@ -361,13 +361,10 @@ p {
   position: absolute;
   right: 13px;
   top: 16px;
-  color: #7b85d3;
+  cursor: pointer;
+  color: #202434;
   font-size: 20px;
   transition: all .2s ease-in-out;
-}
-
-.modfile-icon:hover{
-  color: #c5c6d3
 }
 
 
@@ -376,7 +373,7 @@ p {
   display: none;
 }
 
-.modfile-name{
+#modfile-name{
   color: #7ca3f5;
   font-size: 20px;
   display: -webkit-box;
@@ -478,7 +475,7 @@ input:checked + .slider:before {
   border: none;
   border-bottom: 2px solid #7ea4f3;
   border-radius: 0;
-  width: 190px;
+  width: 100px;
   background-color: #1f2335;
   font-size: 20px;
   color:#ffffff;
@@ -488,7 +485,8 @@ input:checked + .slider:before {
   outline: none;
 }
 
-.share-link{
+#link-input{
   display: flex;
+  gap: 10px;
   justify-content: center;
 }
