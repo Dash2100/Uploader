@@ -43,7 +43,7 @@
             <div class="modfile-area" id="modfile-area">
                 <p class="popupTitle">Modify File</p>
                 <div class="modfile-form">
-                    <p id="modfile-name"></p>
+                    <p id="modfile-name">%%filename%%</p>
                     <div class="modfile-options">
                         <p class="modfile-option-lable">Share</p>
                         <label class="switch">
@@ -52,17 +52,17 @@
                         </label>
                         <p class="modfile-option-lable">Share link</p>
                         <label class="switch">
-                            <input type="checkbox" id="Share-link-switch">
+                            <input type="checkbox" id="Share-link-check">
                             <span class="slider round"></span>
                         </label>
                     </div>
                     <div id="link-input" style="display: none;">
-                        <p class="modfile-option-lable">todev.me /</p>
-                        <input type="text" class="link-input"></input>
+                        <p class="modfile-option-lable" id="baseurl">baseurl /</p>
+                        <input type="text" class="link-input" id="shortlink"></input>
                     </div>
                     <div class="modfile-buttons">
                         <button id="delfile" class="button modfile-btn delete">Delete</button>
-                        <button class="button modfile-btn save" onclick="save();">Save</button>
+                        <button id="savechange" class="button modfile-btn save">Apply</button>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@
     </div>
 </body>
 <script>
-    $('#Share-link-switch').change(
+    $('#Share-link-check').change(
         function () {
             if (this.checked) {
                 $('#link-input').show();

@@ -10,7 +10,6 @@ import json
 import os
 
 path = './Uploads'
-exclude = ['Thumbs.db', '.DS_Store']
 
 app = Flask(__name__, static_url_path='/static')
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -32,8 +31,22 @@ def index():
     cur.execute("SELECT * FROM files WHERE share=1")
     all_files = cur.fetchall()
     con.close()
-    all_files.reverse()
+    #sort list by sharedate
+    all_files.sort(key=lambda x: x[4], reverse=True)
     return render_template('index.html', **locals())
+
+@app.route('/<link>', methods = ['GET'])
+def link(link):
+    #get file from database
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT file FROM shorturls WHERE url=?", (link,))
+    file = cur.fetchone()
+    con.close()
+    if file:
+        return send_from_directory(path, file[0], as_attachment=True)
+    else:
+        return Response(status=404)
 
 @app.route('/download/<filename>')
 def download(filename):
@@ -88,11 +101,11 @@ def upload_file():
                 size = round(size_bytes / 1000, 3).__str__() + ' KB'
             else:
                 size = round(size_bytes / 1000000, 3).__str__() + ' MB'
-            execute_db('INSERT INTO files VALUES (?, ?, ?, ?)', (file.filename, date, size, 0))
+            execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?)', (file.filename, date, size, 0, ""))
             return "success"
 
 
-@app.route('/admin/download/<string:filename>')
+@app.route('/admin/download/<string:filename>', methods=['GET'])
 @login_required
 def download_file(filename):
     #check if file exists
@@ -102,34 +115,94 @@ def download_file(filename):
         return Response(status=404)
 
 
-@app.route('/admin/delfile/<string:file>')
+@app.route('/admin/delfile' , methods=['POST'])
 @login_required
-def del_file(file):
+def del_file():
+    filename = request.get_json()['filename']
     try:
-        os.remove(os.path.join(path, file))
-        execute_db('DELETE FROM files WHERE name = ?', (file,))
+        os.remove(os.path.join(path, filename))
+        execute_db('DELETE FROM files WHERE name = ?', (filename,))
         return "OK"
     except FileNotFoundError:
         return "Not Found"
 
 #use get to change share status in database
-@app.route('/share/<string:file>')
+@app.route('/admin/share', methods=['POST'])
 @login_required
-def share_file(file):
+def share_file():
+    filename = request.get_json()['filename']
+    state = request.get_json()['state']
     con = sqlite3.connect('database.db')
     cur = con.cursor()
-    cur.execute("SELECT * FROM files WHERE name=?", (file,))
+    cur.execute("SELECT * FROM files WHERE name=?", (filename,))
     data = cur.fetchone()
     con.close()
     if data:
-        if data[3] == 0:
-            execute_db('UPDATE files SET share=1 WHERE name = ?', (file,))
-            return "ON"
+        if state == 1:
+            execute_db('UPDATE files SET share=1 WHERE name=?', (filename,))
+            #sharedate
+            now = datetime.now()
+            date = now.strftime("%Y-%m-%d %H:%M:%S")
+            execute_db('UPDATE files SET sharedate=? WHERE name=?', (date, filename))
+        elif state == 0:
+            execute_db('UPDATE files SET share=0 WHERE name=?', (filename,))
+            execute_db('UPDATE files SET sharedate=? WHERE name=?', ("", filename))
         else:
-            execute_db('UPDATE files SET share=0 WHERE name = ?', (file,))
-            return "OFF"
+            return "Wrong State"
+        return "OK"
     else:
         return "Not Found"
+
+#get share state from files table and short link from shorturls table
+@app.route('/admin/filestate', methods=['POST'])
+@login_required
+def file_state():
+    filename = request.get_json()['filename']
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT share FROM files WHERE name=?", (filename,))
+    share = cur.fetchone()[0]
+    cur.execute("SELECT url FROM shorturls WHERE file=?", (filename,))
+    link = cur.fetchone()
+    con.close()
+    if link:
+        link = link[0]
+    else:
+        link = ""
+    return json.dumps({'share': share, 'link': link})
+
+
+@app.route('/admin/shortlink', methods=['POST'])
+@login_required
+def shortlink():
+    filename = request.get_json()['filename']
+    shortlink = request.get_json()['shortlink']
+    #check if value is valid
+    if shortlink == "" or filename == "":
+        return "Empty"
+    #check if shortlink is already in use
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM shorturls WHERE url=?", (shortlink,))
+    data = cur.fetchone()
+    if data:
+        return "Already in use"
+    #check if file already has a shortlink
+    cur.execute("SELECT * FROM shorturls WHERE file=?", (filename,))
+    data = cur.fetchone()
+    con.close()
+    if data:
+        #update shortlink
+        execute_db('UPDATE shorturls SET url=? WHERE file=?', (shortlink, filename))
+    execute_db('INSERT INTO shorturls VALUES (?, ?)', (shortlink, filename))
+    return "OK"
+
+@app.route('/admin/delshortlink', methods=['POST'])
+@login_required
+def del_shortlink():
+    filename = request.get_json()['filename']
+    execute_db('DELETE FROM shorturls WHERE file = ?', (filename,))
+    return "OK"
 
 ## Login
 
