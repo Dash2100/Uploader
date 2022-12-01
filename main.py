@@ -122,6 +122,7 @@ def del_file():
     try:
         os.remove(os.path.join(path, filename))
         execute_db('DELETE FROM files WHERE name = ?', (filename,))
+        execute_db('DELETE FROM shorturls WHERE file = ?', (filename,))
         return "OK"
     except FileNotFoundError:
         return "Not Found"
