@@ -62,7 +62,7 @@
                     </div>
                     <div class="modfile-buttons">
                         <button id="delfile" class="button modfile-btn delete">Delete</button>
-                        <button id="savechange" class="button modfile-btn save">Apply</button>
+                        <button id="savechange" class="button modfile-btn   save">Apply</button>
                     </div>
                 </div>
             </div>
@@ -70,24 +70,45 @@
     </div>
 
     <div class="page">
-        <div class="titlebar">
-            <h3 class="title">Uploader</h3>
-            <button class="button add" onclick="upload();"> + </button>
-            <button class="button logout" onclick="location.replace('/logout')">Logout</button>
+        <div class="titlebar">  
+            <h3 class="title" onclick="location.replace('/')">Uploader</h3>
+            <div class="top-icons">
+                <div class="opt-icons">
+                    <button class="button top-icon btn-group-left" onclick="selectfile();">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <button class="button top-icon btn-group-right" onclick="location.replace('/logout')">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                    <button class="button top-icon add" onclick="upload();">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+                <div class="act-icons">
+                    <button class="button top-icon" onclick="cancelselect();">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="file-list">
             {% for file in all_files %}
-            <div class="file">
-                <div class="file-card" onclick="downloadFile('{{file.0}}')"">
-                    <div class=" file-name">{{file.0}}</div>
-                <div class="file-size">{{file.1}} | {{file.2}}</div>
+            <div class="file" id="{{loop.index}}" onclick="select('{{loop.index}}')">
+                <div class="file-card" id="{{loop.index}}-card" onclick="downloadFile('{{file.0}}')"">
+                    <div class="file-name">{{file.0}}</div>
+                    <div class="file-size">{{file.1}} | {{file.2}}</div>
+                </div>
+                <i class="modfile-icon fa-solid fa-pen-to-square" onclick="modify('{{file.0}}');"></i>
             </div>
-            <i class="modfile-icon fa-solid fa-pen-to-square" onclick="modify('{{file.0}}');"></i>
+            {% endfor %}
         </div>
-        {% endfor %}
+        <!-- options -->
+        <div class="edit-options">
+            <p id="edit-options-text">已選取 2 個檔案</p>
+        </div>
     </div>
-    </div>
+
 </body>
 <script>
     $('#Share-link-check').change(

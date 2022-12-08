@@ -3,7 +3,6 @@ let file_count = 0;
 let uploaded_count = 0;
 let sharebutton;
 let linkbutton;
-
 let linkstate;
 
 function $id(id) {
@@ -195,5 +194,36 @@ function save(filename) {
         }
       }
     });
+  }
+}
+
+let selecting = 0;
+function selectfile(){
+  selecting = 1
+  $('.modfile-icon').addClass('hide');
+  $('.file-card').addClass('file-card-disable');
+  $('.file').addClass('file-select');
+  $('.opt-icons').addClass('hide');
+  $('.act-icons').addClass('show');
+  $('.edit-options').addClass('edit-options-open');
+}
+
+
+function cancelselect(){
+ selecting = 0;
+  $('.modfile-icon').removeClass('hide');
+  $('.file-card').removeClass('file-card-disable');
+  $('.file').removeClass('file-select');
+  $('.opt-icons').removeClass('hide');
+  $('.file-selected').removeClass('file-selected');
+  $('.act-icons').removeClass('show');
+  $('.edit-options').removeClass('edit-options-open');
+}
+
+function select(filename){
+  if(selecting === 1){
+    console.log(filename);
+    $("#" + filename).addClass('file-selected');
+    $("#" + filename + "-card").removeClass('file-card-disable');
   }
 }

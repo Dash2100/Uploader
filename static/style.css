@@ -96,6 +96,7 @@ input::-ms-clear {
 }
 
 .title {
+  cursor: pointer;
   color: #90a6d6;
   font-size: 30px;
 }
@@ -274,12 +275,10 @@ p {
   background: #5c6eb8;
 }
 
-.logout {
-  font-size: 13px;
-  margin-top: 30px;
-  margin-left: 20px;
-  padding: 10px;
-  font-weight: bold;
+.add {
+  width: 40px;
+  height: 40px;
+  margin-left: 10px;
 }
 
 .login {
@@ -290,11 +289,75 @@ p {
   font-weight: bold;
 }
 
-.add {
+.top-icon{
+  width: 40px;
+  height: 40px;
+}
+
+.top-icons{
+  position: relative;
   font-size: 18px;
-  padding: 0 15px;
   margin-top: 30px;
   margin-left: auto;
+  pointer-events: all;
+}
+
+.act-icons{
+  float: right;
+  top: 0;
+  right: 0px;
+  position: absolute;
+  pointer-events: all;
+  transition: all .25s ease-in-out;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.opt-icons{
+  transition: all .3s ease-in-out;
+}
+
+.show{
+  opacity: 100%;
+  pointer-events: all;
+}
+
+.hide{
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.edit-options{
+  position: fixed;
+  background-color: #3c415a;
+  border-radius: 15px;
+  height: 55px;
+  width: 95%;
+  max-width: 550px;
+  text-align: left;
+  bottom: -60px;
+  transition: all .3s ease-in-out;
+}
+
+.edit-options-open{
+  bottom: 25px;
+}
+
+#edit-options-text{
+  color: #FFFFFF;
+  font-size: 17px;
+  line-height: 55px;
+  margin: 0 25px;
+}
+
+.btn-group-right{
+  float: left;
+  margin-right: 1px;
+  border-radius: 10px 0 0 10px;
+}
+
+.btn-group-left{
+  border-radius: 0 10px 10px 0;
 }
 
 .modfile-btn{
@@ -334,11 +397,27 @@ p {
   border-radius: 10px;
   width: 80%;
   position: relative;
+  transition: all 0.2s ease-in-out;
+}
+
+.file-select{
+  background-color: #373d58;
+}
+
+.file-selected{
+  background-color: #4a5796;
 }
 
 .file-card {
+  pointer-events: all;
   margin: 1px auto;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.file-card-disable{
+  pointer-events: none;
+  opacity: 0.6;
 }
 
 
@@ -360,11 +439,17 @@ p {
 .modfile-icon{
   position: absolute;
   right: 13px;
-  top: 16px;
+  top: 18px;
   cursor: pointer;
   color: #202434;
   font-size: 20px;
   transition: all .2s ease-in-out;
+  opacity: 100%;
+}
+
+.modfile-icon-hide{
+  opacity: 0;
+  pointer-events: none;
 }
 
 
