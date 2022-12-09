@@ -205,12 +205,12 @@ function selectfile(){
   $('.file').addClass('file-select');
   $('.opt-icons').addClass('hide');
   $('.act-icons').addClass('show');
-  $('.edit-options').addClass('edit-options-open');
 }
 
-
+let selected = [];
 function cancelselect(){
- selecting = 0;
+  selecting = 0;
+  selected = [];
   $('.modfile-icon').removeClass('hide');
   $('.file-card').removeClass('file-card-disable');
   $('.file').removeClass('file-select');
@@ -222,8 +222,30 @@ function cancelselect(){
 
 function select(filename){
   if(selecting === 1){
-    console.log(filename);
-    $("#" + filename).addClass('file-selected');
-    $("#" + filename + "-card").removeClass('file-card-disable');
+    if(selected.includes(filename)){
+      selected.splice(selected.indexOf(filename), 1);
+      $("#" + filename).removeClass('file-selected');
+      $("#" + filename + "-card").removeClass('file-card-selected');
+      $("#" + filename + "-card").addClass('file-card-disable');
+      if(selected.length < 1){
+        $('.edit-options').removeClass('edit-options-open');
+      }else{
+        $('#edit-options-text').text(selected.length + " files selected");
+      }
+    }
+    else{
+      selected.push(filename);
+      if(selected.length > 0){
+        $('.edit-options').addClass('edit-options-open');
+      }
+      $("#" + filename).addClass('file-selected');
+      $("#" + filename + "-card").removeClass('file-card-disable');
+      $("#" + filename + "-card").addClass('file-card-selected');
+      $('#edit-options-text').text(selected.length + " files selected");
+    }
   }
+}
+
+function multidelete(){
+  console.log(selected);
 }

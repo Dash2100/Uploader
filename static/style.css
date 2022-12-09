@@ -329,18 +329,28 @@ p {
 
 .edit-options{
   position: fixed;
+  display: flex;
   background-color: #3c415a;
   border-radius: 15px;
   height: 55px;
-  width: 95%;
+  width: 91%;
   max-width: 550px;
   text-align: left;
   bottom: -60px;
-  transition: all .3s ease-in-out;
+  transition: all .28s ease-in-out;
 }
 
 .edit-options-open{
   bottom: 25px;
+}
+
+.edit-options-button{
+  width: 60px;
+}
+
+.edit-options-buttons{
+  display: flex;
+  margin: auto 20px auto auto;
 }
 
 #edit-options-text{
@@ -382,6 +392,27 @@ p {
   background-color: #1aaa51;
 }
 
+.edit-delete{
+  background-color: #7e403e;
+  margin-left: 15px;
+}
+
+.edit-delete:hover{
+  background-color: #b62a25;
+}
+
+.edit-edit{
+  background-color: #4a557a;
+}
+
+.edit-edit:hover{
+  background-color: #58607b;
+}
+
+.edit-options-buttons-delete{
+  margin-left: 20px;
+}
+
 /* filecard */
 
 .file-list {
@@ -410,7 +441,6 @@ p {
 
 .file-card {
   pointer-events: all;
-  margin: 1px auto;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
@@ -420,6 +450,9 @@ p {
   opacity: 0.6;
 }
 
+.file-card-selected{
+  pointer-events: none;
+}
 
 .file-name {
   font-size: 16px;
