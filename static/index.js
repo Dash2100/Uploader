@@ -175,6 +175,21 @@ function save(filename) {
               text: 'This shortlink already in use!',
             })
           }
+          if (res == "Empty"){
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'You must enter a shortlink!',
+            })
+          }
+          if (res == "illegal") {
+            $('#shortlink').val("");
+            Swal.fire({
+              icon: 'error',
+              title: 'WTF',
+              text: "Don't even think about this!",
+            })
+          }
         }
       });
     }
@@ -222,7 +237,7 @@ function cancelselect(){
 
 function select(filename){
   if(selecting === 1){
-    if(selected.includes(filename)){
+    if(selected.includes($('#' + filename + "-name").text())){
       selected.splice(selected.indexOf(filename), 1);
       $("#" + filename).removeClass('file-selected');
       $("#" + filename + "-card").removeClass('file-card-selected');

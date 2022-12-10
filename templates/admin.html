@@ -15,13 +15,14 @@
     <link href="/static/fontawesome/fontawesome.css" rel="stylesheet">
     <link href="/static/fontawesome/brands.css" rel="stylesheet">
     <link href="/static/fontawesome/solid.css" rel="stylesheet">
-    <title>Uploader</title>
+    <title>Admin | Uploader</title>
 </head>
 
 <body onload="init();">
     <div class="popup">
         <a class="popbg" onclick="popopoff();"></a>
         <div class="popup-content">
+            <!-- upload area -->
             <div class="upload-area" id="upload-area" style="display: none;">
                 <p class="popupTitle">Upload File</p>
                 <div id="drop-area">
@@ -40,6 +41,7 @@
                     </script>
                 </div>
             </div>
+            <!-- modify file -->
             <div class="modfile-area" id="modfile-area">
                 <p class="popupTitle">Modify File</p>
                 <div class="modfile-form">
@@ -66,6 +68,9 @@
                     </div>
                 </div>
             </div>
+            <!-- modify multiple files -->
+            
+
         </div>
     </div>
 

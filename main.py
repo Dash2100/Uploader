@@ -46,7 +46,7 @@ def link(link):
     if file:
         return send_from_directory(path, file[0], as_attachment=True)
     else:
-        return Response(status=404)
+        return render_template('404.html')
 
 @app.route('/download/<filename>')
 def download(filename):
@@ -194,6 +194,9 @@ def shortlink():
     #check if value is valid
     if shortlink == "" or filename == "":
         return "Empty"
+    #check if user is using a illegal character
+    if shortlink == "admin":
+        return "illegal"
     #check if shortlink is already in use
     con = sqlite3.connect('database.db')
     cur = con.cursor()

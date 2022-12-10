@@ -330,13 +330,16 @@ p {
 .edit-options{
   position: fixed;
   display: flex;
-  background-color: #3c415a;
+  background-color: #3e4463;
+  box-shadow: 2px 2px 40px 3px #2d3143;
   border-radius: 15px;
   height: 55px;
-  width: 90%;
-  max-width: 550px;
+  width: 85%;
+  max-width: 500px;
   text-align: left;
   bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
   transition: all .28s ease-in-out;
 }
 
