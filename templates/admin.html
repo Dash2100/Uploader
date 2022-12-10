@@ -69,8 +69,32 @@
                 </div>
             </div>
             <!-- modify multiple files -->
-            
-
+            <div class="modfile-area" id="multi-modfile-area">
+                <p class="popupTitle">Modify Multi Files</p>
+                <div class="modfile-form">
+                    <p id="modfile-name">%%filename%%</p>
+                    <div class="modfile-options">
+                        <p class="modfile-option-lable">Share</p>
+                        <label class="switch">
+                            <input type="checkbox" id="Share-check">
+                            <span class="slider round"></span>
+                        </label>
+                        <p class="modfile-option-lable">Share link</p>
+                        <label class="switch">
+                            <input type="checkbox" id="Share-link-check">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div id="link-input" style="display: none;">
+                        <p class="modfile-option-lable" id="baseurl">baseurl /</p>
+                        <input type="text" class="link-input" id="shortlink"></input>
+                    </div>
+                    <div class="modfile-buttons">
+                        <button id="delfile" class="button modfile-btn delete">Delete</button>
+                        <button id="savechange" class="button modfile-btn save">Apply</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
