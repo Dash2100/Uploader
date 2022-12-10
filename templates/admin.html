@@ -62,7 +62,7 @@
                     </div>
                     <div class="modfile-buttons">
                         <button id="delfile" class="button modfile-btn delete">Delete</button>
-                        <button id="savechange" class="button modfile-btn   save">Apply</button>
+                        <button id="savechange" class="button modfile-btn save">Apply</button>
                     </div>
                 </div>
             </div>
@@ -96,7 +96,7 @@
             {% for file in all_files %}
             <div class="file" id="{{loop.index}}" onclick="select('{{loop.index}}')">
                 <div class="file-card" id="{{loop.index}}-card" onclick="downloadFile('{{file.0}}')"">
-                    <div class="file-name">{{file.0}}</div>
+                    <div class="file-name" id="{{loop.index}}-name">{{file.0}}</div>
                     <div class="file-size">{{file.1}} | {{file.2}}</div>
                 </div>
                 <i class="modfile-icon fa-solid fa-pen-to-square" onclick="modify('{{file.0}}');"></i>

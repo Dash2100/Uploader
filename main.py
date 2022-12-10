@@ -127,6 +127,19 @@ def del_file():
     except FileNotFoundError:
         return "Not Found"
 
+@app.route('/admin/multidelete', methods=['POST'])
+@login_required
+def multi_delete():
+    files = request.get_json()['files']
+    for file in files:
+        try:
+            os.remove(os.path.join(path, file))
+            execute_db('DELETE FROM files WHERE name = ?', (file,))
+            execute_db('DELETE FROM shorturls WHERE file = ?', (file,))
+        except FileNotFoundError:
+            pass
+    return "OK"
+
 #use get to change share status in database
 @app.route('/admin/share', methods=['POST'])
 @login_required

@@ -234,7 +234,7 @@ function select(filename){
       }
     }
     else{
-      selected.push(filename);
+      selected.push($('#' + filename + "-name").text());
       if(selected.length > 0){
         $('.edit-options').addClass('edit-options-open');
       }
@@ -247,5 +247,27 @@ function select(filename){
 }
 
 function multidelete(){
-  console.log(selected);
+  Swal.fire({
+    title: "Are you sure?",
+    text: "This will delete " + selected.length + " file(s)",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "/admin/multidelete",
+        method: "post",
+        data: JSON.stringify({ files: selected }),
+        contentType: "application/json;charset=utf-8",
+        success: function (res) {
+          if (res == "OK") {
+            location.reload();
+          }
+        }
+      });
+    }
+  })
 }
+
