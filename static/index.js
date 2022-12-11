@@ -16,17 +16,47 @@ function init() {
 
 // popup
 function upload() {
-  $id('modfile-area').style.display = 'none';
+  hideall();
   $id('upload-area').style.display = 'block';
   var x = document.getElementsByClassName("popup")[0];
   x.classList.add("popup--opened");
 }
 
-function popopoff() {
+function popupoff() {
   if (uploading == 0) {
     var x = document.getElementsByClassName("popup")[0];
     x.classList.remove("popup--opened");
   }
+}
+
+function hideall(){
+  $id('modfile-area').style.display = 'none';
+  $id('upload-area').style.display = 'none';
+  $id('multi-modfile-area').style.display = 'none';
+}
+
+function modify(name) {
+  sharebutton = 0;
+  linkbutton = 0;
+  linkstate = 0;
+  hideall();
+  filestate(name);
+  $('#link-input').hide();
+  $id('modfile-area').style.display = 'block';
+  $id('savechange').onclick = function () { save(name); };
+  $id('delfile').onclick = function () { delFile(name); };
+  $id('modfile-name').innerHTML = name;
+  var x = document.getElementsByClassName("popup")[0];
+  x.classList.add("popup--opened");
+}
+
+function multimodify() {
+  hideall();
+  $id('multi-modfile-area').style.display = 'block';
+  $('#multi-Share-check').prop('checked', false);
+  $id('multi-modfile-name').innerHTML = selected.length + " Files";
+  var x = document.getElementsByClassName("popup")[0];
+  x.classList.add("popup--opened");
 }
 
 function downloadFile(fileName) {
@@ -87,21 +117,6 @@ function file_progress(id, percent) {
   }
 }
 
-function modify(name) {
-  sharebutton = 0;
-  linkbutton = 0;
-  linkstate = 0;
-  filestate(name);
-  $('#link-input').hide();
-  $id('upload-area').style.display = 'none';
-  $id('modfile-area').style.display = 'block';
-  $id('savechange').onclick = function () { save(name); };
-  $id('delfile').onclick = function () { delFile(name); };
-  $id('modfile-name').innerHTML = name;
-  var x = document.getElementsByClassName("popup")[0];
-  x.classList.add("popup--opened");
-}
-
 function filestate(filename) {
   $.ajax({
     url: "/admin/filestate",
@@ -152,7 +167,7 @@ function save(filename) {
       contentType: "application/json;charset=utf-8",
       success: function (res) {
         if (res == "OK") {
-          popopoff();
+          popupoff();
         }
       }
     });
@@ -166,7 +181,7 @@ function save(filename) {
         contentType: "application/json;charset=utf-8",
         success: function (res) {
           if (res == "OK") {
-            popopoff();
+            popupoff();
           }
           if (res == "Already in use") {
             Swal.fire({
@@ -175,7 +190,7 @@ function save(filename) {
               text: 'This shortlink already in use!',
             })
           }
-          if (res == "Empty"){
+          if (res == "Empty") {
             Swal.fire({
               icon: 'error',
               title: 'Oops...',
@@ -186,15 +201,15 @@ function save(filename) {
             $('#shortlink').val("");
             Swal.fire({
               icon: 'error',
-              title: 'WTF',
-              text: "Don't even think about this!",
+              title: 'Wait!',
+              text: "The shortlink can't contain special characters or spaces",
             })
           }
         }
       });
     }
-    else{
-      popopoff();
+    else {
+      popupoff();
     }
   }
   else {
@@ -205,7 +220,7 @@ function save(filename) {
       contentType: "application/json;charset=utf-8",
       success: function (res) {
         if (res == "OK") {
-          popopoff();
+          popupoff();
         }
       }
     });
@@ -213,7 +228,7 @@ function save(filename) {
 }
 
 let selecting = 0;
-function selectfile(){
+function selectfile() {
   selecting = 1
   $('.modfile-icon').addClass('hide');
   $('.file-card').addClass('file-card-disable');
@@ -223,7 +238,7 @@ function selectfile(){
 }
 
 let selected = [];
-function cancelselect(){
+function cancelselect() {
   selecting = 0;
   selected = [];
   $('.modfile-icon').removeClass('hide');
@@ -235,40 +250,40 @@ function cancelselect(){
   $('.edit-options').removeClass('edit-options-open');
 }
 
-function select(filename){
-  if(selecting === 1){
-    if(selected.includes($('#' + filename + "-name").text())){
+function select(filename) {
+  if (selecting === 1) {
+    if (selected.includes($('#' + filename + "-name").text())) {
       selected.splice(selected.indexOf(filename), 1);
       $("#" + filename).removeClass('file-selected');
       $("#" + filename + "-card").removeClass('file-card-selected');
       $("#" + filename + "-card").addClass('file-card-disable');
-      if(selected.length < 1){
+      if (selected.length < 1) {
         $('.edit-options').removeClass('edit-options-open');
-      }else{
-        $('#edit-options-text').text(selected.length + " files selected");
+      } else {
+        $('#edit-options-text').text(selected.length + " Files selected");
       }
     }
-    else{
+    else {
       selected.push($('#' + filename + "-name").text());
-      if(selected.length > 0){
+      if (selected.length > 0) {
         $('.edit-options').addClass('edit-options-open');
       }
       $("#" + filename).addClass('file-selected');
       $("#" + filename + "-card").removeClass('file-card-disable');
       $("#" + filename + "-card").addClass('file-card-selected');
-      $('#edit-options-text').text(selected.length + " files selected");
+      $('#edit-options-text').text(selected.length + " Files selected");
     }
   }
 }
 
-function multidelete(){
+function multidelete() {
   Swal.fire({
     title: "Are you sure?",
-    text: "This will delete " + selected.length + " file(s)",
+    text: "This will delete " + selected.length + " files",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonText: "Delete",
   }).then((result) => {
     if (result.isConfirmed) {
       $.ajax({
@@ -286,3 +301,27 @@ function multidelete(){
   })
 }
 
+function multishare(){
+  if ($('#multi-Share-check').is(":checked") === true) {
+    var multistate = 1;
+  } else {
+    var multistate = 0;
+  }
+  $.ajax({
+    url: "/admin/multishare",
+    method: "post",
+    data: JSON.stringify({ files: selected, state: multistate}),
+    contentType: "application/json;charset=utf-8",
+    success: function (res) {
+      popupoff();
+      cancelselect();
+      if (res == "OK") {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Files shared!',
+        })
+      }
+    }
+  });
+}

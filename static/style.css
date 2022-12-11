@@ -10,6 +10,10 @@ body::-webkit-scrollbar {
   display: none;
 }
 
+a{
+  text-decoration: none;
+}
+
 /* swal custom */
 .swal2-popup {
   background-color: #24283B !important;
@@ -20,8 +24,7 @@ body::-webkit-scrollbar {
 
 .swal2-confirm {
   border-radius: 5px !important;
-  /* color: #FFFFFF !important; */
-  border: none !important;
+  /* background-color: #7083d9 !important; */
 }
 
 .swal2-input {
@@ -269,6 +272,7 @@ p {
   background-color: #42496B;
   border-radius: 10px;
   transition: all 0.1s ease-in-out;
+  cursor: pointer;
 }
 
 .button:hover {
@@ -331,7 +335,7 @@ p {
   position: fixed;
   display: flex;
   background-color: #3e4463;
-  box-shadow: 2px 2px 40px 3px #2d3143;
+  box-shadow: 1px 1px 30px 1px #292c3b;
   border-radius: 15px;
   height: 55px;
   width: 85%;
@@ -401,7 +405,7 @@ p {
 }
 
 .edit-delete:hover{
-  background-color: #b62a25;
+  background-color: #992d29;
 }
 
 .edit-edit{
@@ -446,6 +450,7 @@ p {
   pointer-events: all;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  margin: 2px auto;
 }
 
 .file-card-disable{
@@ -494,7 +499,11 @@ p {
   display: none;
 }
 
-#modfile-name{
+#multi-modfile-area{
+  display: block;
+}
+
+.modfile-name{
   color: #7ca3f5;
   font-size: 20px;
   display: -webkit-box;

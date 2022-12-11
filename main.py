@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory, render_template, jsonify, make_response, redirect, url_for, Response
+from flask import Flask, request, send_from_directory, render_template, jsonify, redirect, url_for, Response
 from flask_login import LoginManager, UserMixin, login_user,  login_required, logout_user, current_user
 from datetime import datetime
 from getpass import getpass
@@ -6,6 +6,7 @@ from sql_init import sqlinit
 import sqlite3
 import hashlib
 import sys
+import re
 import json
 import os
 
@@ -74,6 +75,7 @@ def admin():
     all_files = cur.fetchall()
     con.close()
     all_files.reverse()
+    print(all_files)
     return render_template('admin.html', **locals())
 
 
@@ -84,7 +86,7 @@ def upload_file():
         if 'file' not in request.files:
             return 'No file part'
         file = request.files['file']
-        print(file)
+        print(f"[INFO] {file} uploaded")
         if file.filename == '':
             return 'No selected file'
         if file:
@@ -101,6 +103,7 @@ def upload_file():
                 size = round(size_bytes / 1000, 3).__str__() + ' KB'
             else:
                 size = round(size_bytes / 1000000, 3).__str__() + ' MB'
+            filename_base64 = file.filename.encode('utf-8')
             execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?)', (file.filename, date, size, 0, ""))
             return "success"
 
@@ -167,6 +170,33 @@ def share_file():
     else:
         return "Not Found"
 
+@app.route('/admin/multishare', methods=['POST'])
+@login_required
+def multishare():
+    files = request.get_json()['files']
+    state = request.get_json()['state']
+    for file in files:
+        con = sqlite3.connect('database.db')
+        cur = con.cursor()
+        cur.execute("SELECT * FROM files WHERE name=?", (file,))
+        data = cur.fetchone()
+        con.close()
+        if data:
+            if state == 1:
+                execute_db('UPDATE files SET share=1 WHERE name=?', (file,))
+                #sharedate
+                now = datetime.now()
+                date = now.strftime("%Y-%m-%d %H:%M:%S")
+                execute_db('UPDATE files SET sharedate=? WHERE name=?', (date, file))
+            elif state == 0:
+                execute_db('UPDATE files SET share=? WHERE name=?', (0,file,))
+                execute_db('UPDATE files SET sharedate=? WHERE name=?', ("", file))
+            else:
+                return "Wrong State"
+        else:
+            return "Not Found"
+    return "OK"
+
 #get share state from files table and short link from shorturls table
 @app.route('/admin/filestate', methods=['POST'])
 @login_required
@@ -195,6 +225,8 @@ def shortlink():
     if shortlink == "" or filename == "":
         return "Empty"
     #check if user is using a illegal character
+    if not re.match("^[a-zA-Z0-9_-]*$", shortlink):
+        return "illegal"
     if shortlink == "admin":
         return "illegal"
     #check if shortlink is already in use
@@ -240,9 +272,12 @@ def login():
                 return redirect(url_for('admin'))
             return render_template('login.html')
     request_pas = request.get_json()
-    #load password from json
-    with open('data.json', 'r') as f:
-        password = json.load(f).get('password')
+    #load password from db
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT password FROM Users where username = 'admin'")
+    password = cur.fetchone()[0]
+    con.close()
     if hashlib.sha256(request_pas['password'].encode('utf-8')).hexdigest() == password:
         user = User()
         user.id = 'admin'
@@ -262,8 +297,8 @@ if __name__ == "__main__":
         if sys.argv[1] == 'passwd':
             password = getpass('Password: ')
             password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-            with open('data.json', 'w') as f:
-                json.dump({'password': password}, f)
+            execute_db('UPDATE Users SET password=? WHERE username=?', (password, 'admin'))
+            print(password)
             print('Password changed')
     else:
         app.run(debug=True, host='0.0.0.0', port=5090)

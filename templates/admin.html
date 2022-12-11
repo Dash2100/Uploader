@@ -20,7 +20,7 @@
 
 <body onload="init();">
     <div class="popup">
-        <a class="popbg" onclick="popopoff();"></a>
+        <a class="popbg" onclick="popupoff();"></a>
         <div class="popup-content">
             <!-- upload area -->
             <div class="upload-area" id="upload-area" style="display: none;">
@@ -45,7 +45,7 @@
             <div class="modfile-area" id="modfile-area">
                 <p class="popupTitle">Modify File</p>
                 <div class="modfile-form">
-                    <p id="modfile-name">%%filename%%</p>
+                    <p class="modfile-name" id="modfile-name">%%filename%%</p>
                     <div class="modfile-options">
                         <p class="modfile-option-lable">Share</p>
                         <label class="switch">
@@ -72,26 +72,17 @@
             <div class="modfile-area" id="multi-modfile-area">
                 <p class="popupTitle">Modify Multi Files</p>
                 <div class="modfile-form">
-                    <p id="modfile-name">%%filename%%</p>
+                    <p class="modfile-name" id="multi-modfile-name">%%files%%</p>
                     <div class="modfile-options">
                         <p class="modfile-option-lable">Share</p>
                         <label class="switch">
-                            <input type="checkbox" id="Share-check">
+                            <input type="checkbox" id="multi-Share-check">
                             <span class="slider round"></span>
                         </label>
-                        <p class="modfile-option-lable">Share link</p>
-                        <label class="switch">
-                            <input type="checkbox" id="Share-link-check">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                    <div id="link-input" style="display: none;">
-                        <p class="modfile-option-lable" id="baseurl">baseurl /</p>
-                        <input type="text" class="link-input" id="shortlink"></input>
                     </div>
                     <div class="modfile-buttons">
-                        <button id="delfile" class="button modfile-btn delete">Delete</button>
-                        <button id="savechange" class="button modfile-btn save">Apply</button>
+                        <button class="button modfile-btn" onclick="popupoff();">Cancel</button>
+                        <button class="button modfile-btn save" onclick="multishare();">Apply</button>
                     </div>
                 </div>
             </div>
@@ -100,7 +91,7 @@
 
     <div class="page">
         <div class="titlebar">  
-            <h3 class="title" onclick="location.replace('/')">Uploader</h3>
+            <a href="/"><h3 class="title">Uploader</h3></a>
             <div class="top-icons">
                 <div class="opt-icons">
                     <button class="button top-icon btn-group-left" onclick="selectfile();">
@@ -124,11 +115,11 @@
         <div class="file-list">
             {% for file in all_files %}
             <div class="file" id="{{loop.index}}" onclick="select('{{loop.index}}')">
-                <div class="file-card" id="{{loop.index}}-card" onclick="downloadFile('{{file.0}}')"">
+                <div class="file-card" id="{{loop.index}}-card" onclick='downloadFile("{{file.0}}")'>
                     <div class="file-name" id="{{loop.index}}-name">{{file.0}}</div>
                     <div class="file-size">{{file.1}} | {{file.2}}</div>
                 </div>
-                <i class="modfile-icon fa-solid fa-pen-to-square" onclick="modify('{{file.0}}');"></i>
+                <i class="modfile-icon fa-solid fa-pen-to-square" onclick='modify("{{file.0}}");'></i>
             </div>
             {% endfor %}
         </div>
@@ -136,8 +127,8 @@
         <div class="edit-options">
             <p id="edit-options-text"></p>
             <div class="edit-options-buttons">
-                <button class="button edit-options-button edit-edit">Edit</button>
-                <button class="button edit-options-button edit-delete" onclick="multidelete()">Delete</button>
+                <button class="button edit-options-button edit-edit" onclick="multimodify();">Edit</button>
+                <button class="button edit-options-button edit-delete" onclick="multidelete();">Delete</button>
             </div>
         </div>
     </div>
