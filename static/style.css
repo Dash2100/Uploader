@@ -620,3 +620,25 @@ input:checked + .slider:before {
   gap: 10px;
   justify-content: center;
 }
+
+.upload-file-titlebar{
+  position: relative;
+}
+
+.upload-options{
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.upload-options-area{
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background-color: #2e334b;
+  border-radius: 10px;
+  padding: 10px;
+  z-index: 1;
+}

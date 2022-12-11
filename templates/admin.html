@@ -24,7 +24,19 @@
         <div class="popup-content">
             <!-- upload area -->
             <div class="upload-area" id="upload-area" style="display: none;">
-                <p class="popupTitle">Upload File</p>
+                <div class="upload-file-titlebar">
+                    <p class="popupTitle">Upload File</p>
+                    <button class="button upload-options"><i class="fa-sharp fa-solid fa-caret-down"></i></button>
+                    <div class="upload-options-area">
+                        <div class="modfile-options">
+                            <p class="modfile-option-lable">Share</p>
+                            <label class="switch">
+                                <input type="checkbox" id="Share-check">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
                 <div id="drop-area">
                     <form class="upload-form">
                         <p><span id="dragText" style="color:white">Drop files here or</span></p>
