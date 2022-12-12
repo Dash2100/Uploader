@@ -4,21 +4,21 @@ $(function () {
     auto: true,
     queue: false,
     onDragEnter: function(){
+      $(".upload-options-area").hide();
       this.addClass('drop-active');
     },
     onDragLeave: function(){
       this.removeClass('drop-active');
     },
-    // onComplete: function () {
-    //   console.log('All pending tranfers');
-    // },
     onNewFile: function (id, file) {
       add_file(id, file);
     },
     onBeforeUpload: function (id) {
       uploading = 1;
-      document.getElementById("drop-area").style.display = "none";
-      document.getElementById("uploading-list").style.display = "block";
+      $("#drop-area").hide();
+      $('#uploading-list').show();
+      $('.upload-options').hide();
+      $(".upload-options-area").hide();
       console.log('Starting upload ' + id);
     },
     onUploadProgress: function (id, percent) {
