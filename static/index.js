@@ -319,9 +319,22 @@ function multishare(){
         Swal.fire({
           icon: 'success',
           title: 'Success',
-          text: 'Files shared!',
+          text: 'Change applied!',
         })
       }
     }
   });
 }
+
+
+// toggle options area and outside click to close
+function toggleoptions() {
+  $(".upload-options-area").toggle();
+}
+
+$(document).mouseup(function (e) {
+  var container = $(".upload-options-area");
+  if (!container.is(e.target) && container.has(e.target).length === 0) {
+    container.hide();
+  }
+});

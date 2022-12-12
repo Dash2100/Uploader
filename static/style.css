@@ -638,7 +638,16 @@ input:checked + .slider:before {
   right: 0;
   top: 40px;
   background-color: #2e334b;
+  box-shadow: .3px .3px 10px 1px #20222a;
   border-radius: 10px;
-  padding: 10px;
+  padding: 20px;
   z-index: 1;
+}
+
+.upload-modfile-options{
+  display: grid;
+  grid-template-columns: .5fr 60px;
+  justify-content: center;
+  text-align: left;
+  gap: 15px;
 }
