@@ -75,7 +75,8 @@ function delFile(filename) {
     showCancelButton: true,
     confirmButtonColor: '#d33',
     cancelButtonColor: '#51597e',
-    confirmButtonText: 'Yes'
+    confirmButtonText: 'Yes',
+    allowEnterKey: false,
   }).then((result) => {
     if (result.isConfirmed) {
       $.ajax({
@@ -89,7 +90,22 @@ function delFile(filename) {
           }
         },
         error: function (res) {
-          alert("Something went wrong");
+          Swal.fire({
+            title: "Error",
+            text: "Something went wrong, please try again later.",
+            icon: "error",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+            showConfirmButton: true,
+            confirmButtonText: "Reload Page",
+            confirmButtonColor: "#546ad8",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              location.reload();
+            }
+          }
+          );
         }
       });
     }
@@ -284,6 +300,7 @@ function multidelete() {
     showCancelButton: true,
     confirmButtonColor: "#d33",
     confirmButtonText: "Delete",
+    allowEnterKey: false,
   }).then((result) => {
     if (result.isConfirmed) {
       $.ajax({
@@ -329,12 +346,12 @@ function multishare(){
 
 // toggle options area and outside click to close
 function toggleoptions() {
-  $(".upload-options-area").toggle();
+  $('.upload-options-area').toggleClass('upload-options-area--open');
 }
 
 $(document).mouseup(function (e) {
   var container = $(".upload-options-area");
   if (!container.is(e.target) && container.has(e.target).length === 0) {
-    container.hide();
+    container.removeClass('upload-options-area--open');
   }
 });

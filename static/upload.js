@@ -1,13 +1,18 @@
+let sharestate = 0;
+
 $(function () {
   $('#drop-area').dmUploader({
     url: '/admin/upload',
+    extraData: {
+      "share": sharestate,
+    },
     auto: true,
     queue: false,
-    onDragEnter: function(){
+    onDragEnter: function () {
       $(".upload-options-area").hide();
       this.addClass('drop-active');
     },
-    onDragLeave: function(){
+    onDragLeave: function () {
       this.removeClass('drop-active');
     },
     onNewFile: function (id, file) {
@@ -19,6 +24,12 @@ $(function () {
       $('#uploading-list').show();
       $('.upload-options').hide();
       $(".upload-options-area").hide();
+      // get share state
+      if ($('#upload-share-check').is(":checked") === true) {
+        sharestate = 1;
+      } else {
+        sharestate = 0;
+      }
       console.log('Starting upload ' + id);
     },
     onUploadProgress: function (id, percent) {
@@ -27,17 +38,47 @@ $(function () {
     onUploadSuccess: function (id, data) {
       console.log('Server Response for file #' + id + ': ' + JSON.stringify(data));
       uploaded_count++
-      if(uploaded_count >= file_count){
-        setTimeout(function(){
+      if (uploaded_count >= file_count) {
+        setTimeout(function () {
           location.reload();
         }, 300);
       }
     },
     onUploadError: function (id, xhr, status, message) {
-      Swal.fire("Error", "Something went wrong", "error");
+      Swal.fire({
+        title: "Error",
+        text: message,
+        icon: "error",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+        showConfirmButton: true,
+        confirmButtonText: "Reload Page",
+        confirmButtonColor: "#546ad8",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          location.reload();
+        }
+      }
+      );
     },
     onFallbackMode: function () {
-      Swal.fire("Error", "Something went wrong", "error");
+      Swal.fire({
+        title: "Error",
+        text: "Your browser does not support drop file uploads.",
+        icon: "error",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+        showConfirmButton: true,
+        confirmButtonText: "Reload Page",
+        confirmButtonColor: "#546ad8",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          location.reload();
+        }
+      }
+      );
     },
   });
 });

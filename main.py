@@ -75,7 +75,6 @@ def admin():
     all_files = cur.fetchall()
     con.close()
     all_files.reverse()
-    print(all_files)
     return render_template('admin.html', **locals())
 
 
@@ -86,6 +85,8 @@ def upload_file():
         if 'file' not in request.files:
             return 'No file part'
         file = request.files['file']
+        data = request.form
+        print(data['share'])
         print(f"[INFO] {file} uploaded")
         if file.filename == '':
             return 'No selected file'
