@@ -86,7 +86,7 @@ def upload_file():
             return 'No file part'
         file = request.files['file']
         data = request.form
-        print(data['share'])
+        share = data['share']
         print(f"[INFO] {file} uploaded")
         if file.filename == '':
             return 'No selected file'
@@ -105,7 +105,10 @@ def upload_file():
             else:
                 size = round(size_bytes / 1000000, 3).__str__() + ' MB'
             filename_base64 = file.filename.encode('utf-8')
-            execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?)', (file.filename, date, size, 0, ""))
+            if share == '0':
+                execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?)', (file.filename, date, size, 0, ""))
+            else:
+                execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?)', (file.filename, date, size, 1, date))
             return "success"
 
 

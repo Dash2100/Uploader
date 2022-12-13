@@ -1,11 +1,8 @@
-let sharestate = 0;
+let sharestate = "Default";
 
 $(function () {
   $('#drop-area').dmUploader({
     url: '/admin/upload',
-    extraData: {
-      "share": sharestate,
-    },
     auto: true,
     queue: false,
     onDragEnter: function () {
@@ -24,13 +21,17 @@ $(function () {
       $('#uploading-list').show();
       $('.upload-options').hide();
       $(".upload-options-area").hide();
-      // get share state
+      console.log('Starting upload ' + id);
+    },
+    extraData: function() {
       if ($('#upload-share-check').is(":checked") === true) {
         sharestate = 1;
       } else {
         sharestate = 0;
       }
-      console.log('Starting upload ' + id);
+      return {
+        "share": sharestate
+      };
     },
     onUploadProgress: function (id, percent) {
       file_progress(id, percent);
