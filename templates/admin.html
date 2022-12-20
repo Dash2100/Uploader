@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang='zh-tw'>
 
 <head>
     <meta charset="UTF-8">
@@ -26,7 +26,8 @@
             <div class="upload-area" id="upload-area" style="display: none;">
                 <div class="upload-file-titlebar">
                     <p class="popupTitle">Upload File</p>
-                    <button class="button upload-options" onclick="toggleoptions()"><i class="fa-sharp fa-solid fa-caret-down"></i></button>
+                    <button class="button upload-options" onclick="toggleoptions()"><i
+                            class="fa-sharp fa-solid fa-caret-down"></i></button>
                     <div class="upload-options-area">
                         <div class="upload-modfile-options">
                             <p class="modfile-option-lable">Share</p>
@@ -102,8 +103,10 @@
     </div>
 
     <div class="page">
-        <div class="titlebar">  
-            <a href="/"><h3 class="title">Uploader</h3></a>
+        <div class="titlebar">
+            <a href="/">
+                <h3 class="title">Uploader</h3>
+            </a>
             <div class="top-icons">
                 <div class="opt-icons">
                     <button class="button top-icon btn-group-left" onclick="selectfile();">
@@ -151,10 +154,19 @@
         function () {
             if (this.checked) {
                 $('#link-input').show();
+                $('#shortlink').focus();
             } else {
                 $('#link-input').hide();
             }
-        });
+        }
+    );
+
+    $('#modfile-area').keypress(function (e) {
+        if (e.which == 13) {
+            $('#savechange').click();
+        }
+    });
+
 </script>
 
 </html>
