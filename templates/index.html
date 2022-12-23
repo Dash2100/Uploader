@@ -9,6 +9,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="/static/style.css">
     <script src="/static/share.js"></script>
+    <!-- Font Awesome -->
+    <link href="/static/fontawesome/fontawesome.css" rel="stylesheet">
+    <link href="/static/fontawesome/brands.css" rel="stylesheet">
+    <link href="/static/fontawesome/solid.css" rel="stylesheet">
     <title>Shared | Uploader</title>
 </head>
 
@@ -16,7 +20,9 @@
     <div class="page">
         <div class="titlebar">
             <h3 class="title">Shared Files</h3>
-            <button class="button login" onclick="location.replace('/login')"> Login </button>
+            <button class="button login" onclick="location.replace('/login')">
+                <i class="fa-solid fa-right-to-bracket"></i>
+            </button>
         </div>
         <div class="file-list">
             {% for file in all_files %}
