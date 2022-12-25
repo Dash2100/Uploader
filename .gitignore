@@ -2,3 +2,4 @@ __pycache__/
 Uploads/*
 database.db
 .DS_Store
+.idea/*
