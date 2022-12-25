@@ -291,6 +291,8 @@ p {
   margin-left: auto;
   padding: 10px;
   font-weight: bold;
+  width: 40px;
+  height: 40px;
 }
 
 .top-icon{
