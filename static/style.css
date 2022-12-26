@@ -92,7 +92,7 @@ input::-ms-clear {
 
 .page {
   width: 95%;
-  max-width: 550px;
+  max-width: 600px;
   margin: 0 auto;
   text-align: center;
   height: 100%;
@@ -147,6 +147,14 @@ p {
 
 .file-button:hover {
   background: #5c6eb8;
+}
+
+#ani-button{
+  transition: all .15s ease;
+}
+
+.cancel-select{
+  transform: rotate(45deg);
 }
 
 #fileElem {
@@ -306,6 +314,7 @@ p {
   margin-top: 30px;
   margin-left: auto;
   pointer-events: all;
+  display: flex;
 }
 
 .act-icons{
@@ -428,6 +437,11 @@ p {
   background-color: #2e334b;
   border-radius: 20px;
   padding: 10px;
+  margin-bottom: 30px;
+  transition: all 0.3s ease-in-out;
+}
+
+.file-list-editing {
   margin-bottom: 90px;
 }
 

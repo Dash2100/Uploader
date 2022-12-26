@@ -13,8 +13,7 @@
     <script src="/static/upload.js"></script>
     <!-- Font Awesome -->
     <link href="/static/fontawesome/fontawesome.css" rel="stylesheet">
-    <link href="/static/fontawesome/brands.css" rel="stylesheet">
-    <link href="/static/fontawesome/solid.css" rel="stylesheet">
+    <link href="/static/fontawesome/all.css" rel="stylesheet">
     <title>Admin | Uploader</title>
 </head>
 
@@ -115,15 +114,10 @@
                     <button class="button top-icon btn-group-right" onclick="location.replace('/logout')">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
-                    <button class="button top-icon add" onclick="upload();">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
                 </div>
-                <div class="act-icons">
-                    <button class="button top-icon" onclick="cancelselect();">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
+                <button class="button top-icon add" onclick="func_button();">
+                    <i class="fa-solid fa-plus" id="ani-button"></i>
+                </button>
             </div>
         </div>
 

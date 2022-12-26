@@ -243,6 +243,14 @@ function save(filename) {
   }
 }
 
+function func_button(){
+  if (selecting == 0) {
+    upload();
+  } else {
+    cancelselect();
+  }
+}
+
 let selecting = 0;
 function selectfile() {
   selecting = 1
@@ -250,7 +258,8 @@ function selectfile() {
   $('.file-card').addClass('file-card-disable');
   $('.file').addClass('file-select');
   $('.opt-icons').addClass('hide');
-  $('.act-icons').addClass('show');
+  $('.file-list').addClass('file-list-editing');
+  $('#ani-button').addClass('cancel-select');
 }
 
 let selected = [];
@@ -262,8 +271,9 @@ function cancelselect() {
   $('.file').removeClass('file-select');
   $('.opt-icons').removeClass('hide');
   $('.file-selected').removeClass('file-selected');
-  $('.act-icons').removeClass('show');
   $('.edit-options').removeClass('edit-options-open');
+  $('.file-list').removeClass('file-list-editing');
+  $('#ani-button').removeClass('cancel-select');
 }
 
 function select(filename) {

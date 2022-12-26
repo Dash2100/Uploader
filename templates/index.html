@@ -8,11 +8,9 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="/static/style.css">
-    <script src="/static/share.js"></script>
     <!-- Font Awesome -->
     <link href="/static/fontawesome/fontawesome.css" rel="stylesheet">
-    <link href="/static/fontawesome/brands.css" rel="stylesheet">
-    <link href="/static/fontawesome/solid.css" rel="stylesheet">
+    <link href="/static/fontawesome/all.css" rel="stylesheet">
     <title>Shared | Uploader</title>
 </head>
 
@@ -36,4 +34,13 @@
         </div>
     </div>
 </body>
+<script>
+    function downloadFile(fileName) {
+        let url = '/download/' + fileName;
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+    };
+</script>
 </html>
