@@ -11,6 +11,7 @@ import json
 import os
 
 path = './Uploads'
+quick_token = 'jJPaERsj6wPq58VShWMAGVsS3V97FRN4UqM'
 
 app = Flask(__name__, static_url_path='/static')
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -63,6 +64,17 @@ def download(filename):
             return send_from_directory(path, filename, as_attachment=True)
         else:
             return Response(status=404)
+    else:
+        return Response(status=404)
+
+@app.route('/quick/<token>')
+def quickUP(token):
+    if token == quick_token:
+        #login as admin
+        user = User()
+        user.id = 'admin'
+        login_user(user)
+        return render_template('quick.html', **locals())
     else:
         return Response(status=404)
 
