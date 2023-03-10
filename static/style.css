@@ -476,7 +476,7 @@ p {
 }
 
 .file-card-selected{
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 
 .file-name {
