@@ -1,4 +1,8 @@
-﻿body {
+﻿* {
+  touch-action: manipulation;
+}
+
+body {
   background-color: #1F2335;
   user-select: none;
   -webkit-user-select: none;
@@ -22,10 +26,14 @@ a{
   z-index: 999 !important;
 }
 
-.swal2-confirm {
+.swal2-styled{
   border-radius: 5px !important;
-  /* background-color: #7083d9 !important; */
 }
+
+/* .swal2-confirm {
+  border-radius: 5px !important;
+  background-color: #7083d9 !important;
+} */
 
 .swal2-input {
   background-color: #24283B !important;
@@ -351,7 +359,7 @@ p {
   height: 55px;
   width: 85%;
   max-width: 500px;
-  text-align: left;
+  text-align: center;
   bottom: -60px;
   left: 50%;
   transform: translateX(-50%);
@@ -362,13 +370,13 @@ p {
   bottom: 25px;
 }
 
-.edit-options-button{
-  width: 60px;
-}
-
 .edit-options-buttons{
   display: flex;
   margin: auto 20px auto auto;
+}
+
+.edit-options-button{
+  width: 65px;
 }
 
 #edit-options-text{
@@ -390,8 +398,8 @@ p {
 
 .modfile-btn{
   font-size: 15px;
-  padding: 0 10px;
-  margin: 0 50px;
+  padding: 0 15px;
+  margin: 0 15px;
 }
 
 .delete{
@@ -410,25 +418,29 @@ p {
   background-color: #1aaa51;
 }
 
-.edit-delete{
-  background-color: #7e403e;
+.select-delete{
+  background-color: #803735;
   margin-left: 15px;
 }
 
-.edit-delete:hover{
+.select-delete:hover{
   background-color: #992d29;
 }
 
-.edit-edit{
-  background-color: #4a557a;
+.select-edit{
+  background-color: #555bb3;
 }
 
-.edit-edit:hover{
-  background-color: #58607b;
+.select-edit:hover{
+  background-color: #696fc2;
 }
 
-.edit-options-buttons-delete{
-  margin-left: 20px;
+.rename{
+  background-color: #2f44ad;
+}
+
+.rename:hover{
+  background-color: #2b47d1;
 }
 
 /* filecard */
@@ -591,7 +603,7 @@ input:checked + .slider:before {
 }
 
 .modfile-buttons{
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .modfile-option-lable{

@@ -269,6 +269,44 @@ def del_shortlink():
     execute_db('DELETE FROM shorturls WHERE file = ?', (filename,))
     return "OK"
 
+#rename file
+@app.route('/admin/rename', methods=['POST'])
+@login_required
+def rename():
+    filename = request.get_json()['filename']
+    newname = request.get_json()['newname']
+    #check if value is valid
+    if newname == "" or filename == "":
+        return "illegal"
+
+    #check if user is using a illegal character
+    if not re.match("^[a-zA-Z0-9_.-]*$", newname):
+        return "illegal"
+    
+    #check if file has a shortlink
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+
+    #check if newname is already in use
+    cur.execute("SELECT * FROM files WHERE name=?", (newname,))
+    data = cur.fetchone()
+    if data:
+        return "Already in use"
+
+    #check if file has a shortlink
+    cur.execute("SELECT * FROM shorturls WHERE file=?", (filename,))
+    data = cur.fetchone()
+    con.close()
+    if data:
+        #update shortlink
+        execute_db('UPDATE shorturls SET file=? WHERE file=?', (newname, filename))
+    #rename file
+    os.rename(os.path.join(path, filename), os.path.join(path, newname))
+    #update database
+    execute_db('UPDATE files SET name=? WHERE name=?', (newname, filename))
+    return "OK"
+
+
 ## Login
 
 # Create user class

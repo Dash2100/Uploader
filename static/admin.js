@@ -10,7 +10,7 @@ function $id(id) {
 }
 
 function init() {
-  var domain = window.location.hostname;
+  var domain = window.location.href.split('/')[2];
   $('#baseurl').text(domain + ' /');
 }
 
@@ -29,7 +29,7 @@ function popupoff() {
   }
 }
 
-function hideall(){
+function hideall() {
   $id('modfile-area').style.display = 'none';
   $id('upload-area').style.display = 'none';
   $id('multi-modfile-area').style.display = 'none';
@@ -45,6 +45,7 @@ function modify(name) {
   $id('modfile-area').style.display = 'block';
   $id('savechange').onclick = function () { save(name); };
   $id('delfile').onclick = function () { delFile(name); };
+  $id('rename').onclick = function () { rename(name); };
   $id('modfile-name').innerHTML = name;
   var x = document.getElementsByClassName("popup")[0];
   x.classList.add("popup--opened");
@@ -243,7 +244,7 @@ function save(filename) {
   }
 }
 
-function func_button(){
+function func_button() {
   if (selecting == 0) {
     upload();
   } else {
@@ -305,10 +306,10 @@ function select(filename) {
 function multidelete() {
   Swal.fire({
     title: "Are you sure?",
-    text: "This will delete " + selected.length + " files",
+    text: "You will delete " + selected.length + " files",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonColor: "#d33",
+    confirmButtonColor: "#7e403e",
     confirmButtonText: "Delete",
     allowEnterKey: false,
   }).then((result) => {
@@ -328,7 +329,7 @@ function multidelete() {
   })
 }
 
-function multishare(){
+function multishare() {
   if ($('#multi-Share-check').is(":checked") === true) {
     var multistate = 1;
   } else {
@@ -337,7 +338,7 @@ function multishare(){
   $.ajax({
     url: "/admin/multishare",
     method: "post",
-    data: JSON.stringify({ files: selected, state: multistate}),
+    data: JSON.stringify({ files: selected, state: multistate }),
     contentType: "application/json;charset=utf-8",
     success: function (res) {
       popupoff();
@@ -365,3 +366,59 @@ $(document).mouseup(function (e) {
     container.removeClass('upload-options-area--open');
   }
 });
+
+
+//rename
+function rename(file) {
+  Swal.fire({
+    title: 'Rename',
+    text: "Enter a new name for " + file + ":",
+    input: 'text',
+    inputValue: file,
+    inputAttributes: {
+      autocapitalize: 'off',
+      id: 'rename-input'
+    },
+    showCancelButton: true,
+    confirmButtonText: 'Rename',
+    showLoaderOnConfirm: true,
+    onOpen: (toast) => {
+      console.log(toast);
+    },
+    preConfirm: (newname) => {
+      if (newname == "") {
+        Swal.showValidationMessage(
+          `You must enter a name`
+        )
+      }
+      else if (newname == file) {
+        Swal.showValidationMessage(
+          `You must enter a different name`
+        )
+      }
+      else {
+        return $.ajax({
+          url: "/admin/rename",
+          method: "post",
+          data: JSON.stringify({ filename: file, newname: newname }),
+          contentType: "application/json;charset=utf-8",
+          success: function (res) {
+            if (res == "OK") {
+              location.reload();
+            }
+            if (res == "Already in use") {
+              Swal.showValidationMessage(
+                `This name already in use`
+              )
+            }
+            if (res == "illegal") {
+              Swal.showValidationMessage(
+                `The name can't contain special characters or spaces`
+              )
+            }
+          }
+        });
+      }
+    }
+  })
+}
