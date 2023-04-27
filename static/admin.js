@@ -382,8 +382,10 @@ function rename(file) {
     showCancelButton: true,
     confirmButtonText: 'Rename',
     showLoaderOnConfirm: true,
-    onOpen: (toast) => {
-      console.log(toast);
+    didOpen: function () {
+      $('#rename-input').focus()
+      const dotIndex = $('#rename-input').val().lastIndexOf('.')
+      $('#rename-input').setSelectionRange(0, dotIndex)
     },
     preConfirm: (newname) => {
       if (newname == "") {
