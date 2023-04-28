@@ -382,10 +382,11 @@ function rename(file) {
     showCancelButton: true,
     confirmButtonText: 'Rename',
     showLoaderOnConfirm: true,
-    didOpen: function () {
-      $('#rename-input').focus()
+    didOpen: function () { 
       const dotIndex = $('#rename-input').val().lastIndexOf('.')
-      $('#rename-input').setSelectionRange(0, dotIndex)
+      $('#rename-input')[0].setSelectionRange(0, dotIndex)
+      $('#rename-input').focus()
+      
     },
     preConfirm: (newname) => {
       if (newname == "") {

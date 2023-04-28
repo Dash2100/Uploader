@@ -45,6 +45,9 @@ def link(link):
     cur.execute("SELECT file FROM shorturls WHERE url=?", (link,))
     file = cur.fetchone()
     con.close()
+    #update clicks
+    execute_db("UPDATE shorturls SET clicks=clicks+1 WHERE url=?", (link,))
+
     if file:
         return send_from_directory(path, file[0], as_attachment=True)
     else:
@@ -259,7 +262,7 @@ def shortlink():
     if data:
         #update shortlink
         execute_db('UPDATE shorturls SET url=? WHERE file=?', (shortlink, filename))
-    execute_db('INSERT INTO shorturls VALUES (?, ?)', (shortlink, filename))
+    execute_db('INSERT INTO shorturls VALUES (?, ?, ?)', (shortlink, filename, 0))
     return "OK"
 
 @app.route('/admin/delshortlink', methods=['POST'])
