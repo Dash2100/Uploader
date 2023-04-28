@@ -128,7 +128,7 @@
             <div class="file" id="{{loop.index}}" onclick="select('{{loop.index}}')">
                 <div class="file-card" id="{{loop.index}}-card" onclick='downloadFile("{{file.0}}")'>
                     <div class="file-name" id="{{loop.index}}-name">{{file.0}}</div>
-                    <div class="file-size">{{file.1}} | {{file.2}}</div>
+                    <div class="file-size">{{file.1}} | {{file.2}} ({{file.5}})</div>
                 </div>
                 <i class="modfile-icon fa-solid fa-pen-to-square" onclick='modify("{{file.0}}");'></i>
             </div>

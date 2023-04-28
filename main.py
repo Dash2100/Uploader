@@ -45,10 +45,10 @@ def link(link):
     cur.execute("SELECT file FROM shorturls WHERE url=?", (link,))
     file = cur.fetchone()
     con.close()
-    #update clicks
-    execute_db("UPDATE shorturls SET clicks=clicks+1 WHERE url=?", (link,))
 
     if file:
+        #update downloads
+        execute_db("UPDATE files SET downloads=downloads+1 WHERE name=?", (file[0],))
         return send_from_directory(path, file[0], as_attachment=True)
     else:
         return render_template('404.html')
@@ -64,11 +64,13 @@ def download(filename):
         share = cur.fetchone()[0]
         con.close()
         if share == 1:
+            #update downloads
+            execute_db("UPDATE files SET downloads=downloads+1 WHERE name=?", (filename,))
             return send_from_directory(path, filename, as_attachment=True)
         else:
-            return Response(status=404)
+            return render_template('404.html')
     else:
-        return Response(status=404)
+        return render_template('404.html')
 
 @app.route('/quick/<token>')
 def quickUP(token):
@@ -79,7 +81,7 @@ def quickUP(token):
         login_user(user)
         return render_template('quick.html', **locals())
     else:
-        return Response(status=404)
+        return render_template('404.html')
 
 @app.route('/admin')
 @login_required
@@ -121,9 +123,9 @@ def upload_file():
                 size = round(size_bytes / 1000000, 3).__str__() + ' MB'
             filename_base64 = file.filename.encode('utf-8')
             if share == '0':
-                execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?)', (file.filename, date, size, 0, ""))
+                execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?, ?)', (file.filename, date, size, 0, "", 0))
             else:
-                execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?)', (file.filename, date, size, 1, date))
+                execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?, ?)', (file.filename, date, size, 1, date, 0))
             return "success"
 
 
@@ -132,9 +134,11 @@ def upload_file():
 def download_file(filename):
     #check if file exists
     if filename in os.listdir(path):
+        #update downloads
+        execute_db("UPDATE files SET downloads=downloads+1 WHERE name=?", (filename,))
         return send_from_directory(path, filename, as_attachment=True)
     else:
-        return Response(status=404)
+        return render_template('404.html')
 
 
 @app.route('/admin/delfile' , methods=['POST'])
@@ -308,7 +312,6 @@ def rename():
     #update database
     execute_db('UPDATE files SET name=? WHERE name=?', (newname, filename))
     return "OK"
-
 
 ## Login
 

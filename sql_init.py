@@ -3,8 +3,8 @@ import sqlite3
 def sqlinit():
     con = sqlite3.connect('database.db')
     cur = con.cursor()
-    cur.execute('CREATE TABLE IF NOT EXISTS "Files" ("name" TEXT, "date" TEXT, "size" TEXT,"share" INTEGER,"sharedate" TEXT)')
-    cur.execute('CREATE TABLE IF NOT EXISTS "ShortUrls" ("url" TEXT, "file" TEXT, "clicks" INTEGER)')
+    cur.execute('CREATE TABLE IF NOT EXISTS "Files" ("name" TEXT, "date" TEXT, "size" TEXT,"share" INTEGER,"sharedate" TEXT, "downloads" INTEGER)')
+    cur.execute('CREATE TABLE IF NOT EXISTS "ShortUrls" ("url" TEXT, "file" TEXT)')
     cur.execute('CREATE TABLE IF NOT EXISTS "Users" ("username" TEXT, "password" TEXT)')
     cur.execute("SELECT * FROM Users")
     users = cur.fetchall()
