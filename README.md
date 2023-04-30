@@ -13,9 +13,9 @@ Navigate to `localhost:5090` or `http://127.0.0.1:5090/`
 ## TODO
 
 <!-- * add / name changing -->
-* add / Download count
+<!-- * add / Download count -->
 <!-- * fix / select file (delete) button text location -->
 
 * add / det file change in dir and add it into sql
-* add? / Upload  Progress %
+* add? / Upload Progress %
 * add? / Prview a photo or a doc
