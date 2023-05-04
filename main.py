@@ -53,6 +53,10 @@ def link(link):
     else:
         return render_template('404.html')
 
+@app.route('/pdfview', methods=['GET'])
+def pdf():
+    return render_template('viewer.html')
+
 @app.route('/download/<filename>')
 def download(filename):
     #check if file exists
