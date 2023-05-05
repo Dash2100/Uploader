@@ -16,6 +16,21 @@
 </head>
 
 <body>
+
+    <div class="popup popup--opened">
+        <a class="popbg" onclick="popupoff();"></a>
+        <div class="popup-content preview-content">
+            <!--Preview -->
+            <div class="preview-ctrl-bar">
+                <p class="popupTitle">Preview File</p>
+                <div class="preview-ctrl-btns">
+                    <button class="button preview-ctrl-btn" onclick="downloadFile('{{file.0}}')">Download</button>
+                    <button class="button preview-ctrl-btn" onclick="popupoff();">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="page">
         <div class="titlebar">
             <h3 class="title">Shared Files</h3>
@@ -27,12 +42,12 @@
             {% for file in all_files %}
             <div class="file">
                 <div class="file-card" onclick="downloadFile('{{file.0}}')"">
-                    <div class="file-name">{{file.0}}</div>
-                    <div class="file-size">{{file.4}} | {{file.2}} ({{file.5}})</div>
-                </div>
+                    <div class=" file-name">{{file.0}}</div>
+                <div class="file-size">{{file.4}} | {{file.2}} ({{file.5}})</div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
+    </div>
     </div>
 </body>
 <script>
@@ -44,4 +59,5 @@
         a.click();
     };
 </script>
+
 </html>

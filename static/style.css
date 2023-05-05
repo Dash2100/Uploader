@@ -14,7 +14,7 @@ body::-webkit-scrollbar {
   display: none;
 }
 
-a{
+a {
   text-decoration: none;
 }
 
@@ -26,7 +26,7 @@ a{
   z-index: 999 !important;
 }
 
-.swal2-styled{
+.swal2-styled {
   border-radius: 5px !important;
 }
 
@@ -81,14 +81,14 @@ a{
 ::-webkit-scrollbar {
   width: 6px;
 }
- 
+
 ::-webkit-scrollbar-thumb {
-  background: #7083d9; 
+  background: #7083d9;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3c4a88; 
+  background: #3c4a88;
 }
 
 /* disable password show/hide button */
@@ -133,7 +133,7 @@ input::-ms-clear {
   padding: 20px;
 }
 
-.drop-active{
+.drop-active {
   background-color: #455399 !important;
 }
 
@@ -157,11 +157,11 @@ p {
   background: #5c6eb8;
 }
 
-#ani-button{
+#ani-button {
   transition: all .15s ease;
 }
 
-.cancel-select{
+.cancel-select {
   transform: rotate(45deg);
 }
 
@@ -274,13 +274,13 @@ p {
 }
 
 
-.upload-area{
+.upload-area {
   display: none;
 }
 
 /* button */
 
-.button{
+.button {
   font-size: 13px;
   height: 40px;
   border: none;
@@ -311,12 +311,12 @@ p {
   height: 40px;
 }
 
-.top-icon{
+.top-icon {
   width: 40px;
   height: 40px;
 }
 
-.top-icons{
+.top-icons {
   position: relative;
   font-size: 18px;
   margin-top: 30px;
@@ -325,7 +325,7 @@ p {
   display: flex;
 }
 
-.act-icons{
+.act-icons {
   float: right;
   top: 0;
   right: 0px;
@@ -336,21 +336,21 @@ p {
   pointer-events: none;
 }
 
-.opt-icons{
+.opt-icons {
   transition: all .3s ease-in-out;
 }
 
-.show{
+.show {
   opacity: 100%;
   pointer-events: all;
 }
 
-.hide{
+.hide {
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
-.edit-options{
+.edit-options {
   position: fixed;
   display: flex;
   background-color: #3e4463;
@@ -366,80 +366,80 @@ p {
   transition: all .28s ease-in-out;
 }
 
-.edit-options-open{
+.edit-options-open {
   bottom: 25px;
 }
 
-.edit-options-buttons{
+.edit-options-buttons {
   display: flex;
   margin: auto 20px auto auto;
 }
 
-.edit-options-button{
+.edit-options-button {
   width: 65px;
 }
 
-#edit-options-text{
+#edit-options-text {
   color: #FFFFFF;
   font-size: 17px;
   line-height: 55px;
   margin: 0 25px;
 }
 
-.btn-group-right{
+.btn-group-right {
   float: left;
   margin-right: 1px;
   border-radius: 10px 0 0 10px;
 }
 
-.btn-group-left{
+.btn-group-left {
   border-radius: 0 10px 10px 0;
 }
 
-.modfile-btn{
+.modfile-btn {
   font-size: 15px;
   padding: 0 15px;
   margin: 0 15px;
 }
 
-.delete{
+.delete {
   background-color: #7e403e;
 }
 
-.delete:hover{
+.delete:hover {
   background-color: #b62a25;
 }
 
-.save{
+.save {
   background-color: #3e8359;
 }
 
-.save:hover{
+.save:hover {
   background-color: #1aaa51;
 }
 
-.select-delete{
+.select-delete {
   background-color: #803735;
   margin-left: 15px;
 }
 
-.select-delete:hover{
+.select-delete:hover {
   background-color: #992d29;
 }
 
-.select-edit{
+.select-edit {
   background-color: #555bb3;
 }
 
-.select-edit:hover{
+.select-edit:hover {
   background-color: #696fc2;
 }
 
-.rename{
+.rename {
   background-color: #2f44ad;
 }
 
-.rename:hover{
+.rename:hover {
   background-color: #2b47d1;
 }
 
@@ -467,11 +467,11 @@ p {
   transition: all 0.2s ease-in-out;
 }
 
-.file-select{
+.file-select {
   background-color: #373d58;
 }
 
-.file-selected{
+.file-selected {
   background-color: #4a5796;
 }
 
@@ -482,12 +482,12 @@ p {
   margin: 2px auto;
 }
 
-.file-card-disable{
+.file-card-disable {
   pointer-events: none;
   opacity: 0.6;
 }
 
-.file-card-selected{
+.file-card-selected {
   pointer-events: none;
 }
 
@@ -506,7 +506,7 @@ p {
   color: rgb(131, 150, 194);
 }
 
-.modfile-icon{
+.modfile-icon {
   position: absolute;
   right: 13px;
   top: 18px;
@@ -517,21 +517,21 @@ p {
   opacity: 100%;
 }
 
-.modfile-icon-hide{
+.modfile-icon-hide {
   opacity: 0;
   pointer-events: none;
 }
 
 /* modfile */
-.modfile-area{
+.modfile-area {
   display: none;
 }
 
-#multi-modfile-area{
+#multi-modfile-area {
   display: block;
 }
 
-.modfile-name{
+.modfile-name {
   color: #7ca3f5;
   font-size: 20px;
   display: -webkit-box;
@@ -549,7 +549,7 @@ p {
   transform: scale(0.8);
 }
 
-.switch input { 
+.switch input {
   opacity: 0;
   width: 0;
   height: 0;
@@ -579,15 +579,15 @@ p {
   transition: .4s;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: #5b8df8;
 }
 
-input:focus + .slider {
+input:focus+.slider {
   box-shadow: 0 0 1px #5b8df8;
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   -webkit-transform: translateX(26px);
   -ms-transform: translateX(26px);
   transform: translateX(26px);
@@ -601,15 +601,15 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-.modfile-buttons{
+.modfile-buttons {
   margin-top: 30px;
 }
 
-.modfile-option-lable{
+.modfile-option-lable {
   color: #FFFFFF;
 }
 
-.modfile-options{
+.modfile-options {
   display: grid;
   grid-template-columns: 0.5fr 60px;
   justify-content: center;
@@ -618,42 +618,42 @@ input:checked + .slider:before {
   gap: 10px 0;
 }
 
-.modfile-option-lable{
+.modfile-option-lable {
   font-size: 20px;
   line-height: 34px;
   margin-bottom: 0;
 }
 
-.option-p{
+.option-p {
   margin-top: auto;
   margin-bottom: auto;
 }
 
-.link-input{
+.link-input {
   border: none;
   border-bottom: 2px solid #7ea4f3;
   border-radius: 0;
   width: 100px;
   background-color: #1f2335;
   font-size: 20px;
-  color:#ffffff;
+  color: #ffffff;
 }
 
-.link-input:focus{
+.link-input:focus {
   outline: none;
 }
 
-#link-input{
+#link-input {
   display: flex;
   gap: 10px;
   justify-content: center;
 }
 
-.upload-file-titlebar{
+.upload-file-titlebar {
   position: relative;
 }
 
-.upload-options{
+.upload-options {
   width: 40px;
   height: 40px;
   position: absolute;
@@ -661,7 +661,7 @@ input:checked + .slider:before {
   top: 0;
 }
 
-.upload-options-area{
+.upload-options-area {
   position: absolute;
   right: 0;
   top: 40px;
@@ -675,15 +675,39 @@ input:checked + .slider:before {
   transition: all .15s ease-in-out;
 }
 
-.upload-options-area--open{
+.upload-options-area--open {
   pointer-events: all;
   opacity: 1;
 }
 
-.upload-modfile-options{
+.upload-modfile-options {
   display: grid;
   grid-template-columns: .5fr 60px;
   justify-content: center;
   text-align: left;
   gap: 15px;
+}
+
+/* preview file */
+.preview-content {
+  width: 90%;
+  height: 90%;
+  max-width: 100%;
+}
+
+@media (max-width:700px) {
+  .preview-content {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+  }
+}
+
+.preview-ctrl-bar {
+  display: flex;
+}
+
+.preview-ctrl-btns{
+  margin-top: auto;
+  margin-bottom: auto;
 }
