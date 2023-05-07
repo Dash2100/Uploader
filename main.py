@@ -350,7 +350,7 @@ def shortlink():
     if data:
         #update shortlink
         execute_db('UPDATE shorturls SET url=? WHERE file=?', (shortlink, filename))
-    execute_db('INSERT INTO shorturls VALUES (?, ?, ?)', (shortlink, filename, 0))
+    execute_db('INSERT INTO shorturls VALUES (?, ?)', (shortlink, filename))
     return "OK"
 
 @app.route('/admin/delshortlink', methods=['POST'])
