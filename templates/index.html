@@ -16,7 +16,7 @@
     <title>Shared | Uploader</title>
 </head>
 
-<body>
+<body onload="">
 
     <div id="preview-area"></div>
 
@@ -42,17 +42,17 @@
 
 <script type="text/html" id="file-prev">
     <div class="popup" id="preview">
-        <a class="popbg" onclick="popupoff();"></a>
+        <a class="popbg" onclick="previewoff();"></a>
         <div class="popup-content preview-content">
             <!--Preview -->
             <div class="preview-ctrl-bar">
                 <p class="preview-title">Preview File</p>
                 <div class="preview-ctrl-lbtns">
-                    <button class="button preview-ctrl-btn" onclick="popupoff();"><i class="fa-sharp fa-solid fa-xmark"></i></button>
+                    <button class="button preview-ctrl-btn" onclick="previewoff();"><i class="fa-sharp fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="preview-ctrl-rbtns">
-                    <button class="button preview-ctrl-btn" id="preview-link"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
-                    <button class="button preview-ctrl-btn" id="preview-download"><i class="fa-solid fa-download"></i></button>
+                    <button class="button preview-ctrl-btn" onclick="window.open('%preview-link%')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                    <button class="button preview-ctrl-btn" onclick="downloadFile('%filename%')"><i class="fa-solid fa-download"></i></button>
                 </div>
             </div>
             <div class="preview-content">

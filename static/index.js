@@ -1,8 +1,8 @@
-function downloadFile(fileName) {
-    let url = '/download/' + fileName;
+function downloadFile(filename) {
+    let url = '/download/' + filename;
     let a = document.createElement('a');
     a.href = url;
-    a.download = fileName;
+    a.download = filename;
     a.click();
 };
 
@@ -13,7 +13,7 @@ function checkPreviewable(filename) {
         return false;
     }
 
-    if(!ext) {
+    if (!ext) {
         return false;
     }
 
@@ -38,43 +38,64 @@ function checkPreviewable(filename) {
 function preview(filename) {
 
     let filetype = checkPreviewable(filename);
-    if(!filetype){
-        alert("not support")
-        return;
+    if (!filetype) {
+        var link = `/preview/${filename}`;
+        var content = 
+        `<div class="preview-info">
+            <a class="preview-notavailable">Preview not available</a>
+            <button class="button preview-download" onclick="downloadFile('${filename}')">Download</button>
+        </div>`;
     }
 
-    if(filetype == 'pdf'){
-        var content = `<iframe class="preview-iframe" src="/pdfview?file=/download/${filename}"></iframe>`;
+    if (filetype == 'pdf') {
+        var link = `/pdfview?file=/preview/${filename}`
+        var content = `<iframe class="preview-iframe" src="${link}"></iframe>`;
     }
 
-    if(filetype == 'image'){
-        var content = `<img class="preview-img" src="/download/${filename}">`;
+    if (filetype == 'image') {
+        var link = `/preview/${filename}`;
+        var content = `<img class="preview-img" src="${link}">`;
     }
+
+    if (filetype == 'text') {
+        var link = `/preview/${filename}`;
+        var text = '';
+        $.ajax({
+            url: `/preview/${filename}`,
+            async: false,
+            success: function (data) {
+                text = data;
+            }
+        });
+
+        var content = `<textarea readonly class="preview-text">${text}</textarea>`;
+    }
+
 
     let template = $('#file-prev').text();
+    template = template.replace('%filename%', filename);
     template = template.replace('%preview-content%', content);
-    console.log(template);
+    template = template.replace('%preview-link%', link);
+
     template = $(template);
-  
+
     //disable scroll
     $('body').css('overflow', 'hidden');
 
     $('#preview-area').append(template);
-    // wait 0.5 sec for animation
-    setTimeout(function() {
+    
+    //for animation
+    setTimeout(function () {
         template.addClass('popup--opened');
-    }
-    , 1);
+    }, 1);
 }
 
-function popupoff(){
-
+function previewoff() {
     //enable scroll
     $('body').css('overflow', 'auto');
 
     $('#preview').removeClass('popup--opened');
-    setTimeout(function() {
+    setTimeout(function () {
         $('#preview').remove();
-    }
-    , 200);
+    }, 200);
 }

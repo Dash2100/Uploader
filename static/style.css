@@ -354,7 +354,7 @@ p {
 .edit-options {
   position: fixed;
   display: flex;
-  background-color: #3e4463;
+  background-color: #49527c;
   box-shadow: 1px 1px 30px 1px #292c3b;
   border-radius: 15px;
   height: 55px;
@@ -434,6 +434,16 @@ p {
 
 .select-edit:hover {
   background-color: #696fc2;
+}
+
+.select-download{
+  margin-left: 10px;
+  width: 80px;
+  background-color: #3e8359;
+}
+
+.select-download:hover {
+  background-color: #1aaa51;
 }
 
 .rename {
@@ -736,12 +746,54 @@ input:checked+.slider:before {
   font-size: 30px;
   margin-top: auto;
   margin-bottom: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .preview-img{
   height: 100%;
   width: min-content;
   border-radius: 10px;
+}
+
+.preview-notavailable{
+  display: block;
+  width: 100%;
+  color: #90a6d6;
+  font-size: 30px;
+  border-radius: 10px;
+  background-color: #1f2335;
+}
+
+.preview-download{
+  font-size: 15px;
+  width: 100px;
+  margin: 10px auto 0 auto;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.preview-info{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.preview-text{
+  width: 90%;
+  height: 95%;
+  border: none;
+  border-radius: 10px;
+  padding: 15px;
+  resize: none;
+  background-color: #191c2b;
+  font-size: 20px;
+  color: #FFFFFF;
+}
+
+.preview-text:focus{
+  outline: none;
 }
 
 @media (max-width:700px) {
@@ -772,4 +824,10 @@ input:checked+.slider:before {
     width: 100%;
     border-radius: 0px;
   }
+
+  .preview-text{
+    height: 88%;
+    border-radius: 0px;
+  }
+
 }

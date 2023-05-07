@@ -60,13 +60,48 @@ function multimodify() {
   x.classList.add("popup--opened");
 }
 
-function downloadFile(fileName) {
-  let url = '/admin/download/' + fileName;
-  let a = document.createElement('a');
-  a.href = url;
-  a.download = fileName;
-  a.click();
-};
+function downloadzip() {
+  var zip = new JSZip();
+  var count = 0;
+  for (var i = 0; i < selected.length; i++) {
+    (function (filename) {
+      var file = zip.folder(filename);
+      $.ajax({
+        url: "/admin/download/" + filename,
+        method: "GET",
+        responseType: "arraybuffer",
+        success: function (res) {
+          file.file(filename, res);
+          count++;
+          if (count == selected.length) {
+            zip.generateAsync({ type: "blob" }).then(function (content) {
+              saveAs(content, "files.zip");
+            });
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("Failed to download file:", filename);
+        },
+      });
+    })(selected[i]);
+  }
+}
+
+function saveAs(blob, filename) {
+  if (window.navigator.msSaveOrOpenBlob) {
+    window.navigator.msSaveOrOpenBlob(blob, filename);
+  } else {
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    var url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+}
+
 
 function delFile(filename) {
   Swal.fire({
@@ -382,11 +417,11 @@ function rename(file) {
     showCancelButton: true,
     confirmButtonText: 'Rename',
     showLoaderOnConfirm: true,
-    didOpen: function () { 
+    didOpen: function () {
       const dotIndex = $('#rename-input').val().lastIndexOf('.')
       $('#rename-input')[0].setSelectionRange(0, dotIndex)
       $('#rename-input').focus()
-      
+
     },
     preConfirm: (newname) => {
       if (newname == "") {

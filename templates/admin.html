@@ -9,6 +9,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="/static/style.css">
     <script src="/static/jquery.dm-uploader.min.js"></script>
+    <script src="/static/jszip.min.js"></script>
+    <script src="/static/index.js"></script>
     <script src="/static/admin.js"></script>
     <script src="/static/upload.js"></script>
     <!-- Font Awesome -->
@@ -19,6 +21,7 @@
 </head>
 
 <body onload="init();">
+    <div id="preview-area"></div>
     <div class="popup">
         <a class="popbg" onclick="popupoff();"></a>
         <div class="popup-content">
@@ -45,14 +48,7 @@
                         <label class="file-button" for="fileElem">Select File</label>
                     </form>
                 </div>
-                <div id="uploading-list" class="uploading-list" style="display: none;">
-                    <script type="text/html" id="files-template">
-                        <div class="uploading-file">
-                            <p class="uploading-file-name">%%filename%%</p>
-                            <div class="progressbar" id="progressbar" style="width: 0px;"></div>
-                        </div>
-                    </script>
-                </div>
+                <div id="uploading-list" class="uploading-list" style="display: none;"></div>
             </div>
             <!-- modify file -->
             <div class="modfile-area" id="modfile-area">
@@ -126,7 +122,7 @@
         <div class="file-list">
             {% for file in all_files %}
             <div class="file" id="{{loop.index}}" onclick="select('{{loop.index}}')">
-                <div class="file-card" id="{{loop.index}}-card" onclick='downloadFile("{{file.0}}")'>
+                <div class="file-card" id="{{loop.index}}-card" onclick='preview("{{file.0}}")'>
                     <div class="file-name" id="{{loop.index}}-name">{{file.0}}</div>
                     <div class="file-size">{{file.1}} | {{file.2}} ({{file.5}})</div>
                 </div>
@@ -139,6 +135,7 @@
             <p id="edit-options-text"></p>
             <div class="edit-options-buttons">
                 <button class="button edit-options-button select-edit" onclick="multimodify();">Modify</button>
+                <button class="button edit-options-button select-download" onclick="downloadzip();">Download</button>
             </div>
         </div>
     </div>
@@ -162,6 +159,35 @@
         }
     });
 
+</script>
+
+<script type="text/html" id="files-template">
+    <div class="uploading-file">
+        <p class="uploading-file-name">%%filename%%</p>
+        <div class="progressbar" id="progressbar" style="width: 0px;"></div>
+    </div>
+</script>
+
+<script type="text/html" id="file-prev">
+    <div class="popup" id="preview">
+        <a class="popbg" onclick="previewoff();"></a>
+        <div class="popup-content preview-content">
+            <!--Preview -->
+            <div class="preview-ctrl-bar">
+                <p class="preview-title">Preview File</p>
+                <div class="preview-ctrl-lbtns">
+                    <button class="button preview-ctrl-btn" onclick="previewoff();"><i class="fa-sharp fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="preview-ctrl-rbtns">
+                    <button class="button preview-ctrl-btn" onclick="window.open('%preview-link%')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                    <button class="button preview-ctrl-btn" onclick="downloadFile('%filename%')"><i class="fa-solid fa-download"></i></button>
+                </div>
+            </div>
+            <div class="preview-content">
+                %preview-content%
+            </div>
+        </div>
+    </div>
 </script>
 
 </html>

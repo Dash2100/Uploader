@@ -1,14 +1,16 @@
-from flask import Flask, request, send_from_directory, render_template, jsonify, redirect, url_for, Response
+from flask import Flask, request, send_from_directory, render_template, jsonify, redirect, url_for, send_file
 from flask_login import LoginManager, UserMixin, login_user,  login_required, logout_user, current_user
 from datetime import datetime
 from getpass import getpass
 from sql_init import sqlinit
 import sqlite3
 import hashlib
+import zipfile
+import json
 import sys
 import re
-import json
 import os
+import io
 
 path = './Uploads'
 quick_token = 'jJPaERsj6wPq58VShWMAGVsS3V97FRN4UqM'
@@ -75,6 +77,40 @@ def download(filename):
             return render_template('404.html')
     else:
         return render_template('404.html')
+    
+@app.route('/preview/<filename>')
+def preview(filename):
+    #check if file exists
+    if filename in os.listdir(path):
+        #check file share state
+        con = sqlite3.connect('database.db')
+        cur = con.cursor()
+        cur.execute("SELECT share FROM files WHERE name=?", (filename,))
+        share = cur.fetchone()[0]
+        con.close()
+        if share == 1:
+            return send_from_directory(path, filename)
+        else:
+            return render_template('404.html')
+    else:
+        return render_template('404.html')
+    
+
+@app.route('/download/zip', methods=['POST'])
+def download_zip(files_to_include):
+    download_files = request.get_json()['files']
+
+    zip_buffer = io.BytesIO() # create a BytesIO buffer to hold the zip file
+    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+        for file in download_files:
+            zip_file.write(file)
+
+    zip_buffer.seek(0) # set the buffer's file position to the beginning
+
+    return send_file(zip_buffer,
+                     attachment_filename='download.zip',
+                     as_attachment=True,
+                     mimetype='application/zip')
 
 @app.route('/quick/<token>')
 def quickUP(token):
@@ -102,35 +138,34 @@ def admin():
 @app.route('/admin/upload', methods=['POST'])
 @login_required
 def upload_file():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return 'No file part'
-        file = request.files['file']
-        data = request.form
-        share = data['share']
-        print(f"[INFO] {file} uploaded")
-        if file.filename == '':
-            return 'No selected file'
-        if file:
-            while file.filename in os.listdir(path):
-                file.filename = '-' + file.filename
-            file.save(os.path.join(path, file.filename))
-            # Add file to database
-            now = datetime.now()
-            date = now.strftime("%Y-%m-%d %H:%M:%S")
-            #get file size in MB
-            size_bytes = os.path.getsize(os.path.join(path, file.filename))
-            #if size less than 1 MB, show in KB
-            if size_bytes < 1000000:
-                size = round(size_bytes / 1000, 3).__str__() + ' KB'
-            else:
-                size = round(size_bytes / 1000000, 3).__str__() + ' MB'
-            filename_base64 = file.filename.encode('utf-8')
-            if share == '0':
-                execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?, ?)', (file.filename, date, size, 0, "", 0))
-            else:
-                execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?, ?)', (file.filename, date, size, 1, date, 0))
-            return "success"
+    if 'file' not in request.files:
+        return 'No file part'
+    file = request.files['file']
+    data = request.form
+    share = data['share']
+    print(f"[INFO] {file} uploaded")
+    if file.filename == '':
+        return 'No selected file'
+    if file:
+        while file.filename in os.listdir(path):
+            file.filename = '-' + file.filename
+        file.save(os.path.join(path, file.filename))
+        # Add file to database
+        now = datetime.now()
+        date = now.strftime("%Y-%m-%d %H:%M:%S")
+        #get file size in MB
+        size_bytes = os.path.getsize(os.path.join(path, file.filename))
+        #if size less than 1 MB, show in KB
+        if size_bytes < 1000000:
+            size = round(size_bytes / 1000, 3).__str__() + ' KB'
+        else:
+            size = round(size_bytes / 1000000, 3).__str__() + ' MB'
+        filename_base64 = file.filename.encode('utf-8')
+        if share == '0':
+            execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?, ?)', (file.filename, date, size, 0, "", 0))
+        else:
+            execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?, ?)', (file.filename, date, size, 1, date, 0))
+        return "success"
 
 
 @app.route('/admin/download/<string:filename>', methods=['GET'])
