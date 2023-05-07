@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="/static/index.js"></script>
     <link rel="stylesheet" href="/static/style.css">
     <!-- Font Awesome -->
     <link href="/static/fontawesome/fontawesome.css" rel="stylesheet">
@@ -18,7 +17,22 @@
 
 <body>
 
-    <div id="preview-area"></div>
+    <div class="popup popup--opened">
+        <a class="popbg" onclick="popupoff();"></a>
+        <div class="popup-content preview-content">
+            <!--Preview -->
+            <div class="preview-ctrl-bar">
+                <p class="popupTitle">Preview File</p>
+                <!-- <div class="preview-ctrl-btns">
+                    <button class="button preview-ctrl-btn" onclick="downloadFile('{{file.0}}')">Download</button>
+                    <button class="button preview-ctrl-btn" onclick="popupoff();">Close</button>
+                </div> -->
+            </div>
+            <div class="preview-content">
+                <iframe class="preview-iframe" src="https://fda.sh/"></iframe>
+            </div>
+        </div>
+    </div>
 
     <div class="page">
         <div class="titlebar">
@@ -30,7 +44,7 @@
         <div class="file-list">
             {% for file in all_files %}
             <div class="file">
-                <div class="file-card" onclick="preview('{{file.0}}')">
+                <div class="file-card" onclick="">
                     <div class=" file-name">{{file.0}}</div>
                 <div class="file-size">{{file.4}} | {{file.2}} ({{file.5}})</div>
             </div>
@@ -39,27 +53,14 @@
     </div>
     </div>
 </body>
-
-<script type="text/html" id="file-prev">
-    <div class="popup" id="preview">
-        <a class="popbg" onclick="popupoff();"></a>
-        <div class="popup-content preview-content">
-            <!--Preview -->
-            <div class="preview-ctrl-bar">
-                <p class="preview-title">Preview File</p>
-                <div class="preview-ctrl-lbtns">
-                    <button class="button preview-ctrl-btn" onclick="popupoff();"><i class="fa-sharp fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="preview-ctrl-rbtns">
-                    <button class="button preview-ctrl-btn" id="preview-link"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
-                    <button class="button preview-ctrl-btn" id="preview-download"><i class="fa-solid fa-download"></i></button>
-                </div>
-            </div>
-            <div class="preview-content">
-                %preview-content%
-            </div>
-        </div>
-    </div>
+<script>
+    function downloadFile(fileName) {
+        let url = '/download/' + fileName;
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+    };
 </script>
 
 </html>

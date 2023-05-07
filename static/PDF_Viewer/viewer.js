@@ -742,15 +742,8 @@ const PDFViewerApplication = {
           allowOutsideClick: false,
           allowEscapeKey: false,
           allowEnterKey: false,
-          showConfirmButton: true,
-          confirmButtonText: "Back",
-          confirmButtonColor: "#546ad8",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            //back
-            location.replace('/');
-          }
-        });
+          showConfirmButton: false,
+        })
         throw reason;
       });
     });
