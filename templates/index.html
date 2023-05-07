@@ -23,20 +23,40 @@
     <div class="page">
         <div class="titlebar">
             <h3 class="title">Shared Files</h3>
-            <button class="button login" onclick="location.replace('/login')">
-                <i class="fa-solid fa-right-to-bracket"></i>
-            </button>
+
+            <div class="top-icons">
+                <button class="button top-icon" id="selectbtn" onclick="selectfile();">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <button class="button top-icon login" id="loginbtn" onclick="location.replace('/login')">
+                    <i class="fa-solid fa-right-to-bracket" id="loginicon"></i>
+                </button>
+
+                <button class="button top-icon top-icon-hide xmark" id="xbtn" onclick="cancelselect()">
+                    <i class="fa-solid fa-xmark" id="cancelicon"></i>
+                </button>
+            </div>
+
         </div>
         <div class="file-list">
             {% for file in all_files %}
-            <div class="file">
-                <div class="file-card" onclick="preview('{{file.0}}')">
-                    <div class=" file-name">{{file.0}}</div>
-                <div class="file-size">{{file.4}} | {{file.2}} ({{file.5}})</div>
+            <div class="file" id="{{loop.index}}" onclick="select('{{loop.index}}')">
+                <div class="file-card" id="{{loop.index}}-card" onclick="preview('{{file.0}}')">
+                    <div class="file-name" id="{{loop.index}}-name">{{file.0}}</div>
+                    <div class="file-size">{{file.4}} | {{file.2}} ({{file.5}})</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="edit-options">
+            <p id="edit-options-text"></p>
+            <div class="edit-options-buttons">
+                <button class="button edit-options-button select-download" onclick="downloadzip();">Download</button>
             </div>
         </div>
-        {% endfor %}
-    </div>
+
     </div>
 </body>
 

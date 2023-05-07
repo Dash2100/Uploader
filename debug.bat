@@ -1,1 +1,2 @@
-wt python ./main.py
+python ./main.py
+debug.bat

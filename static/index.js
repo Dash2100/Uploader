@@ -40,8 +40,8 @@ function preview(filename) {
     let filetype = checkPreviewable(filename);
     if (!filetype) {
         var link = `/preview/${filename}`;
-        var content = 
-        `<div class="preview-info">
+        var content =
+            `<div class="preview-info">
             <a class="preview-notavailable">Preview not available</a>
             <button class="button preview-download" onclick="downloadFile('${filename}')">Download</button>
         </div>`;
@@ -83,7 +83,7 @@ function preview(filename) {
     $('body').css('overflow', 'hidden');
 
     $('#preview-area').append(template);
-    
+
     //for animation
     setTimeout(function () {
         template.addClass('popup--opened');
@@ -99,3 +99,93 @@ function previewoff() {
         $('#preview').remove();
     }, 200);
 }
+
+let selecting = 0;
+function selectfile() {
+    selecting = 1
+    $('.file-card').addClass('file-card-disable');
+    $('.file-list').addClass('file-list-editing');
+    $('.file').addClass('file-select');
+    $('#selectbtn').addClass('top-icon-hide');
+    $('#loginbtn').addClass('top-icon-hide');
+    $('#xbtn').removeClass('top-icon-hide');
+}
+
+let selected = [];
+function cancelselect() {
+    $('.file').removeClass('file-select');
+    $('.file-card').removeClass('file-card-disable');
+    $('.file-list').removeClass('file-list-editing');
+    $('.file').removeClass('file-selected');
+    $('.file-card').removeClass('file-card-selected');
+    $('#selectbtn').removeClass('top-icon-hide');
+    $('#loginbtn').removeClass('top-icon-hide');
+    $('#xbtn').addClass('top-icon-hide');
+    $('.edit-options').removeClass('edit-options-open');
+
+    selecting = 0;
+    selected = [];
+}
+
+function select(fileID) {
+    if (selecting === 1) {
+        let filename = $('#' + fileID + "-name").text();
+        console.log(filename);
+        if (selected.includes(filename)) {
+            selected.splice(selected.indexOf(filename), 1);
+            multi_select_ui(fileID, 1);
+        }
+        else {
+            selected.push(filename);
+            multi_select_ui(fileID, 0);
+        }
+    }
+
+}
+
+function multi_select_ui(fileID, state) {
+    if (selected.length > 0) {
+        $('#edit-options-text').text(selected.length + " Files selected");
+        $('.edit-options').addClass('edit-options-open');
+    } else {
+        $('.edit-options').removeClass('edit-options-open');
+    }
+
+    if (state === 1) {
+        $("#" + fileID).removeClass('file-selected');
+        $("#" + fileID + "-card").removeClass('file-card-selected');
+        $("#" + fileID + "-card").addClass('file-card-disable');
+    }
+    else {
+        $("#" + fileID).addClass('file-selected');
+        $("#" + fileID + "-card").removeClass('file-card-disable');
+        $("#" + fileID + "-card").addClass('file-card-selected');
+    }
+}
+
+function downloadzip() {
+    // post to /download/zip and save
+    var data = JSON.stringify({ files: selected });
+    $.ajax({
+      url: "/download/zip",
+      method: "post",
+      data: data,
+      contentType: "application/json;charset=utf-8",
+      xhrFields: {
+        responseType: "blob" // set the response type to blob
+      },
+      success: function (blob) {
+        var url = window.URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.href = url;
+        link.download = "download.zip";
+        document.body.appendChild(link);
+        link.click();
+  
+        // clean up the URL and link
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(link);
+      }
+    });
+    cancelselect();
+  }

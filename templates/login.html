@@ -41,7 +41,7 @@
                 })
                 .then(response => response.json())
                 .then(response => {
-                    if(response.ststus == "correct"){
+                    if(response.state == "correct"){
                         return response;
                     }else{
                         Swal.showValidationMessage(

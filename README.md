@@ -16,10 +16,12 @@ Navigate to `localhost:5090` or `http://127.0.0.1:5090/`
 <!-- * add / Download count -->
 <!-- * fix / select file (delete) button text location -->
 <!-- * add / det file change in dir and add it into sql -->
-
-* add? / Upload Progress %
-<!-- * add / Prview a photo or a doc -->
-* add / view preview
-* add / Download multi file as zip
-* fix / multi select bug
 <!-- * fix / Download Count not include preview -->
+<!-- * add / Prview a photo or a doc -->
+<!-- * fix / multi select bug -->
+
+* add / Download multi file as zip
+* add / esc key to close popup
+
+* add / video preview
+* add? / Upload Progress %

@@ -5,6 +5,21 @@ let sharebutton;
 let linkbutton;
 let linkstate;
 
+function downloadFile(filename) {
+  let url = '/admin/download/' + filename;
+  let a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+};
+
+function downloadURL(URL) {
+  let a = document.createElement('a');
+  a.href = URL;
+  a.download = filename;
+  a.click();
+};
+
 function $id(id) {
   return document.getElementById(id);
 }
@@ -61,46 +76,32 @@ function multimodify() {
 }
 
 function downloadzip() {
-  var zip = new JSZip();
-  var count = 0;
-  for (var i = 0; i < selected.length; i++) {
-    (function (filename) {
-      var file = zip.folder(filename);
-      $.ajax({
-        url: "/admin/download/" + filename,
-        method: "GET",
-        responseType: "arraybuffer",
-        success: function (res) {
-          file.file(filename, res);
-          count++;
-          if (count == selected.length) {
-            zip.generateAsync({ type: "blob" }).then(function (content) {
-              saveAs(content, "files.zip");
-            });
-          }
-        },
-        error: function (xhr, status, error) {
-          console.error("Failed to download file:", filename);
-        },
-      });
-    })(selected[i]);
-  }
+  // post to /download/zip and save
+  var data = JSON.stringify({ files: selected });
+  $.ajax({
+    url: "/admin/download/zip",
+    method: "post",
+    data: data,
+    contentType: "application/json;charset=utf-8",
+    xhrFields: {
+      responseType: "blob" // set the response type to blob
+    },
+    success: function (blob) {
+      var url = window.URL.createObjectURL(blob);
+      var link = document.createElement("a");
+      link.href = url;
+      link.download = "download.zip";
+      document.body.appendChild(link);
+      link.click();
+
+      // clean up the URL and link
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+    }
+  });
+  cancelselect();
 }
 
-function saveAs(blob, filename) {
-  if (window.navigator.msSaveOrOpenBlob) {
-    window.navigator.msSaveOrOpenBlob(blob, filename);
-  } else {
-    var a = document.createElement("a");
-    document.body.appendChild(a);
-    a.style = "display: none";
-    var url = window.URL.createObjectURL(blob);
-    a.href = url;
-    a.download = filename;
-    a.click();
-    window.URL.revokeObjectURL(url);
-  }
-}
 
 
 function delFile(filename) {
@@ -300,41 +301,53 @@ function selectfile() {
 
 let selected = [];
 function cancelselect() {
-  selecting = 0;
-  selected = [];
   $('.modfile-icon').removeClass('hide');
-  $('.file-card').removeClass('file-card-disable');
   $('.file').removeClass('file-select');
+  $('.file').removeClass('file-selected');
+  $('.file-card').removeClass('file-card-disable');
+  $('.file-card').removeClass('file-card-selected');
   $('.opt-icons').removeClass('hide');
-  $('.file-selected').removeClass('file-selected');
   $('.edit-options').removeClass('edit-options-open');
   $('.file-list').removeClass('file-list-editing');
   $('#ani-button').removeClass('cancel-select');
+
+  selecting = 0;
+  selected = [];
 }
 
-function select(filename) {
+function select(fileID) {
   if (selecting === 1) {
-    if (selected.includes($('#' + filename + "-name").text())) {
+
+    let filename = $('#' + fileID + "-name").text();
+    if (selected.includes(filename)) {
       selected.splice(selected.indexOf(filename), 1);
-      $("#" + filename).removeClass('file-selected');
-      $("#" + filename + "-card").removeClass('file-card-selected');
-      $("#" + filename + "-card").addClass('file-card-disable');
-      if (selected.length < 1) {
-        $('.edit-options').removeClass('edit-options-open');
-      } else {
-        $('#edit-options-text').text(selected.length + " Files selected");
-      }
+      multi_select_ui(fileID, 1);
     }
     else {
-      selected.push($('#' + filename + "-name").text());
-      if (selected.length > 0) {
-        $('.edit-options').addClass('edit-options-open');
-      }
-      $("#" + filename).addClass('file-selected');
-      $("#" + filename + "-card").removeClass('file-card-disable');
-      $("#" + filename + "-card").addClass('file-card-selected');
-      $('#edit-options-text').text(selected.length + " Files selected");
+      selected.push(filename);
+      multi_select_ui(fileID, 0);
     }
+  }
+  
+}
+
+function multi_select_ui(fileID, state) {
+  if (selected.length > 0) {
+    $('#edit-options-text').text(selected.length + " Files selected");
+    $('.edit-options').addClass('edit-options-open');
+  } else {
+    $('.edit-options').removeClass('edit-options-open');
+  }
+
+  if (state === 1) {
+    $("#" + fileID).removeClass('file-selected');
+    $("#" + fileID + "-card").removeClass('file-card-selected');
+    $("#" + fileID + "-card").addClass('file-card-disable');
+  }
+  else {
+    $("#" + fileID).addClass('file-selected');
+    $("#" + fileID + "-card").removeClass('file-card-disable');
+    $("#" + fileID + "-card").addClass('file-card-selected');
   }
 }
 
@@ -459,4 +472,100 @@ function rename(file) {
       }
     }
   })
+}
+
+//preview
+
+function checkPreviewable(filename) {
+  let ext = filename.split('.').pop().toLowerCase();
+
+  if (filename.indexOf('.') == -1) {
+    return false;
+  }
+
+  if (!ext) {
+    return false;
+  }
+
+  let image = ['bmp', 'gif', 'ico', 'jpeg', 'jpg', 'png', 'svg', 'tiff', 'webp'];
+  let text = ['txt', 'md', 'log', 'csv', 'tsv', 'tab', 'json', 'xml', 'html', 'htm', 'css', 'js', 'jsx', 'php', 'rb', 'py', 'c', 'cpp', 'h', 'hpp', 'java', 'pl', 'sh', 'bat', 'ps1', 'sql', 'r', 'yaml', 'yml', 'ini', 'env'];
+
+  if (ext == 'pdf') {
+    return ext;
+  }
+
+  if (image.indexOf(ext) != -1) {
+    return 'image';
+  }
+
+  if (text.indexOf(ext) != -1) {
+    return 'text';
+  }
+
+  return false;
+}
+
+function preview(filename) {
+
+  let filetype = checkPreviewable(filename);
+  if (!filetype) {
+    var link = `/admin/preview/${filename}`;
+    var content =
+      `<div class="preview-info">
+          <a class="preview-notavailable">Preview not available</a>
+          <button class="button preview-download" onclick="downloadFile('${filename}')">Download</button>
+      </div>`;
+  }
+
+  if (filetype == 'pdf') {
+    var link = `/pdfview?file=/admin/preview/${filename}`
+    var content = `<iframe class="preview-iframe" src="${link}"></iframe>`;
+  }
+
+  if (filetype == 'image') {
+    var link = `/admin/preview/${filename}`;
+    var content = `<img class="preview-img" src="${link}">`;
+  }
+
+  if (filetype == 'text') {
+    var link = `/admin/preview/${filename}`;
+    var text = '';
+    $.ajax({
+      url: `/admin/preview/${filename}`,
+      async: false,
+      success: function (data) {
+        text = data;
+      }
+    });
+
+    var content = `<textarea readonly class="preview-text">${text}</textarea>`;
+  }
+
+
+  let template = $('#file-prev').text();
+  template = template.replace('%filename%', filename);
+  template = template.replace('%preview-content%', content);
+  template = template.replace('%preview-link%', link);
+
+  template = $(template);
+
+  //disable scroll
+  $('body').css('overflow', 'hidden');
+
+  $('#preview-area').append(template);
+
+  //for animation
+  setTimeout(function () {
+    template.addClass('popup--opened');
+  }, 1);
+}
+
+function previewoff() {
+  //enable scroll
+  $('body').css('overflow', 'auto');
+
+  $('#preview').removeClass('popup--opened');
+  setTimeout(function () {
+    $('#preview').remove();
+  }, 200);
 }

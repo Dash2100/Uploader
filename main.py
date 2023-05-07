@@ -78,6 +78,37 @@ def download(filename):
     else:
         return render_template('404.html')
     
+@app.route('/download/zip', methods=['POST'])
+@login_required
+def download_zip():
+
+    download_files = request.get_json()['files']
+
+    #check all file share state is on
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT name FROM files WHERE share=1")
+    shared_data = cur.fetchall()
+    con.close()
+    shared_files = [name[0] for name in shared_data]
+
+    for file in download_files:
+        if file not in shared_files:
+            return 'error'
+    
+
+    zip_buffer = io.BytesIO() # create a BytesIO buffer to hold the zip file
+    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+        for file in download_files:
+            zip_file.write(os.path.join(path, file))
+
+    zip_buffer.seek(0) # set the buffer's file position to the beginning
+
+    return send_file(zip_buffer,
+                     download_name='download.zip',
+                     as_attachment=True,
+                     mimetype='application/zip')
+    
 @app.route('/preview/<filename>')
 def preview(filename):
     #check if file exists
@@ -94,23 +125,6 @@ def preview(filename):
             return render_template('404.html')
     else:
         return render_template('404.html')
-    
-
-@app.route('/download/zip', methods=['POST'])
-def download_zip(files_to_include):
-    download_files = request.get_json()['files']
-
-    zip_buffer = io.BytesIO() # create a BytesIO buffer to hold the zip file
-    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-        for file in download_files:
-            zip_file.write(file)
-
-    zip_buffer.seek(0) # set the buffer's file position to the beginning
-
-    return send_file(zip_buffer,
-                     attachment_filename='download.zip',
-                     as_attachment=True,
-                     mimetype='application/zip')
 
 @app.route('/quick/<token>')
 def quickUP(token):
@@ -179,6 +193,37 @@ def download_file(filename):
     else:
         return render_template('404.html')
 
+@app.route('/admin/download/zip', methods=['POST'])
+@login_required
+def download_zip_admin():
+    download_files = request.get_json()['files']
+
+    zip_buffer = io.BytesIO() # create a BytesIO buffer to hold the zip file
+    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+        for file in download_files:
+            zip_file.write(os.path.join(path, file))
+
+    zip_buffer.seek(0) # set the buffer's file position to the beginning
+
+    return send_file(zip_buffer,
+                     download_name='download.zip',
+                     as_attachment=True,
+                     mimetype='application/zip')
+
+@app.route('/admin/preview/<filename>')
+@login_required
+def admin_preview(filename):
+    #check if file exists
+    if filename in os.listdir(path):
+        #check file share state
+        con = sqlite3.connect('database.db')
+        cur = con.cursor()
+        cur.execute("SELECT share FROM files WHERE name=?", (filename,))
+        share = cur.fetchone()[0]
+        con.close()
+        return send_from_directory(path, filename)
+    else:
+        return render_template('404.html')
 
 @app.route('/admin/delfile' , methods=['POST'])
 @login_required
@@ -381,8 +426,8 @@ def login():
         user = User()
         user.id = 'admin'
         login_user(user) #登入使用者
-        return jsonify({'ststus':'correct'})
-    return jsonify({'ststus':'incorrect'})
+        return jsonify({'state':'correct'})
+    return jsonify({'state':'incorrect'})
  
 @app.route('/logout')
 @login_required 

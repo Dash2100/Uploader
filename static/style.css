@@ -302,19 +302,25 @@ p {
   margin-left: 10px;
 }
 
-.login {
-  font-size: 13px;
-  margin-top: 30px;
-  margin-left: auto;
-  padding: 10px;
-  font-weight: bold;
-  width: 40px;
-  height: 40px;
+.login{
+  margin-left: 10px;
+}
+
+.xmark {
+  margin-left: 10px;
+  position: absolute;
+  right: 0;
 }
 
 .top-icon {
   width: 40px;
   height: 40px;
+  transition: all .3s ease-in-out;
+}
+
+.top-icon-hide {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .top-icons {
@@ -354,7 +360,7 @@ p {
 .edit-options {
   position: fixed;
   display: flex;
-  background-color: #49527c;
+  background-color: #3c4364;
   box-shadow: 1px 1px 30px 1px #292c3b;
   border-radius: 15px;
   height: 55px;
@@ -439,6 +445,7 @@ p {
 .select-download{
   margin-left: 10px;
   width: 80px;
+  padding: 2px;
   background-color: #3e8359;
 }
 
