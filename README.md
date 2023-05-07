@@ -21,6 +21,7 @@ Navigate to `localhost:5090` or `http://127.0.0.1:5090/`
 <!-- * fix / multi select bug -->
 <!-- * add / Download multi file as zip -->
 
+* fix / mobile multi download not working
 * add / esc key to close popup
 * add / video preview
 * add? / Upload Progress %
