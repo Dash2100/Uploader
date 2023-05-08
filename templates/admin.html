@@ -19,8 +19,8 @@
     <title>Admin | Uploader</title>
 </head>
 
-<body onload="init();">
-    <div id="preview-area"></div>
+<body onload="init();"> 
+    <div id="preview-area" i></div>
     <div class="popup">
         <a class="popbg" onclick="popupoff();"></a>
         <div class="popup-content">
@@ -157,6 +157,15 @@
             $('#savechange').click();
         }
     });
+
+
+    $(document).keyup(function (event) {
+        if (event.which === 27) {
+            previewoff();
+            popupoff();
+        }
+    });
+
 
 </script>
 
