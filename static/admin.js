@@ -20,10 +20,6 @@ function downloadURL(URL) {
   a.click();
 };
 
-function $id(id) {
-  return document.getElementById(id);
-}
-
 function init() {
   var domain = window.location.href.split('/')[2];
   $('#baseurl').text(domain + ' /');
@@ -32,7 +28,7 @@ function init() {
 // popup
 function upload() {
   hideall();
-  $id('upload-area').style.display = 'block';
+  $('#upload-area').show();
   var x = document.getElementsByClassName("popup")[0];
   x.classList.add("popup--opened");
 }
@@ -45,9 +41,9 @@ function popupoff() {
 }
 
 function hideall() {
-  $id('modfile-area').style.display = 'none';
-  $id('upload-area').style.display = 'none';
-  $id('multi-modfile-area').style.display = 'none';
+  $('#modfile-area').hide();
+  $('#upload-area').hide();
+  $('#multi-modfile-area').hide();
 }
 
 function modify(name) {
@@ -57,20 +53,20 @@ function modify(name) {
   hideall();
   filestate(name);
   $('#link-input').hide();
-  $id('modfile-area').style.display = 'block';
-  $id('savechange').onclick = function () { save(name); };
-  $id('delfile').onclick = function () { delFile(name); };
-  $id('rename').onclick = function () { rename(name); };
-  $id('modfile-name').innerHTML = name;
+  $('#modfile-area').show();
+  $('#savechange').on('click', function () { save(name); });
+  $('#delfile').on('click', function () { delFile(name); });
+  $('#rename').on('click', function () { rename(name); });
+  $('#modfile-name').html(name);
   var x = document.getElementsByClassName("popup")[0];
   x.classList.add("popup--opened");
 }
 
 function multimodify() {
   hideall();
-  $id('multi-modfile-area').style.display = 'block';
+  $('#multi-modfile-area').show();
   $('#multi-Share-check').prop('checked', false);
-  $id('multi-modfile-name').innerHTML = selected.length + " Files";
+  $('#multi-modfile-name').html(selected.length + " Files");
   var x = document.getElementsByClassName("popup")[0];
   x.classList.add("popup--opened");
 }
@@ -158,15 +154,15 @@ function add_file(id, file) {
   template = $(template);
   template.prop('id', 'file-' + id);
 
-  $id('uploading-list').appendChild(template[0]);
+  $('#uploading-list').append(template[0]);
 }
 
 function file_progress(id, percent) {
-  var file = $id('file-' + id);
-  var progress = file.querySelector('.progressbar');
-  progress.style.width = percent + '%';
+  var file = $('#file-' + id);
+  var progress = file.find('.progressbar');
+  progress.css('width', percent + '%');
   if (percent === 100) {
-    progress.style.backgroundColor = '#546ad8';
+    progress.css('backgroundColor', '#546ad8');
   }
 }
 
