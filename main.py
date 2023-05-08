@@ -79,7 +79,6 @@ def download(filename):
         return render_template('404.html')
     
 @app.route('/download/zip', methods=['POST'])
-@login_required
 def download_zip():
 
     download_files = request.get_json()['files']
