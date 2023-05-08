@@ -834,7 +834,7 @@ input:checked+.slider:before {
 
   .preview-text{
     height: 88%;
-    border-radius: 0px;
+    border-radius: 10px;
   }
 
 }
