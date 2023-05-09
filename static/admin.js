@@ -105,6 +105,7 @@ function downloadzip() {
       $('#download-btn-loading').hide();
       cancelselect();
   });
+  .
 }
 
 
