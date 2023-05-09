@@ -99,15 +99,12 @@ function downloadzip() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(link);
     }
+  }).then(function () {
+      $('#xbtn').prop('disabled', false);
+      $('#download-btn-text').show();
+      $('#download-btn-loading').hide();
+      cancelselect();
   });
-  setTimeout(function () {
-
-    $('#xbtn').prop('disabled', false);
-    $('#download-btn-text').show();
-    $('#download-btn-loading').hide();
-
-    cancelselect();
-}, 280);
 }
 
 
@@ -325,7 +322,7 @@ function cancelselect() {
 
   setTimeout(function () {
     $('.edit-options').hide();
-}, 280);
+  }, 280);
 }
 
 function select(fileID) {

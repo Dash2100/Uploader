@@ -196,16 +196,10 @@ function downloadzip() {
             window.URL.revokeObjectURL(url);
             document.body.removeChild(link);
         }
-    });
-
-    // delay
-    setTimeout(function () {
-
+    }).then(function () {
         $('#xbtn').prop('disabled', false);
         $('#download-btn-text').show();
         $('#download-btn-loading').hide();
-
         cancelselect();
-    }, 280);
-
+    });
 }
