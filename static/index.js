@@ -103,6 +103,7 @@ function previewoff() {
 let selecting = 0;
 function selectfile() {
     selecting = 1
+    $('.edit-options').show();
     $('.file-card').addClass('file-card-disable');
     $('.file-list').addClass('file-list-editing');
     $('.file').addClass('file-select');
@@ -125,6 +126,10 @@ function cancelselect() {
 
     selecting = 0;
     selected = [];
+
+    setTimeout(function () {
+        $('.edit-options').hide();
+    }, 280);
 }
 
 function select(fileID) {
@@ -164,28 +169,43 @@ function multi_select_ui(fileID, state) {
 }
 
 function downloadzip() {
+    selecting = 0;
+    $('#xbtn').prop('disabled', true);
+    $('#edit-options-text').text("Preparing Download...");
+    $('#download-btn-text').hide();
+    $('#download-btn-loading').show();
     // post to /download/zip and save
     var data = JSON.stringify({ files: selected });
     $.ajax({
-      url: "/download/zip",
-      method: "post",
-      data: data,
-      contentType: "application/json;charset=utf-8",
-      xhrFields: {
-        responseType: "blob" // set the response type to blob
-      },
-      success: function (blob) {
-        var url = window.URL.createObjectURL(blob);
-        var link = document.createElement("a");
-        link.href = url;
-        link.download = "download.zip";
-        document.body.appendChild(link);
-        link.click();
-  
-        // clean up the URL and link
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(link);
-      }
+        url: "/download/zip",
+        method: "post",
+        data: data,
+        contentType: "application/json;charset=utf-8",
+        xhrFields: {
+            responseType: "blob" // set the response type to blob
+        },
+        success: function (blob) {
+            var url = window.URL.createObjectURL(blob);
+            var link = document.createElement("a");
+            link.href = url;
+            link.download = "download.zip";
+            document.body.appendChild(link);
+            link.click();
+
+            // clean up the URL and link
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(link);
+        }
     });
-    cancelselect();
-  }
+
+    // delay
+    setTimeout(function () {
+
+        $('#xbtn').prop('disabled', false);
+        $('#download-btn-text').show();
+        $('#download-btn-loading').hide();
+
+        cancelselect();
+    }, 280);
+
+}

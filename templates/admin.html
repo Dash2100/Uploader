@@ -19,7 +19,7 @@
     <title>Admin | Uploader</title>
 </head>
 
-<body onload="init();"> 
+<body onload="init();">
     <div id="preview-area" i></div>
     <div class="popup">
         <a class="popbg" onclick="popupoff();"></a>
@@ -134,7 +134,15 @@
             <p id="edit-options-text"></p>
             <div class="edit-options-buttons">
                 <button class="button edit-options-button select-edit" onclick="multimodify();">Modify</button>
-                <button class="button edit-options-button select-download" onclick="downloadzip();">Download</button>
+                <button class="button edit-options-button select-download" onclick="downloadzip();">
+                    <p class="download-btn-text" id="download-btn-text">Download</p>
+                    <div class="lds-ring" id="download-btn-loading" style="display: none;">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </button>
             </div>
         </div>
     </div>

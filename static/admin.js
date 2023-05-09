@@ -72,7 +72,12 @@ function multimodify() {
 }
 
 function downloadzip() {
-  // post to /download/zip and save
+  selecting = 0;
+  $('#xbtn').prop('disabled', true);
+  $('#edit-options-text').text("Preparing Download...");
+  $('#download-btn-text').hide();
+  $('#download-btn-loading').show();
+  // post to /admin/download/zip and save
   var data = JSON.stringify({ files: selected });
   $.ajax({
     url: "/admin/download/zip",
@@ -95,7 +100,14 @@ function downloadzip() {
       document.body.removeChild(link);
     }
   });
-  cancelselect();
+  setTimeout(function () {
+
+    $('#xbtn').prop('disabled', false);
+    $('#download-btn-text').show();
+    $('#download-btn-loading').hide();
+
+    cancelselect();
+}, 280);
 }
 
 
@@ -287,6 +299,7 @@ function func_button() {
 let selecting = 0;
 function selectfile() {
   selecting = 1
+  $('.edit-options').show();
   $('.modfile-icon').addClass('hide');
   $('.file-card').addClass('file-card-disable');
   $('.file').addClass('file-select');
@@ -309,6 +322,10 @@ function cancelselect() {
 
   selecting = 0;
   selected = [];
+
+  setTimeout(function () {
+    $('.edit-options').hide();
+}, 280);
 }
 
 function select(fileID) {

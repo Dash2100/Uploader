@@ -53,7 +53,15 @@
         <div class="edit-options">
             <p id="edit-options-text"></p>
             <div class="edit-options-buttons">
-                <button class="button edit-options-button select-download" onclick="downloadzip();">Download</button>
+                <button class="button edit-options-button select-download" onclick="downloadzip();">
+                    <p class="download-btn-text" id="download-btn-text">Download</p>
+                    <div class="lds-ring" id="download-btn-loading" style="display: none;">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </button>
             </div>
         </div>
 
