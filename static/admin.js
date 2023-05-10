@@ -77,6 +77,7 @@ function downloadzip() {
   $('#edit-options-text').text("Preparing Download...");
   $('#download-btn-text').hide();
   $('#download-btn-loading').show();
+  $('#downloadzip-btn').prop('disabled', true);
   // post to /admin/download/zip and save
   var data = JSON.stringify({ files: selected });
   $.ajax({
@@ -103,6 +104,7 @@ function downloadzip() {
       $('#xbtn').prop('disabled', false);
       $('#download-btn-text').show();
       $('#download-btn-loading').hide();
+      $('#downloadzip-btn').prop('disabled', false);
       cancelselect();
   });
 }
