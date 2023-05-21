@@ -101,11 +101,13 @@ function downloadzip() {
       document.body.removeChild(link);
     }
   }).then(function () {
+    cancelselect();
+    setTimeout(function () {
       $('#xbtn').prop('disabled', false);
       $('#download-btn-text').show();
       $('#download-btn-loading').hide();
       $('#downloadzip-btn').prop('disabled', false);
-      cancelselect();
+    }, 280);
   });
 }
 

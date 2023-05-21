@@ -409,7 +409,7 @@ def user_loader(userid):
     return user
 
 @app.route('/login', methods=['GET', 'POST'])  
-def login():  
+def login():
     if request.method == 'GET':  
             if current_user.is_authenticated:  
                 return redirect(url_for('admin'))
