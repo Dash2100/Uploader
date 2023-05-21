@@ -25,21 +25,32 @@
             <h3 class="title">Shared Files</h3>
 
             <div class="top-icons">
-                <button class="button top-icon" id="selectbtn" onclick="selectfile();">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
+                <div class="opt-icons">
+                    <button class="button top-icon btn-group-left" onclick="selectfile();">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <button class="button top-icon btn-group-right" onclick="searchopen();">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
 
                 <button class="button top-icon login" id="loginbtn" onclick="location.replace('/login')">
                     <i class="fa-solid fa-right-to-bracket" id="loginicon"></i>
                 </button>
 
-                <button class="button top-icon top-icon-hide xmark" id="xbtn" onclick="cancelselect()">
+                <button class="button top-icon top-icon-hide xmark" id="xbtn" onclick="cancelselect();searchclose();">
                     <i class="fa-solid fa-xmark" id="cancelicon"></i>
                 </button>
             </div>
 
         </div>
-        <div class="file-list">
+
+        <div class="search" id="search">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input class="search-input" id="search-input"></input>
+        </div>
+
+        <div class="file-list" id="file-list">
             {% for file in all_files %}
             <div class="file" id="{{loop.index}}" onclick="select('{{loop.index}}')">
                 <div class="file-card" id="{{loop.index}}-card" onclick="preview('{{file.0}}')">
@@ -53,7 +64,8 @@
         <div class="edit-options">
             <p id="edit-options-text"></p>
             <div class="edit-options-buttons">
-                <button class="button edit-options-button select-download" id="downloadzip-btn" onclick="downloadzip();">
+                <button class="button edit-options-button select-download" id="downloadzip-btn"
+                    onclick="downloadzip();">
                     <p class="download-btn-text" id="download-btn-text">Download</p>
                     <div class="lds-ring" id="download-btn-loading" style="display: none;">
                         <div></div>

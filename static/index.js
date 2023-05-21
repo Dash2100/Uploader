@@ -6,6 +6,45 @@ function downloadFile(filename) {
     a.click();
 };
 
+
+function downloadzip() {
+    selecting = 0;
+    $('#xbtn').prop('disabled', true);
+    $('#edit-options-text').text("Preparing Download...");
+    $('#download-btn-text').hide();
+    $('#download-btn-loading').show();
+    $('#downloadzip-btn').prop('disabled', true);
+    // post to /download/zip and save
+    var data = JSON.stringify({ files: selected });
+    $.ajax({
+        url: "/download/zip",
+        method: "post",
+        data: data,
+        contentType: "application/json;charset=utf-8",
+        xhrFields: {
+            responseType: "blob" // set the response type to blob
+        },
+        success: function (blob) {
+            var url = window.URL.createObjectURL(blob);
+            var link = document.createElement("a");
+            link.href = url;
+            link.download = "download.zip";
+            document.body.appendChild(link);
+            link.click();
+
+            // clean up the URL and link
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(link);
+        }
+    }).then(function () {
+        $('#xbtn').prop('disabled', false);
+        $('#download-btn-text').show();
+        $('#download-btn-loading').hide();
+        $('#downloadzip-btn').prop('disabled', false);
+        cancelselect();
+    });
+}
+
 function checkPreviewable(filename) {
     let ext = filename.split('.').pop().toLowerCase();
 
@@ -107,7 +146,7 @@ function selectfile() {
     $('.file-card').addClass('file-card-disable');
     $('.file-list').addClass('file-list-editing');
     $('.file').addClass('file-select');
-    $('#selectbtn').addClass('top-icon-hide');
+    $('.opt-icons').addClass('hide');
     $('#loginbtn').addClass('top-icon-hide');
     $('#xbtn').removeClass('top-icon-hide');
 }
@@ -119,7 +158,7 @@ function cancelselect() {
     $('.file-list').removeClass('file-list-editing');
     $('.file').removeClass('file-selected');
     $('.file-card').removeClass('file-card-selected');
-    $('#selectbtn').removeClass('top-icon-hide');
+    $('.opt-icons').removeClass('hide');
     $('#loginbtn').removeClass('top-icon-hide');
     $('#xbtn').addClass('top-icon-hide');
     $('.edit-options').removeClass('edit-options-open');
@@ -168,40 +207,16 @@ function multi_select_ui(fileID, state) {
     }
 }
 
-function downloadzip() {
-    selecting = 0;
-    $('#xbtn').prop('disabled', true);
-    $('#edit-options-text').text("Preparing Download...");
-    $('#download-btn-text').hide();
-    $('#download-btn-loading').show();
-    $('#downloadzip-btn').prop('disabled', true);
-    // post to /download/zip and save
-    var data = JSON.stringify({ files: selected });
-    $.ajax({
-        url: "/download/zip",
-        method: "post",
-        data: data,
-        contentType: "application/json;charset=utf-8",
-        xhrFields: {
-            responseType: "blob" // set the response type to blob
-        },
-        success: function (blob) {
-            var url = window.URL.createObjectURL(blob);
-            var link = document.createElement("a");
-            link.href = url;
-            link.download = "download.zip";
-            document.body.appendChild(link);
-            link.click();
+function searchopen(){
+    $('#search').addClass('search--open');
+    $('#file-list').addClass('file-list--out');
+    $('#search-input').focus();
+    $('.opt-icons').addClass('hide');
+    $('#xbtn').removeClass('top-icon-hide');
+}
 
-            // clean up the URL and link
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(link);
-        }
-    }).then(function () {
-        $('#xbtn').prop('disabled', false);
-        $('#download-btn-text').show();
-        $('#download-btn-loading').hide();
-        $('#downloadzip-btn').prop('disabled', false);
-        cancelselect();
-    });
+function searchclose(){
+    $('#search').removeClass('search--open');
+    $('#file-list').removeClass('file-list--out');
+    $('#search-input').val('');
 }
