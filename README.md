@@ -27,4 +27,5 @@ Navigate to `localhost:5090` or `http://127.0.0.1:5090/`
 
 * add / search file
 * add? / Upload Progress %
+* fix / rename chinese bypass
 
