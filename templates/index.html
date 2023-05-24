@@ -16,7 +16,19 @@
     <title>Shared | Uploader</title>
 </head>
 
-<body onload="">
+<script>
+    let files_list = {};
+
+    $(document).keyup(function (event) {
+        if (event.which === 27) {
+            previewoff();
+            searchclose();
+            cancelselect();
+        }
+    });
+</script>
+
+<body>
 
     <div id="preview-area"></div>
 
@@ -26,11 +38,11 @@
 
             <div class="top-icons">
                 <div class="opt-icons">
-                    <button class="button top-icon btn-group-left" onclick="selectfile();">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
-                    <button class="button top-icon btn-group-right" onclick="searchopen();">
+                    <button class="button top-icon btn-group-left" onclick="searchopen();">
                         <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <button class="button top-icon btn-group-right" onclick="selectfile();">
+                        <i class="fa-solid fa-bars"></i>
                     </button>
                 </div>
 
@@ -48,9 +60,11 @@
         <div class="search" id="search">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
             <input class="search-input" id="search-input"></input>
+            <i class="fa-solid fa-xmark clstext" id="clstext" onclick="clearsearchtext();"></i>
         </div>
 
         <div class="file-list" id="file-list">
+            <p class="no-files" style="display: none;">Nothing to show here...</p>
             {% for file in all_files %}
             <div class="file" id="{{loop.index}}" onclick="select('{{loop.index}}')">
                 <div class="file-card" id="{{loop.index}}-card" onclick="preview('{{file.0}}')">
@@ -58,6 +72,10 @@
                     <div class="file-size">{{file.4}} | {{file.2}} ({{file.5}})</div>
                 </div>
             </div>
+            <script>
+                //filename:loop.index
+                files_list["{{file.0}}"] = "{{loop.index}}";
+            </script>
             {% endfor %}
         </div>
 
@@ -100,13 +118,6 @@
             </div>
         </div>
     </div>
-</script>
-<script>
-    $(document).keyup(function (event) {
-        if (event.which === 27) {
-            previewoff();
-        }
-    });
 </script>
 
 </html>

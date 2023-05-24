@@ -405,7 +405,13 @@ p {
   border-radius: 10px 0 0 10px;
 }
 
+.btn-group-center{
+  margin-right: 1px;
+  border-radius: 0;
+}
+
 .btn-group-left {
+  float: right;
   border-radius: 0 10px 10px 0;
 }
 
@@ -442,6 +448,12 @@ p {
 
 .select-edit {
   background-color: #555bb3;
+  transition: all .1s ease-in-out;
+}
+
+.select-edit-hide {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .select-edit:hover {
@@ -478,7 +490,7 @@ p {
   margin-top: -60px;
 }
 
-.file-list--out {
+.file-list-out {
   margin-top: 0px;
 }
 
@@ -906,7 +918,7 @@ input:checked+.slider:before {
   pointer-events: none;
 }
 
-.search--open{
+.search-open{
   opacity: 100%;
   pointer-events: all;
 }
@@ -929,4 +941,24 @@ input:checked+.slider:before {
 
 .search-input:focus{
   outline: none;
+}
+
+.clstext{
+  position: absolute;
+  right: 15px;
+  color: #b8b8b8;
+  opacity: 0;
+  cursor: pointer;
+  transition: all .2s ease-in-out;
+}
+
+.clstext-show{
+  opacity: 100%;
+}
+
+.no-files{
+  color: #90a6d6;
+  font-size: 20px;
+  margin: 0 auto;
+  text-align: center;
 }

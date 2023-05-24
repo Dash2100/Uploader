@@ -78,6 +78,7 @@ function downloadzip() {
   $('#download-btn-text').hide();
   $('#download-btn-loading').show();
   $('#downloadzip-btn').prop('disabled', true);
+  $('#multimodify-btn').addClass('select-edit-hide');
   // post to /admin/download/zip and save
   var data = JSON.stringify({ files: selected });
   $.ajax({
@@ -107,6 +108,7 @@ function downloadzip() {
       $('#download-btn-text').show();
       $('#download-btn-loading').hide();
       $('#downloadzip-btn').prop('disabled', false);
+      $('#multimodify-btn').removeClass('select-edit-hide');
     }, 280);
   });
 }
@@ -289,24 +291,17 @@ function save(filename) {
   }
 }
 
-function func_button() {
-  if (selecting == 0) {
-    upload();
-  } else {
-    cancelselect();
-  }
-}
-
 let selecting = 0;
+let functioning = 0;
 function selectfile() {
-  selecting = 1
+  selecting = 1;
+  functioning = 1;
+  topiconhide();
   $('.edit-options').show();
   $('.modfile-icon').addClass('hide');
   $('.file-card').addClass('file-card-disable');
   $('.file').addClass('file-select');
-  $('.opt-icons').addClass('hide');
   $('.file-list').addClass('file-list-editing');
-  $('#ani-button').addClass('cancel-select');
 }
 
 let selected = [];
@@ -316,17 +311,36 @@ function cancelselect() {
   $('.file').removeClass('file-selected');
   $('.file-card').removeClass('file-card-disable');
   $('.file-card').removeClass('file-card-selected');
-  $('.opt-icons').removeClass('hide');
   $('.edit-options').removeClass('edit-options-open');
   $('.file-list').removeClass('file-list-editing');
-  $('#ani-button').removeClass('cancel-select');
+  topiconshow();
 
   selecting = 0;
+  functioning = 0;
   selected = [];
 
   setTimeout(function () {
     $('.edit-options').hide();
   }, 280);
+}
+
+function topiconhide() {
+  $('#ani-button').addClass('cancel-select');
+  $('.opt-icons').addClass('hide');
+}
+
+function topiconshow() {
+  $('#ani-button').removeClass('cancel-select');
+  $('.opt-icons').removeClass('hide');
+}
+
+function func_button() {
+  if (functioning == 0) {
+    upload();
+  } else {
+    cancelselect();
+    searchclose();
+  }
 }
 
 function select(fileID) {
@@ -342,6 +356,7 @@ function select(fileID) {
       multi_select_ui(fileID, 0);
     }
   }
+
 
 }
 
@@ -459,6 +474,11 @@ function rename(file) {
       else if (newname == file) {
         Swal.showValidationMessage(
           `You must enter a different name`
+        )
+      }
+      else if (!/^[\p{L}\p{N}\-._]+$/u.test(newname)) {
+        Swal.showValidationMessage(
+          `The name can't contain special characters or spaces`
         )
       }
       else {
@@ -583,3 +603,67 @@ function previewoff() {
     $('#preview').remove();
   }, 200);
 }
+
+function searchopen() {
+  topiconhide();
+  functioning = 1;
+  $('#search').addClass('search-open');
+  $('#file-list').addClass('file-list-out');
+  $('#search-input').focus();
+  $('.opt-icons').addClass('hide');
+  $('#xbtn').removeClass('top-icon-hide');
+}
+
+function searchclose() {
+  $('#search').removeClass('search-open');
+  $('#file-list').removeClass('file-list-out');
+  $('#search-input').val('');
+  $('.file').show();
+  $('.no-files').hide();
+  $('#clstext').removeClass('clstext-show');
+  topiconshow();
+}
+
+function clearsearchtext() {
+  $('#search-input').val('');
+  $('#clstext').removeClass('clstext-show');
+  $('.file').show();
+  $('.no-files').hide();
+}
+
+function search(searchString) {
+  const keys = Object.keys(files_list);
+  const filteredKeys = keys.filter(key => key.toLowerCase().includes(searchString));
+  const result = [];
+  filteredKeys.forEach(key => {
+    result.push(files_list[key]);
+  }
+  );
+
+  $('.file').hide();
+
+  if (result.length == 0) {
+    $('.no-files').show();
+  }
+  else {
+    $('.no-files').hide();
+    result.forEach(file => {
+      $('#' + file).show();
+    }
+    );
+  }
+
+}
+
+$(document).ready(function () {
+  $('#search-input').on('input', function (event) {
+    var inputValue = $(this).val().toLowerCase();
+    search(inputValue);
+    if (inputValue.length > 0) {
+      $('#clstext').addClass('clstext-show');
+    }
+    else {
+      $('#clstext').removeClass('clstext-show');
+    }
+  });
+});

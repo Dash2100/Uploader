@@ -207,16 +207,63 @@ function multi_select_ui(fileID, state) {
     }
 }
 
-function searchopen(){
-    $('#search').addClass('search--open');
-    $('#file-list').addClass('file-list--out');
+function searchopen() {
+    $('#search').addClass('search-open');
+    $('#file-list').addClass('file-list-out');
     $('#search-input').focus();
     $('.opt-icons').addClass('hide');
     $('#xbtn').removeClass('top-icon-hide');
 }
 
-function searchclose(){
-    $('#search').removeClass('search--open');
-    $('#file-list').removeClass('file-list--out');
+function searchclose() {
+    $('#search').removeClass('search-open');
+    $('#file-list').removeClass('file-list-out');
     $('#search-input').val('');
+    $('.file').show();
+    $('.no-files').hide();
+    $('#clstext').removeClass('clstext-show');
 }
+
+function clearsearchtext(){
+    $('#search-input').val('');
+    $('#clstext').removeClass('clstext-show');
+    $('.file').show();
+    $('.no-files').hide();
+}
+
+function search(searchString) {
+    const keys = Object.keys(files_list);
+    const filteredKeys = keys.filter(key => key.toLowerCase().includes(searchString));
+    const result = [];
+    filteredKeys.forEach(key => {
+        result.push(files_list[key]);
+    }
+    );
+
+    $('.file').hide();
+
+    if (result.length == 0) {
+        $('.no-files').show();
+    }
+    else {
+        $('.no-files').hide();
+        result.forEach(file => {
+            $('#' + file).show();
+        }
+        );
+    }
+
+}
+
+$(document).ready(function () {
+    $('#search-input').on('input', function (event) {
+        var inputValue = $(this).val().toLowerCase();
+        search(inputValue);
+        if(inputValue.length > 0){
+            $('#clstext').addClass('clstext-show');
+        }
+        else{
+            $('#clstext').removeClass('clstext-show');
+        }
+    });
+});

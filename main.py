@@ -370,7 +370,7 @@ def rename():
         return "illegal"
 
     #check if user is using a illegal character
-    if not re.match("^[a-zA-Z0-9_.-]*$", newname):
+    if not re.match(r"^[\w\-.]+$", newname, re.UNICODE):
         return "illegal"
     
     #check if file has a shortlink

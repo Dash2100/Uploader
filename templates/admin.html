@@ -18,6 +18,39 @@
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
     <title>Admin | Uploader</title>
 </head>
+<script>
+
+    let files_list = {};
+
+    $('#Share-link-check').change(
+        function () {
+            if (this.checked) {
+                $('#link-input').show();
+                $('#shortlink').focus();
+            } else {
+                $('#link-input').hide();
+            }
+        }
+    );
+
+    $('#modfile-area').keypress(function (e) {
+        if (e.which == 13) {
+            $('#savechange').click();
+        }
+    });
+
+
+    $(document).keyup(function (event) {
+        if (event.which === 27) {
+            previewoff();
+            popupoff();
+            searchclose();
+            cancelselect();
+        }
+    });
+
+
+</script>
 
 <body onload="init();">
     <div id="preview-area" i></div>
@@ -105,7 +138,10 @@
             </a>
             <div class="top-icons">
                 <div class="opt-icons">
-                    <button class="button top-icon btn-group-left" onclick="selectfile();">
+                    <button class="button top-icon btn-group-left" onclick="searchopen();">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <button class="button top-icon btn-group-center" onclick="selectfile();">
                         <i class="fa-solid fa-bars"></i>
                     </button>
                     <button class="button top-icon btn-group-right" onclick="location.replace('/logout')">
@@ -118,7 +154,14 @@
             </div>
         </div>
 
-        <div class="file-list">
+        <div class="search" id="search">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input class="search-input" id="search-input"></input>
+            <i class="fa-solid fa-xmark clstext" id="clstext" onclick="clearsearchtext();"></i>
+        </div>
+
+        <div class="file-list" id="file-list">
+            <p class="no-files" style="display: none;">Nothing to show here...</p>
             {% for file in all_files %}
             <div class="file" id="{{loop.index}}" onclick="select('{{loop.index}}')">
                 <div class="file-card" id="{{loop.index}}-card" onclick='preview("{{file.0}}")'>
@@ -127,14 +170,19 @@
                 </div>
                 <i class="modfile-icon fa-solid fa-pen-to-square" onclick='modify("{{file.0}}");'></i>
             </div>
+            <script>
+                //filename:loop.index
+                files_list["{{file.0}}"] = "{{loop.index}}";
+            </script>
             {% endfor %}
         </div>
         <!-- options -->
         <div class="edit-options">
             <p id="edit-options-text"></p>
             <div class="edit-options-buttons">
-                <button class="button edit-options-button select-edit" onclick="multimodify();">Modify</button>
-                <button class="button edit-options-button select-download" id="downloadzip-btn" onclick="downloadzip();">
+                <button class="button edit-options-button select-edit" id="multimodify-btn" onclick="multimodify();">Modify</button>
+                <button class="button edit-options-button select-download" id="downloadzip-btn"
+                    onclick="downloadzip();">
                     <p class="download-btn-text" id="download-btn-text">Download</p>
                     <div class="lds-ring" id="download-btn-loading" style="display: none;">
                         <div></div>
@@ -148,34 +196,6 @@
     </div>
 
 </body>
-<script>
-    $('#Share-link-check').change(
-        function () {
-            if (this.checked) {
-                $('#link-input').show();
-                $('#shortlink').focus();
-            } else {
-                $('#link-input').hide();
-            }
-        }
-    );
-
-    $('#modfile-area').keypress(function (e) {
-        if (e.which == 13) {
-            $('#savechange').click();
-        }
-    });
-
-
-    $(document).keyup(function (event) {
-        if (event.which === 27) {
-            previewoff();
-            popupoff();
-        }
-    });
-
-
-</script>
 
 <script type="text/html" id="files-template">
     <div class="uploading-file">

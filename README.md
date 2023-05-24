@@ -23,9 +23,9 @@ Navigate to `localhost:5090` or `http://127.0.0.1:5090/`
 <!-- * fix / mobile multi download not working -->
 <!-- * add / esc key to close popup -->
 <!-- * add / file zipping animation -->
+<!-- * fix / rename chinese bypass -->
+<!-- * add / search file -->
 
 
-* add / search file
 * add? / Upload Progress %
-* fix / rename chinese bypass
 
