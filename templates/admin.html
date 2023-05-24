@@ -61,8 +61,8 @@
             <div class="upload-area" id="upload-area" style="display: none;">
                 <div class="upload-file-titlebar">
                     <p class="popupTitle">Upload File</p>
-                    <button class="button upload-options" onclick="toggleoptions()"><i
-                            class="fa-sharp fa-solid fa-caret-down"></i></button>
+                    <button class="button upload-options" onclick="toggleoptions()">
+                        <i class="fa-sharp fa-solid fa-caret-down"></i></button>
                     <div class="upload-options-area">
                         <div class="upload-modfile-options">
                             <p class="modfile-option-lable">Share</p>
@@ -148,7 +148,7 @@
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 </div>
-                <button class="button top-icon add" onclick="func_button();">
+                <button class="button top-icon add" id="xbtn" onclick="func_button();">
                     <i class="fa-solid fa-plus" id="ani-button"></i>
                 </button>
             </div>
@@ -180,7 +180,8 @@
         <div class="edit-options">
             <p id="edit-options-text"></p>
             <div class="edit-options-buttons">
-                <button class="button edit-options-button select-edit" id="multimodify-btn" onclick="multimodify();">Modify</button>
+                <button class="button edit-options-button select-edit" id="multimodify-btn"
+                    onclick="multimodify();">Modify</button>
                 <button class="button edit-options-button select-download" id="downloadzip-btn"
                     onclick="downloadzip();">
                     <p class="download-btn-text" id="download-btn-text">Download</p>
