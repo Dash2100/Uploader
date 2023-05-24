@@ -19,26 +19,7 @@
     <title>Admin | Uploader</title>
 </head>
 <script>
-
     let files_list = {};
-
-    $('#Share-link-check').change(
-        function () {
-            if (this.checked) {
-                $('#link-input').show();
-                $('#shortlink').focus();
-            } else {
-                $('#link-input').hide();
-            }
-        }
-    );
-
-    $('#modfile-area').keypress(function (e) {
-        if (e.which == 13) {
-            $('#savechange').click();
-        }
-    });
-
 
     $(document).keyup(function (event) {
         if (event.which === 27) {
@@ -48,8 +29,6 @@
             cancelselect();
         }
     });
-
-
 </script>
 
 <body onload="init();">
@@ -225,6 +204,25 @@
             </div>
         </div>
     </div>
+</script>
+
+<script>
+        $('#Share-link-check').change(
+        function () {
+            if (this.checked) {
+                $('#link-input').show();
+                $('#shortlink').focus();
+            } else {
+                $('#link-input').hide();
+            }
+        }
+    );
+
+    $('#modfile-area').keypress(function (e) {
+        if (e.which == 13) {
+            $('#savechange').click();
+        }
+    });
 </script>
 
 </html>
