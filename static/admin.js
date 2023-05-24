@@ -34,7 +34,7 @@ function upload() {
 }
 
 function popupoff() {
-  if (uploading == 0) {
+  if (uploading === 0) {
     var x = document.getElementsByClassName("popup")[0];
     x.classList.remove("popup--opened");
   }
@@ -133,7 +133,7 @@ function delFile(filename) {
         data: JSON.stringify({ filename: filename }),
         contentType: "application/json;charset=utf-8",
         success: function (res) {
-          if (res == "OK") {
+          if (res === "OK") {
             location.reload();
           }
         },
@@ -230,7 +230,7 @@ function save(filename) {
       data: JSON.stringify({ filename: filename, state: sstate }),
       contentType: "application/json;charset=utf-8",
       success: function (res) {
-        if (res == "OK") {
+        if (res === "OK") {
           popupoff();
         }
       }
@@ -244,24 +244,24 @@ function save(filename) {
         data: JSON.stringify({ shortlink: shortlink, filename: filename }),
         contentType: "application/json;charset=utf-8",
         success: function (res) {
-          if (res == "OK") {
+          if (res === "OK") {
             popupoff();
           }
-          if (res == "Already in use") {
+          if (res === "Already in use") {
             Swal.fire({
               icon: 'error',
               title: 'Oops...',
               text: 'This shortlink already in use!',
             })
           }
-          if (res == "Empty") {
+          if (res === "Empty") {
             Swal.fire({
               icon: 'error',
               title: 'Oops...',
               text: 'You must enter a shortlink!',
             })
           }
-          if (res == "illegal") {
+          if (res === "illegal") {
             $('#shortlink').val("");
             Swal.fire({
               icon: 'error',
@@ -283,7 +283,7 @@ function save(filename) {
       data: JSON.stringify({ filename: filename }),
       contentType: "application/json;charset=utf-8",
       success: function (res) {
-        if (res == "OK") {
+        if (res === "OK") {
           popupoff();
         }
       }
@@ -335,7 +335,7 @@ function topiconshow() {
 }
 
 function func_button() {
-  if (functioning == 0) {
+  if (functioning === 0) {
     upload();
   } else {
     cancelselect();
@@ -397,7 +397,7 @@ function multidelete() {
         data: JSON.stringify({ files: selected }),
         contentType: "application/json;charset=utf-8",
         success: function (res) {
-          if (res == "OK") {
+          if (res === "OK") {
             location.reload();
           }
         }
@@ -420,7 +420,7 @@ function multishare() {
     success: function (res) {
       popupoff();
       cancelselect();
-      if (res == "OK") {
+      if (res === "OK") {
         Swal.fire({
           icon: 'success',
           title: 'Success',
@@ -466,12 +466,12 @@ function rename(file) {
 
     },
     preConfirm: (newname) => {
-      if (newname == "") {
+      if (newname === "") {
         Swal.showValidationMessage(
           `You must enter a name`
         )
       }
-      else if (newname == file) {
+      else if (newname === file) {
         Swal.showValidationMessage(
           `You must enter a different name`
         )
@@ -488,15 +488,15 @@ function rename(file) {
           data: JSON.stringify({ filename: file, newname: newname }),
           contentType: "application/json;charset=utf-8",
           success: function (res) {
-            if (res == "OK") {
+            if (res === "OK") {
               location.reload();
             }
-            if (res == "Already in use") {
+            if (res === "Already in use") {
               Swal.showValidationMessage(
                 `This name already in use`
               )
             }
-            if (res == "illegal") {
+            if (res === "illegal") {
               Swal.showValidationMessage(
                 `The name can't contain special characters or spaces`
               )
@@ -513,7 +513,7 @@ function rename(file) {
 function checkPreviewable(filename) {
   let ext = filename.split('.').pop().toLowerCase();
 
-  if (filename.indexOf('.') == -1) {
+  if (filename.indexOf('.') === -1) {
     return false;
   }
 
@@ -524,7 +524,7 @@ function checkPreviewable(filename) {
   let image = ['bmp', 'gif', 'ico', 'jpeg', 'jpg', 'png', 'svg', 'tiff', 'webp'];
   let text = ['txt', 'md', 'log', 'csv', 'tsv', 'tab', 'json', 'xml', 'html', 'htm', 'css', 'js', 'jsx', 'php', 'rb', 'py', 'c', 'cpp', 'h', 'hpp', 'java', 'pl', 'sh', 'bat', 'ps1', 'sql', 'r', 'yaml', 'yml', 'ini', 'env', 'cmd'];
 
-  if (ext == 'pdf') {
+  if (ext === 'pdf') {
     return ext;
   }
 
@@ -551,17 +551,17 @@ function preview(filename) {
       </div>`;
   }
 
-  if (filetype == 'pdf') {
+  if (filetype === 'pdf') {
     var link = `/pdfview?file=/admin/preview/${filename}`
     var content = `<iframe class="preview-iframe" src="${link}"></iframe>`;
   }
 
-  if (filetype == 'image') {
+  if (filetype === 'image') {
     var link = `/admin/preview/${filename}`;
     var content = `<img class="preview-img" src="${link}">`;
   }
 
-  if (filetype == 'text') {
+  if (filetype === 'text') {
     var link = `/admin/preview/${filename}`;
     var text = '';
     $.ajax({
@@ -642,7 +642,7 @@ function search(searchString) {
 
   $('.file').hide();
 
-  if (result.length == 0) {
+  if (result.length === 0) {
     $('.no-files').show();
   }
   else {
