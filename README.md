@@ -25,7 +25,7 @@ Navigate to `localhost:5090` or `http://127.0.0.1:5090/`
 <!-- * add / file zipping animation -->
 <!-- * fix / rename chinese bypass -->
 <!-- * add / search file -->
+<!-- * fix / rename contain space bug -->
 
-* fix / rename contain space bug
 * add? / Upload Progress %
 

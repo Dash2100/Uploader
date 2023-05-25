@@ -370,9 +370,9 @@ def rename():
         return "illegal"
 
     #check if user is using a illegal character
-    if not re.match(r"^[\w\-.]+$", newname, re.UNICODE):
+    if not re.match(r"^[\w\-. ]+$", newname, re.UNICODE):
         return "illegal"
-    
+
     #check if file has a shortlink
     con = sqlite3.connect('database.db')
     cur = con.cursor()

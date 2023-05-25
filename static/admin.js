@@ -476,9 +476,9 @@ function rename(file) {
           `You must enter a different name`
         )
       }
-      else if (!/^[\p{L}\p{N}\-._]+$/u.test(newname)) {
+      else if (!/^[\p{L}\p{N}\-._\s]+$/u.test(newname)) {
         Swal.showValidationMessage(
-          `The name can't contain special characters or spaces`
+          `The name can't contain special characters`
         )
       }
       else {
