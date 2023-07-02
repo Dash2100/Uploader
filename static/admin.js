@@ -119,7 +119,7 @@ function delFile(filename) {
   Swal.fire({
     title: 'Delete?',
     text: "You won't be able to revert this!",
-    icon: 'warning',
+    // icon: 'question',
     showCancelButton: true,
     confirmButtonColor: '#d33',
     cancelButtonColor: '#51597e',
@@ -141,7 +141,7 @@ function delFile(filename) {
           Swal.fire({
             title: "Error",
             text: "Something went wrong, please try again later.",
-            icon: "error",
+            // icon: "error",
             allowOutsideClick: false,
             allowEscapeKey: false,
             allowEnterKey: false,
@@ -384,7 +384,7 @@ function multidelete() {
   Swal.fire({
     title: "Are you sure?",
     text: "You will delete " + selected.length + " files",
-    icon: "warning",
+    // icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#7e403e",
     confirmButtonText: "Delete",
