@@ -24,14 +24,11 @@ $(function () {
       console.log('Starting upload ' + id);
     },
     extraData: function() {
-      if ($('#upload-share-check').is(":checked") === true) {
-        sharestate = 1;
-      } else {
-        sharestate = 0;
-      }
+      const sharestate = $('#upload-share-check').is(":checked") ? 1 : 0;
       return {
         "share": sharestate
       };
+
     },
     onUploadProgress: function (id, percent) {
       file_progress(id, percent);
