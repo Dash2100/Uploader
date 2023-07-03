@@ -23,7 +23,7 @@ $(function () {
       $(".upload-options-area").hide();
       console.log('Starting upload ' + id);
     },
-    extraData: function() {
+    extraData: function () {
       const sharestate = $('#upload-share-check').is(":checked") ? 1 : 0;
       return {
         "share": sharestate
@@ -80,3 +80,13 @@ $(function () {
     },
   });
 });
+
+function debug() {
+  upload();
+  $("#drop-area").hide();
+  $('#uploading-list').show();
+  $('.upload-options').hide();
+  $(".upload-options-area").hide();
+
+  add_file(1, {name:'thisisatestfileanditsnameisverylonganditshouldnotfitintheboxbutitdoes.png'});
+}

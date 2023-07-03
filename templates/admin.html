@@ -32,7 +32,7 @@
 </script>
 
 <body onload="init();">
-    <div id="preview-area" i></div>
+    <div id="preview-area"></div>
     <div class="popup">
         <a class="popbg" onclick="popupoff();"></a>
         <div class="popup-content">
@@ -180,6 +180,7 @@
 <script type="text/html" id="files-template">
     <div class="uploading-file">
         <p class="uploading-file-name">%%filename%%</p>
+        <p class="uploading-file-percent" id="percent_text">0%</p>
         <div class="progressbar" id="progressbar" style="width: 0px;"></div>
     </div>
 </script>
@@ -207,7 +208,7 @@
 </script>
 
 <script>
-        $('#Share-link-check').change(
+    $('#Share-link-check').change(
         function () {
             if (this.checked) {
                 $('#link-input').show();

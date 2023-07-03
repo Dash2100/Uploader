@@ -174,8 +174,10 @@ function add_file(id, file) {
 
 function file_progress(id, percent) {
   var file = $('#file-' + id);
-  var progress = file.find('.progressbar');
+  var progress = file.find('#progressbar');
+  var percent_text = file.find('#percent_text');
   progress.css('width', percent + '%');
+  percent_text.text(percent + '%');
   if (percent === 100) {
     progress.css('backgroundColor', '#546ad8');
   }
