@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="/static/style.css">
     <script src="/static/jquery.dm-uploader.min.js"></script>
@@ -37,10 +38,10 @@
         <a class="popbg" onclick="popupoff();"></a>
         <div class="popup-content">
             <!-- upload area -->
-            <div class="upload-area" id="upload-area" style="display: none;">
+            <div class="upload-area" id="upload-area">
                 <div class="upload-file-titlebar">
                     <p class="popupTitle">Upload File</p>
-                    <button class="button upload-options" onclick="toggleoptions()">
+                    <button class="button upload-options" onclick="toggleoptions()" title="Options">
                         <i class="fa-sharp fa-solid fa-caret-down"></i></button>
                     <div class="upload-options-area">
                         <div class="upload-modfile-options">
@@ -54,12 +55,12 @@
                 </div>
                 <div id="drop-area">
                     <form class="upload-form">
-                        <p><span id="dragText" style="color:white">Drop files here or</span></p>
+                        <p><span id="dragText">Drop files here or</span></p>
                         <input type="file" id="fileElem" multiple>
                         <label class="file-button" for="fileElem">Select File</label>
                     </form>
                 </div>
-                <div id="uploading-list" class="uploading-list" style="display: none;"></div>
+                <div id="uploading-list" class="uploading-list"></div>
             </div>
             <!-- modify file -->
             <div class="modfile-area" id="modfile-area">
@@ -78,7 +79,7 @@
                             <span class="slider round"></span>
                         </label>
                     </div>
-                    <div id="link-input" style="display: none;">
+                    <div id="link-input">
                         <p class="modfile-option-lable" id="baseurl">baseurl /</p>
                         <input type="text" class="link-input" id="shortlink"></input>
                     </div>
@@ -117,17 +118,17 @@
             </a>
             <div class="top-icons">
                 <div class="opt-icons">
-                    <button class="button top-icon btn-group-left" onclick="searchopen();">
+                    <button class="button top-icon btn-group-left" onclick="searchopen();" title="Search">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
-                    <button class="button top-icon btn-group-center" onclick="selectfile();">
+                    <button class="button top-icon btn-group-center" onclick="selectfile();" title="Select">
                         <i class="fa-solid fa-bars"></i>
                     </button>
-                    <button class="button top-icon btn-group-right" onclick="location.replace('/logout')">
+                    <button class="button top-icon btn-group-right" onclick="location.replace('/logout')" title="Logout">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 </div>
-                <button class="button top-icon add" id="xbtn" onclick="func_button();">
+                <button class="button top-icon add" id="xbtn" onclick="func_button();" title="Add">
                     <i class="fa-solid fa-plus" id="ani-button"></i>
                 </button>
             </div>
@@ -140,7 +141,7 @@
         </div>
 
         <div class="file-list" id="file-list">
-            <p class="no-files" style="display: none;">Nothing to show here...</p>
+            <p class="no-files">Nothing to show here...</p>
             {% for file in all_files %}
             <div class="file" id="{{loop.index}}" onclick="select('{{loop.index}}')">
                 <div class="file-card" id="{{loop.index}}-card" onclick='preview("{{file.0}}")'>
@@ -164,7 +165,7 @@
                 <button class="button edit-options-button select-download" id="downloadzip-btn"
                     onclick="downloadzip();">
                     <p class="download-btn-text" id="download-btn-text">Download</p>
-                    <div class="lds-ring" id="download-btn-loading" style="display: none;">
+                    <div class="lds-ring" id="download-btn-loading">
                         <div></div>
                         <div></div>
                         <div></div>

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="/static/index.js"></script>
     <link rel="stylesheet" href="/static/style.css">
@@ -38,19 +38,19 @@
 
             <div class="top-icons">
                 <div class="opt-icons">
-                    <button class="button top-icon btn-group-left" onclick="searchopen();">
+                    <button class="button top-icon btn-group-left" onclick="searchopen();" title="Search">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
-                    <button class="button top-icon btn-group-right" onclick="selectfile();">
+                    <button class="button top-icon btn-group-right" onclick="selectfile();" title="Select">
                         <i class="fa-solid fa-bars"></i>
                     </button>
                 </div>
 
-                <button class="button top-icon login" id="loginbtn" onclick="location.replace('/login')">
+                <button class="button top-icon login" id="loginbtn" onclick="location.replace('/login')" title="Login">
                     <i class="fa-solid fa-right-to-bracket" id="loginicon"></i>
                 </button>
 
-                <button class="button top-icon top-icon-hide xmark" id="xbtn" onclick="cancelselect();searchclose();">
+                <button class="button top-icon top-icon-hide xmark" id="xbtn" onclick="cancelselect();searchclose();" title="Cancel">
                     <i class="fa-solid fa-xmark" id="cancelicon"></i>
                 </button>
             </div>
@@ -64,7 +64,7 @@
         </div>
 
         <div class="file-list" id="file-list">
-            <p class="no-files" style="display: none;">Nothing to show here...</p>
+            <p class="no-files">Nothing to show here...</p>
             {% for file in all_files %}
             <div class="file" id="{{loop.index}}" onclick="select('{{loop.index}}')">
                 <div class="file-card" id="{{loop.index}}-card" onclick="preview('{{file.0}}')">
@@ -85,7 +85,7 @@
                 <button class="button edit-options-button select-download" id="downloadzip-btn"
                     onclick="downloadzip();">
                     <p class="download-btn-text" id="download-btn-text">Download</p>
-                    <div class="lds-ring" id="download-btn-loading" style="display: none;">
+                    <div class="lds-ring" id="download-btn-loading">
                         <div></div>
                         <div></div>
                         <div></div>

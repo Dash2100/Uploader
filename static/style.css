@@ -4,8 +4,8 @@
 
 body {
   background-color: #1F2335;
-  user-select: none;
   -webkit-user-select: none;
+  user-select: none;
   font-family: 'Roboto', sans-serif;
   -ms-overflow-style: none;
 }
@@ -49,9 +49,10 @@ a {
   color: #FFFFFF;
   justify-content: left !important;
   margin-left: 10px !important;
+  margin-top: 5px !important;
 }
 
-.swal2-icon{
+/* .swal2-icon{
   width: 35px !important;
   height: 35px !important;
   border: 2px solid !important;
@@ -59,7 +60,7 @@ a {
 
 .swal2-icon-content{
   font-size: 30px !important;
-}
+} */
 
 .swal2-title{
   text-align: left !important;
@@ -244,6 +245,7 @@ p {
   max-height: 700px;
   overflow-x: hidden;
   overflow-y: scroll;
+  display: none;
 }
 
 .uploading-file {
@@ -289,6 +291,10 @@ p {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+#dragText{
+  color: white;
 }
 
 .progressbar {
@@ -722,6 +728,7 @@ input:checked+.slider:before {
   background-color: #1f2335;
   font-size: 20px;
   color: #ffffff;
+  display: none;
 }
 
 .link-input:focus {
@@ -910,6 +917,7 @@ input:checked+.slider:before {
 .lds-ring {
   transform: scale(0.4);
   margin-top: -15px;
+  display: none;
 }
 
 .lds-ring div {
@@ -1005,4 +1013,5 @@ input:checked+.slider:before {
   font-size: 20px;
   margin: 0 auto;
   text-align: center;
+  display: none;
 }
