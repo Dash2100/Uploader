@@ -1,8 +1,7 @@
 from flask import Flask, request, send_from_directory, render_template, jsonify, redirect, url_for, send_file
-from flask_login import LoginManager, UserMixin, login_user,  login_required, logout_user, current_user
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from datetime import datetime
 from getpass import getpass
-from sql_init import sqlinit
 import sqlite3
 import hashlib
 import zipfile
@@ -11,6 +10,8 @@ import sys
 import re
 import os
 import io
+
+from App.sql_init import sqlinit
 
 path = './Uploads'
 quick_token = 'jJPaERsj6wPq58VShWMAGVsS3V97FRN4UqM'
