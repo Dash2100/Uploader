@@ -341,7 +341,9 @@ def shortlink():
     cur = con.cursor()
     cur.execute("SELECT * FROM shorturls WHERE url=?", (shortlink,))
     data = cur.fetchone()
+    print(data)
     if data:
+        print("Already in use")
         return "Already in use"
     #check if file already has a shortlink
     cur.execute("SELECT * FROM shorturls WHERE file=?", (filename,))

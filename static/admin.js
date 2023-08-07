@@ -38,6 +38,10 @@ function popupoff() {
     var x = document.getElementsByClassName("popup")[0];
     x.classList.remove("popup--opened");
   }
+
+  $('#savechange').off('click');
+  $('#delfile').off('click');
+  $('#rename').off('click');
 }
 
 function hideall() {
@@ -193,6 +197,7 @@ function filestate(filename) {
       var res = JSON.parse(res);
       sharebutton = res.share;
       linkstate = res.link;
+      console.log(linkstate);
       if (res.share === 1) {
         $('#Share-check').prop('checked', true);
       } else {
