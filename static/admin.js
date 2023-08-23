@@ -5,12 +5,6 @@ let sharebutton;
 let linkbutton;
 let linkstate;
 
-//swal icon html
-
-var questionIcon = '<div class="swal2-icon swal2-question swal2-icon-show" style="display: flex;"><div class="swal2-icon-content">?</div></div>';
-var errorIcon =  '<div class="swal2-icon swal2-error swal2-icon-show" style="display: flex;"><span class="swal2-x-mark"><span class="swal2-x-mark-line-left"></span><span class="swal2-x-mark-line-right"></span></span></div>'
-var warningIcon = '<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex;"><div class="swal2-icon-content">!</div></div>'
-
 function downloadFile(filename) {
   let url = '/admin/download/' + filename;
   let a = document.createElement('a');
@@ -123,10 +117,13 @@ function downloadzip() {
   });
 }
 
+
+
 function delFile(filename) {
   Swal.fire({
-    title: warningIcon + 'Are you sure?',
+    title: 'Delete?',
     text: "You won't be able to revert this!",
+    // icon: 'question',
     showCancelButton: true,
     confirmButtonColor: '#d33',
     cancelButtonColor: '#51597e',
@@ -146,8 +143,9 @@ function delFile(filename) {
         },
         error: function (res) {
           Swal.fire({
-            title: errorIcon + "Error",
+            title: "Error",
             text: "Something went wrong, please try again later.",
+            // icon: "error",
             allowOutsideClick: false,
             allowEscapeKey: false,
             allowEnterKey: false,
@@ -258,20 +256,23 @@ function save(filename) {
           }
           if (res === "Already in use") {
             Swal.fire({
-              title: errorIcon + 'Oops...',
+              icon: 'error',
+              title: 'Oops...',
               text: 'This shortlink already in use!',
             })
           }
           if (res === "Empty") {
             Swal.fire({
-              title: errorIcon + 'Oops...',
+              icon: 'error',
+              title: 'Oops...',
               text: 'You must enter a shortlink!',
             })
           }
           if (res === "illegal") {
             $('#shortlink').val("");
             Swal.fire({
-              title: errorIcon + 'Wait!',
+              icon: 'error',
+              title: 'Wait!',
               text: "The shortlink can't contain special characters or spaces",
             })
           }
@@ -428,13 +429,10 @@ function multishare() {
       cancelselect();
       if (res === "OK") {
         Swal.fire({
+          icon: 'success',
           title: 'Success',
           text: 'Change applied!',
         })
-        // wait for 1 sec and auto Swal.close()
-        setTimeout(function () {
-          Swal.close();
-        }, 1000);
       }
     }
   });
