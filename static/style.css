@@ -18,6 +18,118 @@ a {
   text-decoration: none;
 }
 
+<<<<<<< Updated upstream
+=======
+/* swal custom */
+.swal2-popup {
+  background-color: #24283B !important;
+  color: aliceblue !important;
+  border-radius: 15px !important;
+  z-index: 999 !important;
+  padding-bottom: 0 !important;
+}
+
+.swal2-styled {
+  border-radius: 7px !important;
+}
+
+/* .swal2-confirm {
+  border-radius: 5px !important;
+  background-color: #7083d9 !important;
+} */
+
+.swal2-input {
+  background-color: #24283B !important;
+  border: 1px solid #51597e !important;
+  color: aliceblue !important;
+  border-radius: 8px !important;
+  font-size: 15px;
+}
+
+.swal2-validation-message {
+  background-color: #24283B !important;
+  color: #FFFFFF;
+  justify-content: left !important;
+  margin-left: 10px !important;
+}
+
+.swal2-icon{
+  width: 35px !important;
+  height: 35px !important;
+  border: 2px solid !important;
+  margin: 0 !important;
+  margin-right: 10px !important;
+}
+
+.swal2-icon-content{
+  font-size: 25px !important;
+}
+
+.swal2-title{
+  text-align: left !important;
+  display: flex !important;
+  line-height: 39px;
+}
+
+.swal2-x-mark{
+  width: 10px;
+}
+
+.swal2-html-container{
+  text-align: left !important;
+}
+
+.swal2-actions{
+  background-color: #202434 !important;
+  width: 100% !important;
+  padding: 10px !important;
+  border-radius: 0 0 15px 15px !important;
+  justify-content: right !important;
+}
+
+div:where(.swal2-icon).swal2-error [class^=swal2-x-mark-line] {
+  width: 10px !important;
+  top: 15px !important;
+}
+
+.swal2-x-mark-line-left{
+  left: 5px !important;
+}
+
+.swal2-x-mark-line-right{
+  right: 5px !important;
+}
+
+@keyframes swal2-show {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+
+@keyframes swal2-hide {
+  0% {
+    transform: scale(1);
+    opacity: 1
+  }
+
+  100% {
+    transform: scale(0.9);
+    opacity: 0
+  }
+}
+
+.swal2-show {
+  animation: swal2-show 0.2s !important;
+}
+
+>>>>>>> Stashed changes
 ::-webkit-scrollbar {
   height: 6px;
   width: 6px;
