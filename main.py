@@ -1,9 +1,8 @@
 from flask import Flask, request, send_from_directory, render_template, jsonify, redirect, url_for, send_file
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 from getpass import getpass
+import sqlite3
 import hashlib
 import zipfile
 import json
@@ -12,7 +11,7 @@ import re
 import os
 import io
 
-from App.database import *
+from App.sql_init import sqlinit
 
 path = './Uploads'
 quick_token = 'jJPaERsj6wPq58VShWMAGVsS3V97FRN4UqM'
@@ -22,15 +21,21 @@ app.config['SECRET_KEY'] = os.urandom(24)
 login_manager = LoginManager(app)  # Create login manager
 login_manager.login_view = 'login'  # Set login view
 
-#database
-engine = create_engine('sqlite:///database.db')
-Session = sessionmaker(bind=engine)
-db = Session()
+def execute_db(command, vals):
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute(command, vals)
+    con.commit()
+    con.close()
 
 @app.route('/')
 def index():
-    #get all share=1 files in database use sqlalchemy
-    all_files = db.query(Files).filter(Files.share == 1).all()
+    #get all share=1 files in database
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM files WHERE share=1")
+    all_files = cur.fetchall()
+    con.close()
     #sort list by sharedate
     all_files.sort(key=lambda x: x[4], reverse=True)
     return render_template('index.html', **locals())
@@ -38,12 +43,15 @@ def index():
 @app.route('/<link>', methods = ['GET'])
 def link(link):
     #get file from database
-    file = db.query(ShortUrls).filter(ShortUrls.url == link).first()
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT file FROM shorturls WHERE url=?", (link,))
+    file = cur.fetchone()
+    con.close()
 
     if file:
         #update downloads
-        db.query(Files).filter(Files.name == file.file).update({Files.downloads: Files.downloads + 1})
-        db.commit()
+        execute_db("UPDATE files SET downloads=downloads+1 WHERE name=?", (file[0],))
         return send_from_directory(path, file[0], as_attachment=True)
     else:
         return render_template('404.html')
@@ -57,10 +65,14 @@ def download(filename):
     #check if file exists
     if filename in os.listdir(path):
         #check file share state
-        share = db.query(Files).filter(Files.name == filename).first()[3]
+        con = sqlite3.connect('database.db')
+        cur = con.cursor()
+        cur.execute("SELECT share FROM files WHERE name=?", (filename,))
+        share = cur.fetchone()[0]
+        con.close()
         if share == 1:
             #update downloads
-            db.query(Files).filter(Files.name == filename).update({Files.downloads: Files.downloads + 1})
+            execute_db("UPDATE files SET downloads=downloads+1 WHERE name=?", (filename,))
             return send_from_directory(path, filename, as_attachment=True)
         else:
             return render_template('404.html')
@@ -73,7 +85,11 @@ def download_zip():
     download_files = request.get_json()['files']
 
     #check all file share state is on
-    shared_data = db.query(Files).filter(Files.share == 1).all()
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT name FROM files WHERE share=1")
+    shared_data = cur.fetchall()
+    con.close()
     shared_files = [name[0] for name in shared_data]
 
     for file in download_files:
@@ -98,7 +114,11 @@ def preview(filename):
     #check if file exists
     if filename in os.listdir(path):
         #check file share state
-        share = db.query(Files).filter(Files.name == filename).first()[3]
+        con = sqlite3.connect('database.db')
+        cur = con.cursor()
+        cur.execute("SELECT share FROM files WHERE name=?", (filename,))
+        share = cur.fetchone()[0]
+        con.close()
         if share == 1:
             return send_from_directory(path, filename)
         else:
@@ -120,7 +140,11 @@ def quickUP(token):
 @app.route('/admin')
 @login_required
 def admin():
-    all_files = db.query(Files).all()
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM files")
+    all_files = cur.fetchall()
+    con.close()
     all_files.reverse()
     return render_template('admin.html', **locals())
 
@@ -152,11 +176,9 @@ def upload_file():
             size = round(size_bytes / 1000000, 3).__str__() + ' MB'
         filename_base64 = file.filename.encode('utf-8')
         if share == '0':
-            #update database
-            db.add(Files(name=file.filename, date=date, size=size, share=0, sharedate="", downloads=0))
+            execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?, ?)', (file.filename, date, size, 0, "", 0))
         else:
-            #update database
-            db.add(Files(name=file.filename, date=date, size=size, share=1, sharedate=date, downloads=0))
+            execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?, ?)', (file.filename, date, size, 1, date, 0))
         return "success"
 
 
@@ -166,7 +188,7 @@ def download_file(filename):
     #check if file exists
     if filename in os.listdir(path):
         #update downloads
-        db.query(Files).filter(Files.name == filename).update({Files.downloads: Files.downloads + 1})
+        execute_db("UPDATE files SET downloads=downloads+1 WHERE name=?", (filename,))
         return send_from_directory(path, filename, as_attachment=True)
     else:
         return render_template('404.html')
@@ -193,6 +215,12 @@ def download_zip_admin():
 def admin_preview(filename):
     #check if file exists
     if filename in os.listdir(path):
+        #check file share state
+        con = sqlite3.connect('database.db')
+        cur = con.cursor()
+        cur.execute("SELECT share FROM files WHERE name=?", (filename,))
+        share = cur.fetchone()[0]
+        con.close()
         return send_from_directory(path, filename)
     else:
         return render_template('404.html')
@@ -203,10 +231,8 @@ def del_file():
     filename = request.get_json()['filename']
     try:
         os.remove(os.path.join(path, filename))
-        #delete file and shortlink from database
-        db.query(Files).filter(Files.name == filename).delete()
-        db.query(ShortUrls).filter(ShortUrls.file == filename).delete()
-        db.commit()
+        execute_db('DELETE FROM files WHERE name = ?', (filename,))
+        execute_db('DELETE FROM shorturls WHERE file = ?', (filename,))
         return "OK"
     except FileNotFoundError:
         return "Not Found"
@@ -218,10 +244,8 @@ def multi_delete():
     for file in files:
         try:
             os.remove(os.path.join(path, file))
-            #delete file and shortlink from database
-            db.query(Files).filter(Files.name == file).delete()
-            db.query(ShortUrls).filter(ShortUrls.file == file).delete()
-            db.commit()
+            execute_db('DELETE FROM files WHERE name = ?', (file,))
+            execute_db('DELETE FROM shorturls WHERE file = ?', (file,))
         except FileNotFoundError:
             pass
     return "OK"
@@ -232,21 +256,23 @@ def multi_delete():
 def share_file():
     filename = request.get_json()['filename']
     state = request.get_json()['state']
-    data = db.query(Files).filter(Files.name == filename).first()
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM files WHERE name=?", (filename,))
+    data = cur.fetchone()
+    con.close()
     if data:
         if state == 1:
-            #update database
-            db.query(Files).filter(Files.name == filename).update({Files.share: 1})
+            execute_db('UPDATE files SET share=1 WHERE name=?', (filename,))
             #sharedate
             now = datetime.now()
             date = now.strftime("%Y-%m-%d %H:%M:%S")
-            db.query(Files).filter(Files.name == filename).update({Files.sharedate: date})
+            execute_db('UPDATE files SET sharedate=? WHERE name=?', (date, filename))
         elif state == 0:
-            db.query(Files).filter(Files.name == filename).update({Files.share: 0})
-            db.query(Files).filter(Files.name == filename).update({Files.sharedate: ""})
+            execute_db('UPDATE files SET share=0 WHERE name=?', (filename,))
+            execute_db('UPDATE files SET sharedate=? WHERE name=?', ("", filename))
         else:
             return "Wrong State"
-        db.commit()
         return "OK"
     else:
         return "Not Found"
@@ -257,18 +283,21 @@ def multishare():
     files = request.get_json()['files']
     state = request.get_json()['state']
     for file in files:
-        data = db.query(Files).filter(Files.name == file).first()
+        con = sqlite3.connect('database.db')
+        cur = con.cursor()
+        cur.execute("SELECT * FROM files WHERE name=?", (file,))
+        data = cur.fetchone()
+        con.close()
         if data:
             if state == 1:
-                #update database
-                db.query(Files).filter(Files.name == file).update({Files.share: 1})
+                execute_db('UPDATE files SET share=1 WHERE name=?', (file,))
                 #sharedate
                 now = datetime.now()
                 date = now.strftime("%Y-%m-%d %H:%M:%S")
-                db.query(Files).filter(Files.name == file).update({Files.sharedate: date})
+                execute_db('UPDATE files SET sharedate=? WHERE name=?', (date, file))
             elif state == 0:
-                db.query(Files).filter(Files.name == file).update({Files.share: 0})
-                db.query(Files).filter(Files.name == file).update({Files.sharedate: ""})
+                execute_db('UPDATE files SET share=? WHERE name=?', (0,file,))
+                execute_db('UPDATE files SET sharedate=? WHERE name=?', ("", file))
             else:
                 return "Wrong State"
         else:
@@ -280,8 +309,13 @@ def multishare():
 @login_required
 def file_state():
     filename = request.get_json()['filename']
-    share = db.query(Files).filter(Files.name == filename).first()[3]
-    link = db.query(ShortUrls).filter(ShortUrls.file == filename).first()
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT share FROM files WHERE name=?", (filename,))
+    share = cur.fetchone()[0]
+    cur.execute("SELECT url FROM shorturls WHERE file=?", (filename,))
+    link = cur.fetchone()
+    con.close()
     if link:
         link = link[0]
     else:
@@ -303,31 +337,30 @@ def shortlink():
     if shortlink == "admin":
         return "illegal"
     #check if shortlink is already in use
-    data = db.query(ShortUrls).filter(ShortUrls.url == shortlink).first()
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM shorturls WHERE url=?", (shortlink,))
+    data = cur.fetchone()
     print(data)
     if data:
         print("Already in use")
         return "Already in use"
     #check if file already has a shortlink
-    data = db.query(ShortUrls).filter(ShortUrls.file == filename).first()
+    cur.execute("SELECT * FROM shorturls WHERE file=?", (filename,))
+    data = cur.fetchone()
+    con.close()
     if data:
         #update shortlink
-        db.query(ShortUrls).filter(ShortUrls.file == filename).update({ShortUrls.url: shortlink})
-    db.add(ShortUrls(file=filename, url=shortlink))
+        execute_db('UPDATE shorturls SET url=? WHERE file=?', (shortlink, filename))
+    execute_db('INSERT INTO shorturls VALUES (?, ?)', (shortlink, filename))
     return "OK"
 
 @app.route('/admin/delshortlink', methods=['POST'])
 @login_required
 def del_shortlink():
     filename = request.get_json()['filename']
-    #check if file has a shortlink
-    data = db.query(ShortUrls).filter(ShortUrls.file == filename).first()
-    if data:
-        #delete shortlink
-        db.query(ShortUrls).filter(ShortUrls.file == filename).delete()
-        return "OK"
-    else:
-        return "Not Found"
+    execute_db('DELETE FROM shorturls WHERE file = ?', (filename,))
+    return "OK"
 
 #rename file
 @app.route('/admin/rename', methods=['POST'])
@@ -343,20 +376,27 @@ def rename():
     if not re.match(r"^[\w\-. ]+$", newname, re.UNICODE):
         return "illegal"
 
+    #check if file has a shortlink
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+
     #check if newname is already in use
-    data = db.query(Files).filter(Files.name == newname).first()
+    cur.execute("SELECT * FROM files WHERE name=?", (newname,))
+    data = cur.fetchone()
     if data:
         return "Already in use"
 
     #check if file has a shortlink
-    data = db.query(ShortUrls).filter(ShortUrls.file == filename).first()
+    cur.execute("SELECT * FROM shorturls WHERE file=?", (filename,))
+    data = cur.fetchone()
+    con.close()
     if data:
         #update shortlink
-        db.query(ShortUrls).filter(ShortUrls.file == filename).update({ShortUrls.file: newname})
+        execute_db('UPDATE shorturls SET file=? WHERE file=?', (newname, filename))
     #rename file
     os.rename(os.path.join(path, filename), os.path.join(path, newname))
     #update database
-    db.query(Files).filter(Files.name == filename).update({Files.name: newname})
+    execute_db('UPDATE files SET name=? WHERE name=?', (newname, filename))
     return "OK"
 
 ## Login
@@ -379,9 +419,11 @@ def login():
             return render_template('login.html')
     request_pas = request.get_json()
     #load password from db
-    password = db.query(Users).filter(Users.username == 'admin').first()
-    password = password[1]
-    print(password)
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT password FROM Users where username = 'admin'")
+    password = cur.fetchone()[0]
+    con.close()
     if hashlib.sha256(request_pas['password'].encode('utf-8')).hexdigest() == password:
         user = User()
         user.id = 'admin'
@@ -398,11 +440,11 @@ def logout():
 if __name__ == "__main__":
     sqlinit()
     if len(sys.argv) == 2:
-        if sys.argv[1] == 'user':
-            username = input('Username: ')
+        if sys.argv[1] == 'passwd':
             password = getpass('Password: ')
             password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-            db.add(Users(username=username, password=password))
-            db.commit()
+            execute_db('UPDATE Users SET password=? WHERE username=?', (password, 'admin'))
+            print(password)
+            print('Password changed')
     else:
         app.run(debug=True, host='0.0.0.0', port=5090)
