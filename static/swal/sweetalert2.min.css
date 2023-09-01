@@ -533,7 +533,7 @@ div:where(.swal2-container) button:where(.swal2-close)::-moz-focus-inner {
 div:where(.swal2-container) .swal2-html-container {
     z-index: 1;
     justify-content: center;
-    margin: 1em 1.6em .3em;
+    margin: 1em 1.6em 1em;
     padding: 0;
     overflow: auto;
     color: inherit;

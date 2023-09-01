@@ -38,6 +38,19 @@ input::-ms-clear {
   display: none;
 }
 
+.account-input {
+  background-color: #24283B;
+  color: aliceblue;
+  border-radius: 8px;
+  font-size: 15px;
+  height: 2em;
+  margin: 10px 0 0 0;;
+  width: 100%; 
+}
+
+.account-input::placeholder{
+  color: #51597e;
+}
 
 .page {
   width: 95%;

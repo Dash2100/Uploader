@@ -17,11 +17,9 @@
 <body>
     <script>
         Swal.fire({
-            title: 'Admin Login',
-            input: 'password',
-            inputAttributes: {
-                autocapitalize: 'off'
-            },
+            title: 'Login',
+            html: '<input id="username" autocapitalize="off" class="swal2-input account-input" placeholder="Username" type="text" style="display: flex;">' + 
+                  '<input id="password" autocapitalize="off" class="swal2-input account-input" placeholder="Password" type="password" style="display: flex;">',
             showCancelButton: true,
             confirmButtonText: 'Login',
             showLoaderOnConfirm: true,
@@ -32,14 +30,18 @@
                     Swal.showValidationMessage('Type something!')
                     return (0);
                 }
+
+                var data = {
+                    username: document.getElementById("username").value,
+                    password: document.getElementById("password").value
+                }
+
                 return fetch('/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        password: pas
-                    })
+                    body: JSON.stringify(data)
                 })
                     .then(response => response.json())
                     .then(response => {
@@ -47,7 +49,7 @@
                             return response;
                         } else {
                             Swal.showValidationMessage(
-                                `Password is incorrect`
+                                `Username or password is incorrect`
                             )
                         }
                     })

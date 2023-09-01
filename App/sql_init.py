@@ -1,4 +1,7 @@
 import sqlite3
+import hashlib
+
+default_password = 'admin'
 
 def sqlinit():
     con = sqlite3.connect('database.db')
@@ -6,11 +9,12 @@ def sqlinit():
     cur.execute('CREATE TABLE IF NOT EXISTS "Files" ("name" TEXT, "date" TEXT, "size" TEXT,"share" INTEGER,"sharedate" TEXT, "downloads" INTEGER)')
     cur.execute('CREATE TABLE IF NOT EXISTS "ShortUrls" ("url" TEXT, "file" TEXT)')
     cur.execute('CREATE TABLE IF NOT EXISTS "Users" ("username" TEXT, "password" TEXT)')
+
+    #check if admin user exists
     cur.execute("SELECT * FROM Users")
     users = cur.fetchall()
     if not users:
-        #create admin user password = "password"
-        cur.execute("INSERT INTO Users VALUES (?, ?)", ('admin', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'))
+        cur.execute("INSERT INTO Users VALUES (?, ?)", ('admin', hashlib.sha256(default_password.encode('utf-8')).hexdigest()))
     con.commit()
     con.close()
 
