@@ -368,7 +368,7 @@ div:where(.swal2-container) div:where(.swal2-actions) {
     align-items: center;
     justify-content: right;
     width: 100%;
-    margin: 1.25em auto 0;
+    margin: 20px auto 0;
     padding: 10px;
     border-radius: 0 0 15px 15px;
 }
@@ -533,7 +533,7 @@ div:where(.swal2-container) button:where(.swal2-close)::-moz-focus-inner {
 div:where(.swal2-container) .swal2-html-container {
     z-index: 1;
     justify-content: center;
-    margin: 1em 1.6em 1em;
+    margin: 0 1em;
     padding: 0;
     overflow: auto;
     color: inherit;
@@ -615,7 +615,7 @@ div:where(.swal2-container) .swal2-range output {
 }
 
 div:where(.swal2-container) .swal2-input {
-    height: 2.625em;
+    height: 45px;
     padding: 0 .75em
 }
 
@@ -673,7 +673,7 @@ div:where(.swal2-container) div:where(.swal2-validation-message) {
     margin: 1em 0 0;
     margin-left: 10px;
     margin-top: 5px;
-    padding: .625em;
+    padding: 1em 1em 0 1em;
     overflow: hidden;
     background-color: #24283B;
     color: #FFFFFF;
@@ -689,7 +689,7 @@ div:where(.swal2-container) div:where(.swal2-validation-message)::before {
     height: 1.5em;
     margin: 0 .625em;
     margin-left: 10px;
-    margin-top: 5px;
+    /* margin-top: 5px; */
     border-radius: 50%;
     background-color: #f27474;
     color: #fff;

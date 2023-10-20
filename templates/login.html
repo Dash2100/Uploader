@@ -2,70 +2,101 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="/static/style.css">
-    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-    <!-- sweetalert -->
-    <script src="/static/swal/sweetalert2.min.js"></script>
-    <link rel="stylesheet" href="/static/swal/sweetalert2.min.css">
-    <title>Login | Uploader</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+  <!-- Font Awesome -->
+  <link href="/static/fontawesome/fontawesome.css" rel="stylesheet">
+  <link href="/static/fontawesome/all.css" rel="stylesheet">
+  <!-- sweetalert -->
+  <script src="/static/swal/sweetalert2.min.js"></script>
+  <link rel="stylesheet" href="/static/swal/sweetalert2.min.css">
+  <title>Login | Uploader</title>
 </head>
 
+
 <body>
-    <script>
-        Swal.fire({
-            title: 'Login',
-            html: '<input id="username" autocapitalize="off" class="swal2-input account-input" placeholder="Username" type="text" style="display: flex;">' + 
-                  '<input id="password" autocapitalize="off" class="swal2-input account-input" placeholder="Password" type="password" style="display: flex;">',
-            showCancelButton: true,
-            confirmButtonText: 'Login',
-            showLoaderOnConfirm: true,
-            allowOutsideClick: false,
-            confirmButtonColor: '#51597e',
-            preConfirm: (pas) => {
-                if (pas === "") {
-                    Swal.showValidationMessage('Type something!')
-                    return (0);
-                }
-
-                var data = {
-                    username: document.getElementById("username").value,
-                    password: document.getElementById("password").value
-                }
-
-                return fetch('/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                })
-                    .then(response => response.json())
-                    .then(response => {
-                        if (response.state == "correct") {
-                            return response;
-                        } else {
-                            Swal.showValidationMessage(
-                                `Username or password is incorrect`
-                            )
-                        }
-                    })
-                    .catch(error => {
-                        Swal.showValidationMessage('Server Error')
-                    })
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = "/admin";
-            }
-            else {
-                window.location.href = "../";
-            }
-        })
-    </script>
+  <template id="login-from">
+    <form id="loginForm">
+      <div class="input-area">
+        <div class="input-icon-box">
+          <i class="input-icon fa-solid fa-user"></i>
+        </div>
+        <input id="username" autocapitalize="off" class="swal2-input account-input" placeholder="Username" type="text"
+          style="display: flex;">
+      </div>
+      <div class="input-area">
+        <div class="input-icon-box">
+          <i class="input-icon fa-solid fa-lock"></i>
+        </div>
+        <input id="password" autocapitalize="off" class="swal2-input account-input" placeholder="Password"
+          type="password" style="display: flex;">
+      </div>
+    </form>
+  </template>
 </body>
+
+<script>
+  Swal.fire({
+    title: 'Login to Uploader',
+    html: $('#login-from').html(),
+    showCancelButton: true,
+    confirmButtonText: 'Login',
+    showLoaderOnConfirm: true,
+    allowOutsideClick: false,
+    confirmButtonColor: '#51597e',
+    preConfirm: () => {
+      var data = {
+        username: $('#username').val(),
+        password: $('#password').val()
+      };
+
+      return $.ajax({
+        url: '/login',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data)
+      })
+        .done(function (response) {
+          if (response.state == "correct") {
+            return response;
+          } else {
+            Swal.showValidationMessage(
+              `Username or password is incorrect`
+            );
+
+            $('#username').focus();
+          }
+        })
+        .fail(function (error) {
+          Swal.showValidationMessage('Server Error');
+        });
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "/admin";
+    }
+    else {
+      window.location.href = "../";
+    }
+  });
+
+  $('#loginForm').on('keyup', function (event) {
+    if (event.key === "Enter") {
+      Swal.clickConfirm();
+    }
+  });
+
+  //if $('#username') or $('#password') text is changed, remove validation message
+  $('#username').on('input', function () {
+    Swal.resetValidationMessage();
+  });
+
+  $('#username').focus();
+
+</script>
 
 </html>

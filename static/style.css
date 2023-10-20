@@ -41,15 +41,43 @@ input::-ms-clear {
 .account-input {
   background-color: #24283B;
   color: aliceblue;
-  border-radius: 8px;
   font-size: 15px;
-  height: 2em;
-  margin: 10px 0 0 0;;
-  width: 100%; 
+  margin: 0;
+  width: 90%;
+  border-radius: 0 10px 10px 0;
 }
 
 .account-input::placeholder{
   color: #51597e;
+}
+
+.account-input:focus{
+  outline: none !important;
+}
+
+.input-area{
+  margin-top: 20px;
+  display: flex;
+}
+
+.input-icon-box{
+  background-color: #43485f;
+  width: 45px;
+  height: 45px;
+  border-radius: 10px 0 0 10px;
+  display: block;
+  text-align: center;
+}
+
+.input-icon{
+  color: #90a6d6;
+  font-size: 20px;
+}
+
+.input-icon::before{
+  display: block;
+  line-height: 45px;
+  margin-right: auto;
 }
 
 .page {
@@ -319,6 +347,7 @@ p {
 
 .opt-icons {
   transition: all .3s ease-in-out;
+  white-space: normal;
 }
 
 .show {
@@ -937,4 +966,20 @@ input:checked+.slider:before {
   margin: 0 auto;
   text-align: center;
   display: none;
+}
+
+.account-bar{
+  width: fit-content;
+  margin-right: 10px;
+  padding: 0 10px;
+  justify-items: center;
+  text-align: center;
+}
+
+.account-content{
+  display: flex;
+}
+
+.account-name{
+  margin: auto 0 auto 10px;
 }

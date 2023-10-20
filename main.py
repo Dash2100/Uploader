@@ -146,6 +146,9 @@ def admin():
     all_files = cur.fetchall()
     con.close()
     all_files.reverse()
+
+    username = current_user.id
+
     return render_template('admin.html', **locals())
 
 
