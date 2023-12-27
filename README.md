@@ -10,7 +10,7 @@ Run `python main.py`<br>
 Navigate to `localhost:5090` or `http://127.0.0.1:5090/`
 
 
-## TODO
+<!-- ## TODO -->
 
 <!-- * add / name changing -->
 <!-- * add / Download count -->
@@ -26,6 +26,5 @@ Navigate to `localhost:5090` or `http://127.0.0.1:5090/`
 <!-- * fix / rename chinese bypass -->
 <!-- * add / search file -->
 <!-- * fix / rename contain space bug -->
-
-* add? / Upload Progress %
+<!-- * add? / Upload Progress % -->
 
