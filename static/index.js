@@ -1,3 +1,15 @@
+let files_list = {};
+
+document.addEventListener('DOMContentLoaded', function () {
+    $(document).keyup(function (event) {
+        if (event.which === 27) {
+            previewoff();
+            searchclose();
+            cancelselect();
+        }
+    });
+});
+
 function downloadFile(filename) {
     let url = '/download/' + filename;
     let a = document.createElement('a');
@@ -224,7 +236,7 @@ function searchclose() {
     $('#clstext').removeClass('clstext-show');
 }
 
-function clearsearchtext(){
+function clearsearchtext() {
     $('#search-input').val('');
     $('#clstext').removeClass('clstext-show');
     $('.file').show();
@@ -259,10 +271,10 @@ $(document).ready(function () {
     $('#search-input').on('input', function (event) {
         var inputValue = $(this).val().toLowerCase();
         search(inputValue);
-        if(inputValue.length > 0){
+        if (inputValue.length > 0) {
             $('#clstext').addClass('clstext-show');
         }
-        else{
+        else {
             $('#clstext').removeClass('clstext-show');
         }
     });

@@ -5,6 +5,22 @@ let sharebutton;
 let linkbutton;
 let linkstate;
 
+let files_list = {};
+
+document.addEventListener('DOMContentLoaded', function () {
+  var domain = window.location.href.split('/')[2];
+  $('#baseurl').text(domain + ' /');
+
+  $(document).keyup(function (event) {
+    if (event.which === 27) {
+      previewoff();
+      popupoff();
+      searchclose();
+      cancelselect();
+    }
+  });
+});
+
 function downloadFile(filename) {
   let url = '/admin/download/' + filename;
   let a = document.createElement('a');
@@ -19,11 +35,6 @@ function downloadURL(URL) {
   a.download = filename;
   a.click();
 };
-
-function init() {
-  var domain = window.location.href.split('/')[2];
-  $('#baseurl').text(domain + ' /');
-}
 
 // popup
 function upload() {
@@ -598,7 +609,7 @@ function preview(filename) {
   //for animation
   setTimeout(function () {
     template.addClass('popup--opened');
-  }, 1);
+  }, .1);
 }
 
 function previewoff() {
@@ -608,7 +619,7 @@ function previewoff() {
   $('#preview').removeClass('popup--opened');
   setTimeout(function () {
     $('#preview').remove();
-  }, 200);
+  }, 170);
 }
 
 function searchopen() {

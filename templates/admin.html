@@ -21,20 +21,8 @@
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
     <title>Admin | Uploader</title>
 </head>
-<script>
-    let files_list = {};
 
-    $(document).keyup(function (event) {
-        if (event.which === 27) {
-            previewoff();
-            popupoff();
-            searchclose();
-            cancelselect();
-        }
-    });
-</script>
-
-<body onload="init();">
+<body>
     <div id="preview-area"></div>
     <div class="popup">
         <a class="popbg" onclick="popupoff();"></a>
@@ -66,49 +54,61 @@
             </div>
             <!-- modify file -->
             <div class="modfile-area" id="modfile-area">
-                <p class="popupTitle">Modify File</p>
-                <div class="modfile-form">
+                <div>
+                    <p class="popupTitle">Modify File</p>
                     <p class="modfile-name" id="modfile-name">%%filename%%</p>
-                    <div class="modfile-options">
-                        <p class="modfile-option-lable">Share</p>
-                        <label class="switch">
-                            <input type="checkbox" id="Share-check">
-                            <span class="slider round"></span>
-                        </label>
-                        <p class="modfile-option-lable">Share link</p>
-                        <label class="switch">
-                            <input type="checkbox" id="Share-link-check">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                    <div id="link-input">
-                        <p class="modfile-option-lable" id="baseurl">baseurl /</p>
-                        <input type="text" class="link-input" id="shortlink"></input>
-                    </div>
+                </div>
+
+                <div class="modfile-options">
+                    <p class="modfile-option-lable">Share</p>
+
+                    <label class="switch">
+                        <input type="checkbox" id="Share-check">
+                        <span class="slider round"></span>
+                    </label>
+                    <p class="modfile-option-lable">Share link</p>
+                    <label class="switch">
+                        <input type="checkbox" id="Share-link-check">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div id="link-input">
+                    <p class="modfile-option-lable" id="baseurl">baseurl /</p>
+                    <input type="text" class="link-input" id="shortlink"></input>
+                </div>
+
+                <div class="modfile-form">
+
                     <div class="modfile-buttons">
                         <button id="delfile" class="button modfile-btn delete">Delete</button>
                         <button id="rename" class="button modfile-btn rename">Rename</button>
                         <button id="savechange" class="button modfile-btn save">Apply</button>
                     </div>
+
                 </div>
             </div>
             <!-- modify multiple files -->
             <div class="modfile-area" id="multi-modfile-area">
-                <p class="popupTitle">Modify Multi Files</p>
-                <div class="modfile-form">
+
+                <div>
+                    <p class="popupTitle">Modify Multi Files</p>
                     <p class="modfile-name" id="multi-modfile-name">%%files%%</p>
-                    <div class="modfile-options">
-                        <p class="modfile-option-lable">Share</p>
-                        <label class="switch">
-                            <input type="checkbox" id="multi-Share-check">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                    <div class="modfile-buttons">
-                        <button class="button modfile-btn delete" onclick="multidelete();">Delete</button>
-                        <button class="button modfile-btn save" onclick="multishare();">Apply</button>
-                    </div>
                 </div>
+
+                <div class="modfile-options">
+                    <p class="modfile-option-lable">Share</p>
+                    <label class="switch">
+                        <input type="checkbox" id="multi-Share-check">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="modfile-buttons">
+                    <button class="button modfile-btn delete" onclick="multidelete();">Delete</button>
+                    <button class="button modfile-btn save" onclick="multishare();">Apply</button>
+                </div>
+
             </div>
         </div>
     </div>
@@ -126,7 +126,8 @@
                     <button class="button top-icon btn-group-center" onclick="selectfile();" title="Select">
                         <i class="fa-solid fa-bars"></i>
                     </button>
-                    <button class="button top-icon btn-group-right" onclick="location.replace('/logout')" title="Logout">
+                    <button class="button top-icon btn-group-right" onclick="location.replace('/logout')"
+                        title="Logout">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 </div>
@@ -152,8 +153,8 @@
                 </div>
                 <i class="modfile-icon fa-solid fa-pen-to-square" onclick='modify("{{file.0}}");'></i>
             </div>
+
             <script>
-                //filename:loop.index
                 files_list["{{file.0}}"] = "{{loop.index}}";
             </script>
             {% endfor %}
@@ -191,10 +192,9 @@
 <script type="text/html" id="file-prev">
     <div class="popup" id="preview">
         <a class="popbg" onclick="previewoff();"></a>
-        <div class="popup-content preview-content">
+        <div class="popup-content">
             <!--Preview -->
             <div class="preview-ctrl-bar">
-                <p class="preview-title">Preview File</p>
                 <div class="preview-ctrl-lbtns">
                     <button class="button preview-ctrl-btn" onclick="previewoff();"><i class="fa-sharp fa-solid fa-xmark"></i></button>
                 </div>
