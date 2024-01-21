@@ -14,7 +14,7 @@ import io
 from App.sql_init import sqlinit
 
 path = './Uploads'
-quick_token = 'jJPaERsj6wPq58VShWMAGVsS3V97FRN4UqM'
+quick_token = 'token_here'
 
 app = Flask(__name__, static_url_path='/static')
 app.config['SECRET_KEY'] = os.urandom(24)
