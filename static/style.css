@@ -59,6 +59,7 @@ input::-ms-clear {
   padding: 10px;
   border-radius: 10px;
   margin: 0;
+  line-height: 40px;
 }
 
 .title:hover {
@@ -313,9 +314,9 @@ button:active {
 
 .top-icons {
   position: relative;
-  margin-left: auto;
   pointer-events: all;
   display: flex;
+  margin: auto 10px auto auto;
 }
 
 .act-icons {
