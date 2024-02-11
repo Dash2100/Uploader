@@ -146,17 +146,13 @@
         <div class="file-list" id="file-list">
             <p class="no-files">Nothing to show here...</p>
             {% for file in all_files %}
-            <div class="file" id="{{loop.index}}" onclick="select('{{loop.index}}')">
-                <div class="file-card" id="{{loop.index}}-card" onclick='preview("{{file.0}}")'>
+            <div class="file" id="{{loop.index}}" data-file-name="{{file.0}}">
+                <div class="file-card" id="{{loop.index}}-card">
                     <div class="file-name" id="{{loop.index}}-name">{{file.0}}</div>
                     <div class="file-size">{{file.1}} | {{file.2}} ({{file.5}})</div>
                 </div>
-                <i class="modfile-icon fa-solid fa-pen-to-square" onclick='modify("{{file.0}}");'></i>
+                <i class="modfile-icon fa-solid fa-pen-to-square"></i>
             </div>
-
-            <script>
-                files_list["{{file.0}}"] = "{{loop.index}}";
-            </script>
             {% endfor %}
         </div>
         <!-- options -->

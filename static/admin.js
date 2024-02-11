@@ -8,8 +8,31 @@ let linkstate;
 let files_list = {};
 
 document.addEventListener('DOMContentLoaded', function () {
-  var domain = window.location.href.split('/')[2];
+  let domain = window.location.href.split('/')[2];
   $('#baseurl').text(domain + ' /');
+
+  $('.file').each(function () {
+    let fileName = $(this).data('file-name');
+    let fileId = this.id;
+    files_list[fileName] = fileId;
+  });
+
+  $('.file').click(function () {
+    var fileId = this.id;
+    select(fileId);
+  });
+
+  $('.file-card').click(function (e) {
+    e.stopPropagation(); // 防止事件冒泡到.file
+    var fileName = $(this).parent().data('file-name');
+    preview(fileName);
+  });
+
+  $('.modfile-icon').click(function (e) {
+    e.stopPropagation(); // 防止事件冒泡到.file
+    var fileName = $(this).closest('.file').data('file-name'); // 使用.closest()找到最近的.file父元素
+    modify(fileName);
+  });
 
   $(document).keyup(function (event) {
     if (event.which === 27) {
