@@ -26,7 +26,7 @@
     <div id="preview-area"></div>
     <div class="popup">
         <a class="popbg" onclick="popupoff();"></a>
-        <div class="popup-content">
+        <div class="popup-content modify-content">
             <!-- upload area -->
             <div class="upload-area" id="upload-area">
                 <div class="upload-file-titlebar">
@@ -76,6 +76,17 @@
                 <div id="link-input">
                     <p class="modfile-option-lable" id="baseurl">baseurl /</p>
                     <input type="text" class="link-input" id="shortlink"></input>
+                    <button class="button link-button" id="copylink" onclick="copylink();">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="icon icon-tabler icons-tabler-outline icon-tabler-copy">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" />
+                            <path
+                                d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1" />
+                        </svg>
+                    </button>
                 </div>
 
                 <div class="modfile-form">
@@ -120,14 +131,13 @@
             </a>
             <div class="top-icons">
                 <div class="opt-icons">
-                    <button class="button top-icon btn-group-left" onclick="searchopen();" title="Search">
+                    <button class="button top-icon btn-group" onclick="searchopen();" title="Search">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
-                    <button class="button top-icon btn-group-center" onclick="selectfile();" title="Select">
+                    <button class="button top-icon btn-group" onclick="selectfile();" title="Select">
                         <i class="fa-solid fa-bars"></i>
                     </button>
-                    <button class="button top-icon btn-group-right" onclick="location.replace('/logout')"
-                        title="Logout">
+                    <button class="button top-icon btn-group" onclick="location.replace('/logout')" title="Logout">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 </div>
@@ -188,12 +198,13 @@
 <script type="text/html" id="file-prev">
     <div class="popup" id="preview">
         <a class="popbg" onclick="previewoff();"></a>
-        <div class="popup-content">
+        <div class="popup-content preview-content">
             <!--Preview -->
             <div class="preview-ctrl-bar">
                 <div class="preview-ctrl-lbtns">
                     <button class="button preview-ctrl-btn" onclick="previewoff();"><i class="fa-sharp fa-solid fa-xmark"></i></button>
                 </div>
+                <p class="preview-title">Preview File</p>
                 <div class="preview-ctrl-rbtns">
                     <button class="button preview-ctrl-btn" onclick="window.open('%preview-link%')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
                     <button class="button preview-ctrl-btn" onclick="downloadFile('%filename%')"><i class="fa-solid fa-download"></i></button>

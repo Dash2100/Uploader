@@ -1,4 +1,3 @@
-let uploading = 0;
 let file_count = 0;
 let uploaded_count = 0;
 let sharebutton;
@@ -68,10 +67,8 @@ function upload() {
 }
 
 function popupoff() {
-  if (uploading === 0) {
-    var x = document.getElementsByClassName("popup")[0];
-    x.classList.remove("popup--opened");
-  }
+  var x = document.getElementsByClassName("popup")[0];
+  x.classList.remove("popup--opened");
 
   $('#savechange').off('click');
   $('#delfile').off('click');
@@ -563,7 +560,7 @@ function checkPreviewable(filename) {
   }
 
   let image = ['bmp', 'gif', 'ico', 'jpeg', 'jpg', 'png', 'svg', 'tiff', 'webp'];
-  let text = ['txt', 'md', 'log', 'csv', 'tsv', 'tab', 'json', 'xml', 'html', 'htm', 'css', 'js', 'jsx', 'php', 'rb', 'py', 'c', 'cpp', 'h', 'hpp', 'java', 'pl', 'sh', 'bat', 'ps1', 'sql', 'r', 'yaml', 'yml', 'ini', 'env', 'cmd'];
+  let text = ['txt', 'md', 'log', 'csv', 'tsv', 'tab', 'json', 'xml', 'html', 'htm', 'css', 'js', 'jsx', 'php', 'rb', 'py', 'c', 'cpp', 'h', 'hpp', 'java', 'pl', 'sh', 'bat', 'ps1', 'sql', 'r', 'yaml', 'yml', 'ini', 'env', 'cmd', 'ino'];
 
   if (ext === 'pdf') {
     return ext;
@@ -608,7 +605,9 @@ function preview(filename) {
     $.ajax({
       url: `/admin/preview/${filename}`,
       async: false,
+      CORS: true,
       success: function (data) {
+        console.log(data);
         text = data;
       }
     });
