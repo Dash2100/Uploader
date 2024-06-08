@@ -28,103 +28,103 @@ def execute_db(command, vals):
     con.commit()
     con.close()
 
-@app.route('/')
-def index():
-    #get all share=1 files in database
-    con = sqlite3.connect('database.db')
-    cur = con.cursor()
-    cur.execute("SELECT * FROM files WHERE share=1")
-    all_files = cur.fetchall()
-    con.close()
-    #sort list by sharedate
-    all_files.sort(key=lambda x: x[4], reverse=True)
-    return render_template('index.html', **locals())
+# @app.route('/')
+# def index():
+#     #get all share=1 files in database
+#     con = sqlite3.connect('database.db')
+#     cur = con.cursor()
+#     cur.execute("SELECT * FROM files WHERE share=1")
+#     all_files = cur.fetchall()
+#     con.close()
+#     #sort list by sharedate
+#     all_files.sort(key=lambda x: x[4], reverse=True)
+#     return render_template('index.html', **locals())
 
-@app.route('/<link>', methods = ['GET'])
-def link(link):
-    #get file from database
-    con = sqlite3.connect('database.db')
-    cur = con.cursor()
-    cur.execute("SELECT file FROM shorturls WHERE url=?", (link,))
-    file = cur.fetchone()
-    con.close()
+# @app.route('/<link>', methods = ['GET'])
+# def link(link):
+#     #get file from database
+#     con = sqlite3.connect('database.db')
+#     cur = con.cursor()
+#     cur.execute("SELECT file FROM shorturls WHERE url=?", (link,))
+#     file = cur.fetchone()
+#     con.close()
 
-    if file:
-        #update downloads
-        execute_db("UPDATE files SET downloads=downloads+1 WHERE name=?", (file[0],))
-        return send_from_directory(path, file[0], as_attachment=True)
-    else:
-        return render_template('404.html')
+#     if file:
+#         #update downloads
+#         execute_db("UPDATE files SET downloads=downloads+1 WHERE name=?", (file[0],))
+#         return send_from_directory(path, file[0], as_attachment=True)
+#     else:
+#         return render_template('404.html')
 
-@app.route('/pdfview', methods=['GET'])
-def pdf():
-    return render_template('viewer.html')
+# @app.route('/pdfview', methods=['GET'])
+# def pdf():
+#     return render_template('viewer.html')
 
-@app.route('/download/<filename>')
-def download(filename):
-    #check if file exists
-    if filename in os.listdir(path):
-        #check file share state
-        con = sqlite3.connect('database.db')
-        cur = con.cursor()
-        cur.execute("SELECT share FROM files WHERE name=?", (filename,))
-        share = cur.fetchone()[0]
-        con.close()
-        if share == 1:
-            #update downloads
-            execute_db("UPDATE files SET downloads=downloads+1 WHERE name=?", (filename,))
-            return send_from_directory(path, filename, as_attachment=True)
-        else:
-            return render_template('404.html')
-    else:
-        return render_template('404.html')
+# @app.route('/download/<filename>')
+# def download(filename):
+#     #check if file exists
+#     if filename in os.listdir(path):
+#         #check file share state
+#         con = sqlite3.connect('database.db')
+#         cur = con.cursor()
+#         cur.execute("SELECT share FROM files WHERE name=?", (filename,))
+#         share = cur.fetchone()[0]
+#         con.close()
+#         if share == 1:
+#             #update downloads
+#             execute_db("UPDATE files SET downloads=downloads+1 WHERE name=?", (filename,))
+#             return send_from_directory(path, filename, as_attachment=True)
+#         else:
+#             return render_template('404.html')
+#     else:
+#         return render_template('404.html')
     
-@app.route('/download/zip', methods=['POST'])
-def download_zip():
+# @app.route('/download/zip', methods=['POST'])
+# def download_zip():
 
-    download_files = request.get_json()['files']
+#     download_files = request.get_json()['files']
 
-    #check all file share state is on
-    con = sqlite3.connect('database.db')
-    cur = con.cursor()
-    cur.execute("SELECT name FROM files WHERE share=1")
-    shared_data = cur.fetchall()
-    con.close()
-    shared_files = [name[0] for name in shared_data]
+#     #check all file share state is on
+#     con = sqlite3.connect('database.db')
+#     cur = con.cursor()
+#     cur.execute("SELECT name FROM files WHERE share=1")
+#     shared_data = cur.fetchall()
+#     con.close()
+#     shared_files = [name[0] for name in shared_data]
 
-    for file in download_files:
-        if file not in shared_files:
-            return 'error'
+#     for file in download_files:
+#         if file not in shared_files:
+#             return 'error'
     
 
-    zip_buffer = io.BytesIO() # create a BytesIO buffer to hold the zip file
-    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-        for file in download_files:
-            zip_file.write(os.path.join(path, file))
+#     zip_buffer = io.BytesIO() # create a BytesIO buffer to hold the zip file
+#     with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+#         for file in download_files:
+#             zip_file.write(os.path.join(path, file))
 
-    zip_buffer.seek(0) # set the buffer's file position to the beginning
+#     zip_buffer.seek(0) # set the buffer's file position to the beginning
 
-    return send_file(zip_buffer,
-                     download_name='download.zip',
-                     as_attachment=True,
-                     mimetype='application/zip')
+#     return send_file(zip_buffer,
+#                      download_name='download.zip',
+#                      as_attachment=True,
+#                      mimetype='application/zip')
     
-@app.route('/preview/<filename>')
-def preview(filename):
-    #check if file exists
-    if filename in os.listdir(path):
-        #check file share state
-        con = sqlite3.connect('database.db')
-        cur = con.cursor()
-        cur.execute("SELECT share FROM files WHERE name=?", (filename,))
-        share = cur.fetchone()[0]
-        con.close()
-        if share == 1:
-            return send_from_directory(path, filename)
-        else:
-            return render_template('404.html')
-    else:
-        return render_template('404.html')
+# @app.route('/preview/<filename>')
+# def preview(filename):
+#     #check if file exists
+#     if filename in os.listdir(path):
+#         #check file share state
+#         con = sqlite3.connect('database.db')
+#         cur = con.cursor()
+#         cur.execute("SELECT share FROM files WHERE name=?", (filename,))
+#         share = cur.fetchone()[0]
+#         con.close()
+#         if share == 1:
+#             return send_from_directory(path, filename)
+#         else:
+#             return render_template('404.html')
+#     else:
+#         return render_template('404.html')
 
 @app.route('/quick/<token>')
 def quickUP(token):
@@ -137,118 +137,118 @@ def quickUP(token):
     else:
         return render_template('404.html')
 
-@app.route('/admin')
-@login_required
-def admin():
-    con = sqlite3.connect('database.db')
-    cur = con.cursor()
-    cur.execute("SELECT * FROM files")
-    all_files = cur.fetchall()
-    con.close()
-    all_files.reverse()
-    return render_template('admin.html', **locals())
+# @app.route('/admin')
+# @login_required
+# def admin():
+#     con = sqlite3.connect('database.db')
+#     cur = con.cursor()
+#     cur.execute("SELECT * FROM files")
+#     all_files = cur.fetchall()
+#     con.close()
+#     all_files.reverse()
+#     return render_template('admin.html', **locals())
 
 
-@app.route('/admin/upload', methods=['POST'])
-@login_required
-def upload_file():
-    if 'file' not in request.files:
-        return 'No file part'
-    file = request.files['file']
-    data = request.form
-    share = data['share']
-    print(f"[INFO] {file} uploaded")
-    if file.filename == '':
-        return 'No selected file'
-    if file:
-        while file.filename in os.listdir(path):
-            file.filename = '-' + file.filename
-        file.save(os.path.join(path, file.filename))
-        # Add file to database
-        now = datetime.now()
-        date = now.strftime("%Y-%m-%d %H:%M:%S")
-        #get file size in MB
-        size_bytes = os.path.getsize(os.path.join(path, file.filename))
-        #if size less than 1 MB, show in KB
-        if size_bytes < 1000000:
-            size = round(size_bytes / 1000, 3).__str__() + ' KB'
-        else:
-            size = round(size_bytes / 1000000, 3).__str__() + ' MB'
-        filename_base64 = file.filename.encode('utf-8')
-        if share == '0':
-            execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?, ?)', (file.filename, date, size, 0, "", 0))
-        else:
-            execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?, ?)', (file.filename, date, size, 1, date, 0))
-        return "success"
+# @app.route('/admin/upload', methods=['POST'])
+# @login_required
+# def upload_file():
+#     if 'file' not in request.files:
+#         return 'No file part'
+#     file = request.files['file']
+#     data = request.form
+#     share = data['share']
+#     print(f"[INFO] {file} uploaded")
+#     if file.filename == '':
+#         return 'No selected file'
+#     if file:
+#         while file.filename in os.listdir(path):
+#             file.filename = '-' + file.filename
+#         file.save(os.path.join(path, file.filename))
+#         # Add file to database
+#         now = datetime.now()
+#         date = now.strftime("%Y-%m-%d %H:%M:%S")
+#         #get file size in MB
+#         size_bytes = os.path.getsize(os.path.join(path, file.filename))
+#         #if size less than 1 MB, show in KB
+#         if size_bytes < 1000000:
+#             size = round(size_bytes / 1000, 3).__str__() + ' KB'
+#         else:
+#             size = round(size_bytes / 1000000, 3).__str__() + ' MB'
+#         filename_base64 = file.filename.encode('utf-8')
+#         if share == '0':
+#             execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?, ?)', (file.filename, date, size, 0, "", 0))
+#         else:
+#             execute_db('INSERT INTO files VALUES (?, ?, ?, ?, ?, ?)', (file.filename, date, size, 1, date, 0))
+#         return "success"
 
 
-@app.route('/admin/download/<string:filename>', methods=['GET'])
-@login_required
-def download_file(filename):
-    #check if file exists
-    if filename in os.listdir(path):
-        #update downloads
-        execute_db("UPDATE files SET downloads=downloads+1 WHERE name=?", (filename,))
-        return send_from_directory(path, filename, as_attachment=True)
-    else:
-        return render_template('404.html')
+# @app.route('/admin/download/<string:filename>', methods=['GET'])
+# @login_required
+# def download_file(filename):
+#     #check if file exists
+#     if filename in os.listdir(path):
+#         #update downloads
+#         execute_db("UPDATE files SET downloads=downloads+1 WHERE name=?", (filename,))
+#         return send_from_directory(path, filename, as_attachment=True)
+#     else:
+#         return render_template('404.html')
 
-@app.route('/admin/download/zip', methods=['POST'])
-@login_required
-def download_zip_admin():
-    download_files = request.get_json()['files']
+# @app.route('/admin/download/zip', methods=['POST'])
+# @login_required
+# def download_zip_admin():
+#     download_files = request.get_json()['files']
 
-    zip_buffer = io.BytesIO() # create a BytesIO buffer to hold the zip file
-    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-        for file in download_files:
-            zip_file.write(os.path.join(path, file))
+#     zip_buffer = io.BytesIO() # create a BytesIO buffer to hold the zip file
+#     with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+#         for file in download_files:
+#             zip_file.write(os.path.join(path, file))
 
-    zip_buffer.seek(0) # set the buffer's file position to the beginning
+#     zip_buffer.seek(0) # set the buffer's file position to the beginning
 
-    return send_file(zip_buffer,
-                     download_name='download.zip',
-                     as_attachment=True,
-                     mimetype='application/zip')
+#     return send_file(zip_buffer,
+#                      download_name='download.zip',
+#                      as_attachment=True,
+#                      mimetype='application/zip')
 
-@app.route('/admin/preview/<filename>')
-@login_required
-def admin_preview(filename):
-    #check if file exists
-    if filename in os.listdir(path):
-        #check file share state
-        con = sqlite3.connect('database.db')
-        cur = con.cursor()
-        cur.execute("SELECT share FROM files WHERE name=?", (filename,))
-        share = cur.fetchone()[0]
-        con.close()
-        return send_from_directory(path, filename)
-    else:
-        return render_template('404.html')
+# @app.route('/admin/preview/<filename>')
+# @login_required
+# def admin_preview(filename):
+#     #check if file exists
+#     if filename in os.listdir(path):
+#         #check file share state
+#         con = sqlite3.connect('database.db')
+#         cur = con.cursor()
+#         cur.execute("SELECT share FROM files WHERE name=?", (filename,))
+#         share = cur.fetchone()[0]
+#         con.close()
+#         return send_from_directory(path, filename)
+#     else:
+#         return render_template('404.html')
 
-@app.route('/admin/delfile' , methods=['POST'])
-@login_required
-def del_file():
-    filename = request.get_json()['filename']
-    try:
-        os.remove(os.path.join(path, filename))
-        execute_db('DELETE FROM files WHERE name = ?', (filename,))
-        execute_db('DELETE FROM shorturls WHERE file = ?', (filename,))
-        return "OK"
-    except FileNotFoundError:
-        return "Not Found"
+# @app.route('/admin/delfile' , methods=['POST'])
+# @login_required
+# def del_file():
+#     filename = request.get_json()['filename']
+#     try:
+#         os.remove(os.path.join(path, filename))
+#         execute_db('DELETE FROM files WHERE name = ?', (filename,))
+#         execute_db('DELETE FROM shorturls WHERE file = ?', (filename,))
+#         return "OK"
+#     except FileNotFoundError:
+#         return "Not Found"
 
-@app.route('/admin/multidelete', methods=['POST'])
-@login_required
-def multi_delete():
-    files = request.get_json()['files']
-    for file in files:
-        try:
-            os.remove(os.path.join(path, file))
-            execute_db('DELETE FROM files WHERE name = ?', (file,))
-            execute_db('DELETE FROM shorturls WHERE file = ?', (file,))
-        except FileNotFoundError:
-            pass
-    return "OK"
+# @app.route('/admin/multidelete', methods=['POST'])
+# @login_required
+# def multi_delete():
+#     files = request.get_json()['files']
+#     for file in files:
+#         try:
+#             os.remove(os.path.join(path, file))
+#             execute_db('DELETE FROM files WHERE name = ?', (file,))
+#             execute_db('DELETE FROM shorturls WHERE file = ?', (file,))
+#         except FileNotFoundError:
+#             pass
+#     return "OK"
 
 #use get to change share status in database
 @app.route('/admin/share', methods=['POST'])
