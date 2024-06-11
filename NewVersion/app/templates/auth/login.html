@@ -57,7 +57,15 @@
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = "/admin";
+                // check if url contain next=
+                let urlParams = new URLSearchParams(window.location.search);
+                let next = urlParams.get('next');
+
+                if (next) {
+                    window.location.href = next;
+                } else {
+                    window.location.href = "/admin";
+                }
             }
             else {
                 window.location.href = "../";

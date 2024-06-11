@@ -809,7 +809,7 @@ input:checked+.slider:before {
   justify-content: center;
   align-items: center;
   gap: 20px;
-  padding: 20px 90px 20px 90px;
+  padding: 200px;
 }
 
 .preview-text {

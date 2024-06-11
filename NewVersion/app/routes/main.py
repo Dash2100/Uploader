@@ -18,9 +18,12 @@ def index():
 
 @main.route('/<link>', methods=['GET'])
 def download(link):
-    # Get file name from ShortUrl
-    file = ShortUrl.query.filter_by(url=link).first()
-    file_name = file.file
+    try:
+        # Get file name from ShortUrl
+        file = ShortUrl.query.filter_by(url=link).first()
+        file_name = file.file
+    except:
+        return render_template('404.html'), 404
 
     # Update downloads count
     file = File.query.filter_by(name=file_name).first()
@@ -74,3 +77,17 @@ def download_zip():
                      attachment_filename='download.zip',
                      as_attachment=True,
                      mimetype='application/zip')
+
+@main.route('/<file_name>')
+def preview_file(filename):
+    # check if file exists and is shared
+    file = File.query.filter_by(name=filename).first()
+    if not file or file.share == 0:
+        return render_template('404.html'), 404
+    
+    # send preview file
+    return send_from_directory('files_path', filename)
+
+@main.route('/pdf_viewer', methods=['GET'])
+def pdf_viewer():
+    return render_template('preview/pdf_viewer.html')

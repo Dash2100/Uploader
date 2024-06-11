@@ -584,13 +584,13 @@ function preview(filename) {
     var link = `/admin/preview/${filename}`;
     var content =
       `<div class="preview-info">
-          <a class="preview-notavailable">Preview not available</a>
-          <button class="button preview-download" onclick="downloadFile('${filename}')">Download</button>
-      </div>`;
+                    <a class="preview-notavailable">Preview not available</a>
+                    <button class="button preview-download" onclick="downloadFile('${filename}')">Download</button>
+            </div>`;
   }
 
   if (filetype === 'pdf') {
-    var link = `/pdfview?file=/admin/preview/${filename}`
+    var link = `/pdf_viewer?file=/admin/preview/${filename}`
     var content = `<iframe class="preview-iframe" src="${link}"></iframe>`;
   }
 

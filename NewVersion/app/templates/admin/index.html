@@ -137,7 +137,7 @@
                     <button class="button top-icon btn-group" onclick="selectfile();" title="Select">
                         <i class="fa-solid fa-bars"></i>
                     </button>
-                    <button class="button top-icon btn-group" onclick="location.replace('/logout')" title="Logout">
+                    <button class="button top-icon btn-group" onclick="location.replace('/auth/logout')" title="Logout">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 </div>
@@ -156,10 +156,10 @@
         <div class="file-list" id="file-list">
             <p class="no-files">Nothing to show here...</p>
             {% for file in all_files %}
-            <div class="file" id="{{loop.index}}" data-file-name="{{file.0}}">
+            <div class="file" id="{{loop.index}}" data-file-name="{{file.name}}">
                 <div class="file-card" id="{{loop.index}}-card">
-                    <div class="file-name" id="{{loop.index}}-name">{{file.0}}</div>
-                    <div class="file-size">{{file.1}} | {{file.2}} ({{file.5}})</div>
+                    <div class="file-name" id="{{loop.index}}-name">{{file.name}}</div>
+                    <div class="file-size">{{file.date}} | {{file.size}} ({{file.downloads}})</div>
                 </div>
                 <i class="modfile-icon fa-solid fa-pen-to-square"></i>
             </div>
