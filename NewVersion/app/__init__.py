@@ -5,8 +5,9 @@ from .extensions import init_login_manager
 import os
 
 from .routes.main import main
-from .routes.admin import admin
 from .routes.auth import auth
+from .routes.files import files
+from .routes.preview import preview
 
 def create_app():
     app = Flask(__name__, static_url_path='/static', instance_relative_config=True)
@@ -17,7 +18,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Initialize the database
-    db = init_db(app)
+    init_db(app)
 
     # Initialize Login Manager
     init_login_manager(app)
@@ -28,8 +29,9 @@ def create_app():
         os.makedirs(uploads_dir)
 
     # Register blueprints
-    app.register_blueprint(main)
+    app.register_blueprint(main, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
-    app.register_blueprint(admin, url_prefix='/admin')
+    app.register_blueprint(files, url_prefix='/files')
+    app.register_blueprint(preview, url_prefix='/preview')
 
     return app

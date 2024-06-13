@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function downloadFile(filename) {
-    let url = '/download/' + filename;
+    let url = '/files/download/' + filename;
     let a = document.createElement('a');
     a.href = url;
     a.download = filename;
@@ -29,7 +29,7 @@ function downloadzip() {
     // post to /download/zip and save
     var data = JSON.stringify({ files: selected });
     $.ajax({
-        url: "/download/zip",
+        url: "/files/download_zip",
         method: "post",
         data: data,
         contentType: "application/json;charset=utf-8",

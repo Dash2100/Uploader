@@ -11,7 +11,7 @@ auth = Blueprint('auth', __name__)
 def login():
     # Check if user is already logged in
     if current_user.is_authenticated:
-        return redirect(url_for('admin.index'))
+        return redirect(url_for('main.index_admin'))
 
     if request.method == 'POST':
         request_data = request.get_json()

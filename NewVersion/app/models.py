@@ -23,7 +23,9 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
 class File(db.Model):
-    name = db.Column(db.String(120), primary_key=True)
+    uuid = db.Column(db.String(120), primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    extension = db.Column(db.String(120), nullable=False)
     date = db.Column(db.String(120), nullable=False)
     size = db.Column(db.String(120), nullable=False)
     share = db.Column(db.Integer, default=0)

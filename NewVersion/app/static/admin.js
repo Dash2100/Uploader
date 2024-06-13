@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function downloadFile(filename) {
-  let url = '/admin/download/' + filename;
+  let url = '/files/download/' + filename;
   let a = document.createElement('a');
   a.href = url;
   a.download = filename;
@@ -114,10 +114,10 @@ function downloadzip() {
   $('#download-btn-loading').show();
   $('#downloadzip-btn').prop('disabled', true);
   $('#multimodify-btn').addClass('select-edit-hide');
-  // post to /admin/download/zip and save
+  // post to /admin/download_zip and save
   var data = JSON.stringify({ files: selected });
   $.ajax({
-    url: "/admin/download/zip",
+    url: "/files/download_zip",
     method: "post",
     data: data,
     contentType: "application/json;charset=utf-8",
@@ -147,8 +147,6 @@ function downloadzip() {
     }, 280);
   });
 }
-
-
 
 function delFile(filename) {
   Swal.fire({

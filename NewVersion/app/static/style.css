@@ -813,8 +813,7 @@ input:checked+.slider:before {
 }
 
 .preview-text {
-  width: 800px;
-  max-width: 80vw;
+  width: 60dvw;
   height: 70vh;
   border: none;
   border-radius: 10px;
@@ -895,8 +894,10 @@ input:checked+.slider:before {
   }
 
   .preview-text {
-    height: 88%;
-    border-radius: 10px;
+    height: 90%;
+    width: 93dvw;
+    border-radius: 0;
+    font-size: 15px;
   }
 
   .modfile-icon {

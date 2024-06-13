@@ -2,7 +2,7 @@ let sharestate = "Default";
 
 $(function () {
   $('#drop-area').dmUploader({
-    url: '/admin/upload',
+    url: '/files/upload',
     auto: true,
     queue: false,
     onDragEnter: function () {
@@ -88,5 +88,5 @@ function debug() {
   $('.upload-options').hide();
   $(".upload-options-area").hide();
 
-  add_file(1, {name:'thisisatestfileanditsnameisverylonganditshouldnotfitintheboxbutitdoes.png'});
+  add_file(1, { name: 'thisisatestfileanditsnameisverylonganditshouldnotfitintheboxbutitdoes.png' });
 }
