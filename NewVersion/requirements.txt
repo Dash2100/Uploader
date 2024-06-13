@@ -1,3 +1,0 @@
-Flask
-flask-login
-flask_sqlalchemy
