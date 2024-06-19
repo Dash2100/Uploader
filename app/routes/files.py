@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, send_file, send_from_directory, current_app, g
+from flask import Blueprint, render_template, request, send_file, send_from_directory, current_app, g, jsonify
 
 from ..models import File  # File model
 from ..database import db  # db object
@@ -19,62 +19,76 @@ def before_request_files():
     if 'UPLOADS_DIR' in current_app.config:
         g.files_path = current_app.config['UPLOADS_DIR']
 
+@files.route('/list', methods=['POST'])
+def list_files():
+    data = request.get_json()
+    page = data.get('page', 1)  # 確保頁碼是整數，預設值為第 1 頁
+    admin_mode = data.get('admin_mode', False)  # 預設值為非管理員模式 預設值為非管理員模式
+
+    files_per_page = 15
+
+    query = File.query
+    if not admin_mode:
+        query = query.filter_by(share=1)
+    else:
+        if current_user.is_authenticated == False:            
+            return jsonify([])
+
+    # 使用 paginate 方法直接在資料庫層面進行分頁
+    pagination = query.order_by(File.date.desc()).paginate(page=page, per_page=files_per_page, error_out=False)
+    files = pagination.items
+
+    # 建構響應列表
+    files_list = [{'uuid': file.uuid, 'name': file.name, 'date': file.date, 'size': file.size, 'downloads': file.downloads} for file in files]
+
+    return jsonify(files_list)
+
+
 @files.route('/download', methods=['GET'])
 def download_file():
     # Get file UUID from request
     file_uuid = request.args.get('file')
     file = File.query.filter_by(uuid=file_uuid).first()
-
-    # check if file exists
-    if not file:
-        return render_template('404.html'), 404
-
-    # check if user is logged in and file is shared
-    # if current_user.is_authenticated == False:
-    #     if file.share == 0:
-    #         return render_template('404.html'), 404
-        
-    # Change file name to original name
-    file_name = file.name
-
+    
+    # check file and authentication
+    if not file or current_user.is_authenticated == False and file.share == 0:
+        return jsonify({'error': 'File not exists or not shared'}), 404
+    
     # Update downloads count
     file.downloads += 1
     db.session.commit()
 
     # Return file name
-    return send_from_directory(g.files_path, f'{file_uuid}.{file.extension}', as_attachment=True, download_name=file_name)
+    return send_from_directory(g.files_path, f'{file_uuid}.{file.extension}', as_attachment=True, download_name=file.name)
 
 # 等待修改成UUID方法取得檔案
 @files.route('/download_zip', methods=['POST'])
 def download_zip():
     download_files = request.get_json()['files']
 
-    for file_name in download_files:
-        file = File.query.filter_by(name=file_name).first()
-
-        if not file:
-            return "Files not exist", 400
-
-        # check if user is logged in
-        if current_user.is_authenticated == False:
-            if file.share == 0:
-                return render_template('404.html'), 404
-        
-    # Update downloads count
-    for file_name in download_files:
-        file = File.query.filter_by(name=file_name).first()
-        file.downloads += 1
-        db.session.commit()
-
     zip_buffer = io.BytesIO()
-    with zipfile.ZipFile(zip_buffer, 'a') as zip_file:  # Corrected typo 'Zipfile' to 'ZipFile'
+
+    with zipfile.ZipFile(zip_buffer, 'a') as zip_file:
         for file_name in download_files:
-            zip_file.write(os.path.join(g.files_path, file_name), arcname=file_name)
+            file = File.query.filter_by(name=file_name).first()
+
+            # check file and authentication
+            if not file or current_user.is_authenticated == False and file.share == 0:
+                return jsonify({'error': 'File not exists or not shared'}), 404
+            
+            # Update downloads count
+            file = File.query.filter_by(name=file_name).first()
+            file.downloads += 1
+            db.session.commit()
+
+            # Add file to zip
+            file_name_physical = f'{file.uuid}.{file.extension}' if file.extension else file.uuid
+            zip_file.write(os.path.join(g.files_path, file_name_physical), file_name)
 
     zip_buffer.seek(0)
 
     return send_file(zip_buffer,
-                     attachment_filename='Uploader_Downloads.zip',
+                     download_name='Uploader_Downloads.zip',
                      as_attachment=True,
                      mimetype='application/zip')
 
@@ -85,11 +99,9 @@ def upload():
     if 'file' not in request.files:
         return 'No file part', 400
     
-    # Get uploaded file properties
-    data = request.form
-    share = data['share']
-    
+    # Get user upload data
     file = request.files['file']
+    share = request.form['share']
 
     print(f"[INFO] {file} uploaded")
 
@@ -136,7 +148,6 @@ def upload():
     db.session.add(new_file)
     db.session.commit()
 
-    # Return to index
     return "success", 200
 
 def delete_file_by_name(filename):
@@ -161,7 +172,7 @@ def del_file():
         return "success", 200   
     else:
         print(f"[ERROR] Error while deleting {filename}")
-        return f"error while deleting {filename}", 400
+        return jsonify({'error': 'Error while deleting file'}), 400
 
 @files.route('/multidelete', methods=['POST'])
 @login_required
@@ -170,6 +181,6 @@ def multi_delete():
     for file in files:
         if delete_file_by_name(file) == False:
             print(f"[ERROR] Error while deleting {file}")
-            return f"error while deleting {file}", 400
+            return jsonify({'error': 'Error while deleting file'}), 400
         
     return "success", 200

@@ -10,7 +10,7 @@ main = Blueprint('main', __name__)
 def index_guest():
     # Get all shared files
     shared_files = File.query.filter_by(share=1).all()
-    files_list = [{'name': file.name, 'date': file.date, 'size': file.size, 'downloads': file.downloads} for file in shared_files]
+    files_list = [{'uuid': file.uuid, 'name': file.name, 'date': file.date, 'size': file.size, 'downloads': file.downloads} for file in shared_files]
 
     return render_template('guest/index.html', all_files=files_list)
 
@@ -19,7 +19,7 @@ def index_guest():
 def index_admin():
     # Get all files
     all_files = File.query.all()
-    files_list = [{'name': file.name, 'date': file.date, 'size': file.size, 'downloads': file.downloads} for file in all_files]
+    files_list = [{'uuid': file.uuid, 'name': file.name, 'date': file.date, 'size': file.size, 'downloads': file.downloads} for file in all_files]
 
     # reverse the list
     files_list.reverse()

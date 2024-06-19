@@ -25,7 +25,7 @@ class User(UserMixin, db.Model):
 class File(db.Model):
     uuid = db.Column(db.String(120), primary_key=True)
     name = db.Column(db.String(120), nullable=False)
-    extension = db.Column(db.String(120), nullable=False)
+    extension = db.Column(db.String(120))
     date = db.Column(db.String(120), nullable=False)
     size = db.Column(db.String(120), nullable=False)
     share = db.Column(db.Integer, default=0)
