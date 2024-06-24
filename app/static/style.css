@@ -482,7 +482,7 @@ p {
     display: none;
 }
 
-#file-list {
+.file-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -524,11 +524,27 @@ p {
     cursor: pointer;
 }
 
-.file-template {
+.file-placeholder {
     height: 58px;
+    margin-top: 15px;
     padding-top: 0;
     padding-bottom: 0;
+    background: linear-gradient(to right, #32384f 2%, #353b54 18%, #414968 33%, #353b54 48%, #32384f 64%);
+    background-size: 1300px 100%;
+    animation: placeholderAnimate 3s linear infinite;
 }
+
+@keyframes placeholderAnimate {
+    0% {
+        background-position: -1300px 0;
+    }
+
+    100% {
+        background-position: 1300px 0;
+    }
+}
+
+
 
 .file-card-disable {
     pointer-events: none;

@@ -4,6 +4,9 @@ let sharebutton;
 let linkbutton;
 let linkstate;
 
+let isLoaded = false;
+let page = 1;
+
 let files_list = {};
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -12,27 +15,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     getFileList();
 
-    $('.file').each(function () {
-        let fileName = $(this).data('file-name');
-        let fileId = this.id;
-        files_list[fileName] = fileId;
-    });
-
-    $('.file').click(function () {
-        var fileId = this.id;
-        select(fileId);
-    });
-
-    // $('.file-card').click(function (e) {
-    //     e.stopPropagation(); // 防止事件冒泡到.file
-    //     var fileName = $(this).parent().data('file-uuid');
-    //     preview(fileName);
-    // });
-
     $('.modfile-icon').click(function (e) {
         e.stopPropagation(); // 防止事件冒泡到.file
-        var fileName = $(this).closest('.file').data('file-name'); // 使用.closest()找到最近的.file父元素
+        let fileName = $(this).closest('.file').data('file-name'); // 使用.closest()找到最近的.file父元素
         modify(fileName);
+    });
+
+    $('#file-list-area').on('scroll', function () {
+        let $this = $(this);
+        if (!isLoading && $this.scrollTop() + $this.innerHeight() >= $this[0].scrollHeight - 100) {
+            isLoading = true; // 標記正在加載中
+            getFileList(page);
+        }
     });
 
     $(document).keyup(function (event) {
@@ -46,9 +40,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-function getFileList(page) {
+function getFileList(reqPage) {
     let data = JSON.stringify({
-        "page": page,
+        "page": reqPage,
         "admin_mode": true
     });
 
@@ -58,6 +52,14 @@ function getFileList(page) {
         contentType: "application/json;charset=utf-8",
         data: data,
         success: function (filesList) {
+
+            if (filesList.length === 0) {
+                $('#file-list-area').off('scroll');
+                $('.file-placeholder').hide();
+                isLoading = false;
+                return;
+            }
+
             filesList.forEach(fileData => {
                 let template = $('#file-block-template').text()
                     .replace('%file-name%', fileData.name)
@@ -65,28 +67,34 @@ function getFileList(page) {
                     .replace('%file-size%', fileData.size)
                     .replace('%file-downloads%', fileData.downloads)
 
-                // prop id to it
                 template = $(template);
                 template.prop('id', fileData.uuid);
 
-                // preview file event
                 template.find('.file-card').click(function (e) {
                     preview(fileData.name);
                 });
 
-                // add to list
                 $('#file-list').append(template);
-
-                // add to files_list
                 files_list[fileData.name] = fileData.uuid;
+
+                template.click(function () {
+                    select(fileData.uuid);
+                });
             });
 
+            page++;
+            isLoading = false;
+        },
+        error: function () {
+            isLoading = false;
         }
     });
 }
 
 function downloadFile(filename) {
-    let url = '/files/download?file=' + filename;
+    let file_uuid = files_list[filename];
+
+    let url = '/files/download?file=' + file_uuid;
     let a = document.createElement('a');
     a.href = url;
     a.download = filename;
@@ -424,7 +432,9 @@ function func_button() {
 function select(fileID) {
     if (selecting === 1) {
 
-        let filename = $('#' + fileID + "-name").text();
+        let fileObj = $($('#' + fileID).html());
+        let filename = fileObj.find('.file-name').text();
+
         if (selected.includes(filename)) {
             selected.splice(selected.indexOf(filename), 1);
             multi_select_ui(fileID, 1);
@@ -434,8 +444,6 @@ function select(fileID) {
             multi_select_ui(fileID, 0);
         }
     }
-
-
 }
 
 function multi_select_ui(fileID, state) {
@@ -470,7 +478,7 @@ function multidelete() {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "/admin/multidelete",
+                url: "/files/multidelete",
                 method: "post",
                 data: JSON.stringify({ files: selected }),
                 contentType: "application/json;charset=utf-8",
