@@ -7,11 +7,15 @@ let linkstate;
 let isLoaded = false;
 let page = 1;
 
-let files_list = {};
+let files_list = {}; // filename -> uuid
+let files_names = {}; // uuid -> filename
 
 document.addEventListener('DOMContentLoaded', function () {
     let domain = window.location.href.split('/')[2];
     $('#baseurl').text(domain + ' /');
+
+    // 初始隱藏 placeholder
+    $('.file-placeholder').hide();
 
     getFileList();
 
@@ -25,6 +29,8 @@ document.addEventListener('DOMContentLoaded', function () {
         let $this = $(this);
         if (!isLoading && $this.scrollTop() + $this.innerHeight() >= $this[0].scrollHeight - 100) {
             isLoading = true; // 標記正在加載中
+            // 顯示 loading placeholder
+            $('.file-placeholder').show();
             getFileList(page);
         }
     });
@@ -52,10 +58,11 @@ function getFileList(reqPage) {
         contentType: "application/json;charset=utf-8",
         data: data,
         success: function (filesList) {
+            // 隱藏 loading placeholder
+            $('.file-placeholder').hide();
 
             if (filesList.length === 0) {
                 $('#file-list-area').off('scroll');
-                $('.file-placeholder').hide();
                 isLoading = false;
                 return;
             }
@@ -71,11 +78,12 @@ function getFileList(reqPage) {
                 template.prop('id', fileData.uuid);
 
                 template.find('.file-card').click(function (e) {
-                    preview(fileData.name);
+                    preview(fileData.uuid); // 改為傳入UUID
                 });
 
                 $('#file-list').append(template);
                 files_list[fileData.name] = fileData.uuid;
+                files_names[fileData.uuid] = fileData.name;
 
                 template.click(function () {
                     select(fileData.uuid);
@@ -86,6 +94,8 @@ function getFileList(reqPage) {
             isLoading = false;
         },
         error: function () {
+            // 發生錯誤時也要隱藏 loading placeholder
+            $('.file-placeholder').hide();
             isLoading = false;
         }
     });
@@ -131,18 +141,18 @@ function hideall() {
     $('#multi-modfile-area').hide();
 }
 
-function modify(name) {
+function modify(uuid) {
     sharebutton = 0;
     linkbutton = 0;
     linkstate = 0;
     hideall();
-    filestate(name);
+    filestate(uuid);
     $('#link-input').hide();
     $('#modfile-area').show();
-    $('#savechange').on('click', function () { save(name); });
-    $('#delfile').on('click', function () { delFile(name); });
-    $('#rename').on('click', function () { rename(name); });
-    $('#modfile-name').html(name);
+    $('#savechange').on('click', function () { save(uuid); });
+    $('#delfile').on('click', function () { delFile(uuid); });
+    $('#rename').on('click', function () { rename(uuid); });
+    $('#modfile-name').html(files_names[uuid]);
     var x = document.getElementsByClassName("popup")[0];
     x.classList.add("popup--opened");
 }
@@ -198,7 +208,7 @@ function downloadzip() {
     });
 }
 
-function delFile(filename) {
+function delFile(uuid) {
     Swal.fire({
         title: 'Delete?',
         text: "You won't be able to revert this!",
@@ -213,7 +223,7 @@ function delFile(filename) {
             $.ajax({
                 url: "/admin/delfile",
                 method: "post",
-                data: JSON.stringify({ filename: filename }),
+                data: JSON.stringify({ uuid: uuid }),
                 contentType: "application/json;charset=utf-8",
                 success: function (res) {
                     if (res === "OK") {
@@ -266,12 +276,12 @@ function file_progress(id, percent) {
     }
 }
 
-function filestate(filename) {
+function filestate(uuid) {
     $.ajax({
         url: "/admin/filestate",
         method: "post",
         contentType: "application/json;charset=utf-8",
-        data: JSON.stringify({ filename: filename }),
+        data: JSON.stringify({ uuid: uuid }),
         success: function (res) {
             var res = JSON.parse(res);
             sharebutton = res.share;
@@ -297,7 +307,7 @@ function filestate(filename) {
     });
 }
 
-function save(filename) {
+function save(uuid) {
     var shortlink = $('#shortlink').val();
     if ($('#Share-check').is(":checked") === true) {
         var sstate = 1;
@@ -313,7 +323,7 @@ function save(filename) {
         $.ajax({
             url: "/admin/share",
             method: "post",
-            data: JSON.stringify({ filename: filename, state: sstate }),
+            data: JSON.stringify({ uuid: uuid, state: sstate }),
             contentType: "application/json;charset=utf-8",
             success: function (res) {
                 if (res === "OK") {
@@ -327,7 +337,7 @@ function save(filename) {
             $.ajax({
                 url: "/admin/shortlink",
                 method: "post",
-                data: JSON.stringify({ shortlink: shortlink, filename: filename }),
+                data: JSON.stringify({ shortlink: shortlink, uuid: uuid }),
                 contentType: "application/json;charset=utf-8",
                 success: function (res) {
                     if (res === "OK") {
@@ -366,7 +376,7 @@ function save(filename) {
         $.ajax({
             url: "/admin/delshortlink",
             method: "post",
-            data: JSON.stringify({ filename: filename }),
+            data: JSON.stringify({ uuid: uuid }),
             contentType: "application/json;charset=utf-8",
             success: function (res) {
                 if (res === "OK") {
@@ -429,19 +439,19 @@ function func_button() {
     }
 }
 
-function select(fileID) {
+function select(uuid) {
     if (selecting === 1) {
 
-        let fileObj = $($('#' + fileID).html());
+        let fileObj = $($('#' + uuid).html());
         let filename = fileObj.find('.file-name').text();
 
-        if (selected.includes(filename)) {
-            selected.splice(selected.indexOf(filename), 1);
-            multi_select_ui(fileID, 1);
+        if (selected.includes(uuid)) {
+            selected.splice(selected.indexOf(uuid), 1);
+            multi_select_ui(uuid, 1);
         }
         else {
-            selected.push(filename);
-            multi_select_ui(fileID, 0);
+            selected.push(uuid);
+            multi_select_ui(uuid, 0);
         }
     }
 }
@@ -480,7 +490,7 @@ function multidelete() {
             $.ajax({
                 url: "/files/multidelete",
                 method: "post",
-                data: JSON.stringify({ files: selected }),
+                data: JSON.stringify({ uuids: selected }),
                 contentType: "application/json;charset=utf-8",
                 success: function (res) {
                     if (res === "OK") {
@@ -501,7 +511,7 @@ function multishare() {
     $.ajax({
         url: "/admin/multishare",
         method: "post",
-        data: JSON.stringify({ files: selected, state: multistate }),
+        data: JSON.stringify({ uuids: selected, state: multistate }),
         contentType: "application/json;charset=utf-8",
         success: function (res) {
             popupoff();
@@ -532,12 +542,13 @@ $(document).mouseup(function (e) {
 
 
 //rename
-function rename(file) {
+function rename(uuid) {
+    let filename = files_names[uuid];
     Swal.fire({
         title: 'Rename',
-        text: "Enter a new name for " + file + ":",
+        text: "Enter a new name for " + filename + ":",
         input: 'text',
-        inputValue: file,
+        inputValue: filename,
         inputAttributes: {
             autocapitalize: 'off',
             id: 'rename-input'
@@ -557,7 +568,7 @@ function rename(file) {
                     `You must enter a name`
                 )
             }
-            else if (newname === file) {
+            else if (newname === filename) {
                 Swal.showValidationMessage(
                     `You must enter a different name`
                 )
@@ -571,7 +582,7 @@ function rename(file) {
                 return $.ajax({
                     url: "/admin/rename",
                     method: "post",
-                    data: JSON.stringify({ filename: file, newname: newname }),
+                    data: JSON.stringify({ uuid: uuid, newname: newname }),
                     contentType: "application/json;charset=utf-8",
                     success: function (res) {
                         if (res === "OK") {
@@ -625,11 +636,12 @@ function checkPreviewable(filename) {
     return false;
 }
 
-function preview(filename) {
-
+function preview(uuid) {
+    let filename = files_names[uuid]; // 取得檔名用於顯示
     let filetype = checkPreviewable(filename);
+
     if (!filetype) {
-        var link = `/admin/preview/${filename}`;
+        var link = `/preview/${uuid}`;
         var content =
             `<div class="preview-info">
                     <a class="preview-notavailable">Preview not available</a>
@@ -638,24 +650,23 @@ function preview(filename) {
     }
 
     if (filetype === 'pdf') {
-        var link = `/pdf_viewer?file=/admin/preview/${filename}`
+        var link = `/pdf_viewer?file=/preview/${uuid}`
         var content = `<iframe class="preview-iframe" src="${link}"></iframe>`;
     }
 
     if (filetype === 'image') {
-        var link = `/admin/preview/${filename}`;
+        var link = `/preview/${uuid}`;
         var content = `<img class="preview-img" src="${link}">`;
     }
 
     if (filetype === 'text') {
-        var link = `/admin/preview/${filename}`;
+        var link = `/preview/${uuid}`;
         var text = '';
         $.ajax({
-            url: `/admin/preview/${filename}`,
+            url: `/preview/${uuid}`,
             async: false,
             CORS: true,
             success: function (data) {
-                console.log(data);
                 text = data;
             }
         });
@@ -663,9 +674,8 @@ function preview(filename) {
         var content = `<textarea readonly class="preview-text">${text}</textarea>`;
     }
 
-
     let template = $('#file-preview-template').text();
-    template = template.replace('%filename%', filename);
+    template = template.replace('%filename%', filename); // 顯示用還是用檔名
     template = template.replace('%preview-content%', content);
     template = template.replace('%preview-link%', link);
 

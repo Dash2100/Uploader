@@ -32,4 +32,4 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('main.index'))  # Ensure 'main.index' is the correct endpoint
+    return redirect(url_for('main.index_guest'))
