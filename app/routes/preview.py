@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, send_from_directory, current_app, g
+from flask import Blueprint, render_template, send_from_directory, current_app, g, abort
+import os
 from ..models import File
 from .auth import current_user
 
@@ -11,22 +12,40 @@ def before_request_preview():
 
 @preview.route('/<file_uuid>')
 def preview_file(file_uuid):
-    # 使用 UUID 查詢文件
-    file = File.query.filter_by(uuid=file_uuid).first()
-    
-    # 檢查文件是否存在
-    if not file:
-        return render_template('404.html'), 404
+    try:
+        # 使用 UUID 查詢文件
+        file = File.query.filter_by(uuid=file_uuid).first()
         
-    # 檢查訪問權限
-    if not current_user.is_authenticated and file.share == 0:
+        # 檢查文件是否存在資料庫中
+        if not file:
+            return render_template('404.html'), 404
+            
+        # 檢查訪問權限
+        if not current_user.is_authenticated and file.share == 0:
+            return render_template('404.html'), 404
+
+        # 構建完整的文件路徑
+        file_path = os.path.join(g.files_path, f'{file_uuid}.{file.extension}')
+        
+        # 檢查文件是否實際存在於檔案系統中
+        if not os.path.exists(file_path):
+            return render_template('404.html'), 404
+
+        # 發送預覽文件
+        try:
+            return send_from_directory(
+                directory=g.files_path,
+                path=f'{file_uuid}.{file.extension}',
+                as_attachment=False,
+                download_name=file.name
+            )
+        except Exception as e:
+            current_app.logger.error(f"文件發送失敗: {str(e)}")
+            abort(404)
+            
+    except Exception as e:
+        current_app.logger.error(f"預覽過程發生錯誤: {str(e)}")
         return render_template('404.html'), 404
-    
-    # 構建完整文件名稱
-    full_filename = f"{file.uuid}{file.extension}"
-    
-    # 發送預覽文件
-    return send_from_directory(g.files_path, full_filename)
 
 @preview.route('/pdf_viewer', methods=['GET'])
 def pdf_viewer():

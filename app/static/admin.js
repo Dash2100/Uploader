@@ -393,6 +393,8 @@ function selectfile() {
     selecting = 1;
     functioning = 1;
     topiconhide();
+    // 隱藏 loading placeholders
+    $('.file-placeholder').hide();
     $('.edit-options').show();
     $('.modfile-icon').addClass('hide');
     $('.file-card').addClass('file-card-disable');
