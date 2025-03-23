@@ -12,12 +12,12 @@ Navigate to `localhost:5090` or `http://127.0.0.1:5090/`
 
 <!-- ## TODO -->
 
-* fix / photo preview size
-* add / video preview
-* add / file download password
-* add / get preview URL not download URL
-* add / OG URL preview
-* add / copy short link
+<!-- * fix / photo preview size -->
+<!-- * add / video preview -->
+<!-- * add / file download password -->
+<!-- * add / get preview URL not download URL -->
+<!-- * add / OG URL preview -->
+<!-- * add / copy short link -->
 
 <!-- * add / name changing -->
 <!-- * add / Download count -->
