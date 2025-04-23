@@ -21,9 +21,12 @@ def before_request_files():
 
 @files.route('/list', methods=['POST'])
 def list_files():
-    data = request.get_json()
+    if request.is_json:
+        data = request.get_json()
+    else:
+        data = {}
     page = data.get('page', 1)  # 確保頁碼是整數，預設值為第 1 頁
-    admin_mode = data.get('admin_mode', False)  # 預設值為非管理員模式 預設值為非管理員模式
+    admin_mode = data.get('admin_mode', False)  # 預設值為非管理員模式
 
     files_per_page = 15
 

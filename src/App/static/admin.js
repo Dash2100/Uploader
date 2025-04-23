@@ -647,12 +647,12 @@ function preview(uuid) {
         var content =
             `<div class="preview-info">
                     <a class="preview-notavailable">Preview not available</a>
-                    <button class="button preview-download" onclick="downloadFile('${filename}')">Download</button>
+                    <button class="button preview-download" onclick="downloadFile('${uuid}')">Download</button>
             </div>`;
     }
 
     if (filetype === 'pdf') {
-        var link = `/pdf_viewer?file=/preview/${uuid}`
+        var link = `/preview/pdf_viewer?file=/preview/${uuid}`
         var content = `<iframe class="preview-iframe" src="${link}"></iframe>`;
     }
 

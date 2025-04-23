@@ -69,7 +69,7 @@ input::-ms-clear {
 }
 
 .titlebar {
-    margin: 20px 0;
+    margin: 17px 0;
     display: flex;
 }
 
@@ -486,7 +486,7 @@ p {
 .file-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 14px;
 }
 
 .file-list-out {
