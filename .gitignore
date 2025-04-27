@@ -1,12 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudio,python,macos,windows,vim,jetbrains,node,flask
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio,python,macos,windows,vim,jetbrains,node,flask
 
-### Flask ###
-instance/*
-!instance/.gitignore
-.webassets-cache
-.env
-
 ### Flask.Python Stack ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -70,9 +64,6 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-
-# Flask stuff:
-instance/
 
 # Scrapy stuff:
 .scrapy
