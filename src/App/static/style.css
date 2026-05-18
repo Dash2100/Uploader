@@ -469,14 +469,14 @@ p {
 /* filecard */
 
 .file-list-area {
-    overflow-y: scroll;
+    overflow-y: auto;
     background-color: #2e334b;
     border-radius: 20px;
     padding: 20px 15px;
     margin-top: -60px;
+    min-height: 140px;
     max-height: calc(100dvh - 145px);
     box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, .2);
-    height: 100dvh;
 }
 
 .file-list-area::-webkit-scrollbar {
@@ -526,6 +526,7 @@ p {
 }
 
 .file-placeholder {
+    display: none;
     height: 58px;
     margin-top: 15px;
     padding-top: 0;
@@ -533,6 +534,10 @@ p {
     background: linear-gradient(to right, #32384f 2%, #353b54 18%, #414968 33%, #353b54 48%, #32384f 64%);
     background-size: 1300px 100%;
     animation: placeholderAnimate 3s linear infinite;
+}
+
+.file-placeholder.is-loading {
+    display: block;
 }
 
 @keyframes placeholderAnimate {
@@ -1045,8 +1050,13 @@ input:checked+.slider:before {
 
 .no-files {
     color: #90a6d6;
-    font-size: 20px;
+    font-size: 18px;
     margin: 0 auto;
+    padding: 30px 0 10px;
     text-align: center;
     display: none;
+}
+
+.no-files.is-visible {
+    display: block;
 }

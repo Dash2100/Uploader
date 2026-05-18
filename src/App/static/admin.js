@@ -4,34 +4,35 @@ let sharebutton;
 let linkbutton;
 let linkstate;
 
-let isLoaded = false;
+let isLoading = false;
+let hasMore = true;
 let page = 1;
 
 let files_list = {}; // filename -> uuid
 let files_names = {}; // uuid -> filename
 
+const ADMIN_MODE = true;
+
+function showPlaceholders() {
+    $('.file-placeholder').addClass('is-loading');
+}
+
+function hidePlaceholders() {
+    $('.file-placeholder').removeClass('is-loading');
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     let domain = window.location.href.split('/')[2];
     $('#baseurl').text(domain + ' /');
 
-    // 初始隱藏 placeholder
-    $('.file-placeholder').hide();
-
-    getFileList();
-
-    $('.modfile-icon').click(function (e) {
-        e.stopPropagation(); // 防止事件冒泡到.file
-        let fileName = $(this).closest('.file').data('file-name'); // 使用.closest()找到最近的.file父元素
-        modify(fileName);
-    });
+    hidePlaceholders();
+    getFileList({ silent: true });
 
     $('#file-list-area').on('scroll', function () {
         let $this = $(this);
-        if (!isLoading && $this.scrollTop() + $this.innerHeight() >= $this[0].scrollHeight - 100) {
-            isLoading = true; // 標記正在加載中
-            // 顯示 loading placeholder
-            $('.file-placeholder').show();
-            getFileList(page);
+        let nearBottom = $this.scrollTop() + $this.innerHeight() >= $this[0].scrollHeight - 100;
+        if (!isLoading && hasMore && nearBottom) {
+            getFileList({ silent: false });
         }
     });
 
@@ -46,65 +47,71 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-function getFileList(reqPage) {
-    let data = JSON.stringify({
-        "page": reqPage,
-        "admin_mode": true
+function appendFileRow(fileData) {
+    let template = $('#file-block-template').text()
+        .replace('%file-name%', fileData.name)
+        .replace('%file-date%', fileData.date)
+        .replace('%file-size%', fileData.size)
+        .replace('%file-downloads%', fileData.downloads);
+
+    template = $(template);
+    template.prop('id', fileData.uuid);
+
+    template.find('.file-card').on('click', function (e) {
+        if (selecting !== 1) {
+            preview(fileData.uuid);
+        }
     });
+
+    template.find('.modfile-icon').on('click', function (e) {
+        e.stopPropagation();
+        modify(fileData.uuid);
+    });
+
+    template.on('click', function (e) {
+        if (selecting === 1) {
+            select(fileData.uuid);
+        }
+    });
+
+    $('#file-list').append(template);
+    files_list[fileData.name] = fileData.uuid;
+    files_names[fileData.uuid] = fileData.name;
+}
+
+function getFileList(opts) {
+    opts = opts || {};
+    isLoading = true;
+    if (!opts.silent) showPlaceholders();
 
     $.ajax({
         url: "/files/list",
         method: "post",
         contentType: "application/json;charset=utf-8",
-        data: data,
+        data: JSON.stringify({ page: page, admin_mode: ADMIN_MODE }),
         success: function (filesList) {
-            // 隱藏 loading placeholder
-            $('.file-placeholder').hide();
-
-            if (filesList.length === 0) {
-                $('#file-list-area').off('scroll');
+            hidePlaceholders();
+            if (!filesList || filesList.length === 0) {
+                hasMore = false;
                 isLoading = false;
+                if (page === 1) $('.no-files').addClass('is-visible');
                 return;
             }
-
-            filesList.forEach(fileData => {
-                let template = $('#file-block-template').text()
-                    .replace('%file-name%', fileData.name)
-                    .replace('%file-date%', fileData.date)
-                    .replace('%file-size%', fileData.size)
-                    .replace('%file-downloads%', fileData.downloads)
-
-                template = $(template);
-                template.prop('id', fileData.uuid);
-
-                template.find('.file-card').click(function (e) {
-                    preview(fileData.uuid); // 改為傳入UUID
-                });
-
-                $('#file-list').append(template);
-                files_list[fileData.name] = fileData.uuid;
-                files_names[fileData.uuid] = fileData.name;
-
-                template.click(function () {
-                    select(fileData.uuid);
-                });
-            });
-
+            $('.no-files').removeClass('is-visible');
+            filesList.forEach(appendFileRow);
             page++;
             isLoading = false;
         },
         error: function () {
-            // 發生錯誤時也要隱藏 loading placeholder
-            $('.file-placeholder').hide();
+            hidePlaceholders();
             isLoading = false;
         }
     });
 }
 
-function downloadFile(filename) {
-    let file_uuid = files_list[filename];
-
-    let url = '/files/download?file=' + file_uuid;
+function downloadFile(uuid) {
+    let filename = files_names[uuid] || '';
+    let url = '/files/download?file=' + uuid;
     let a = document.createElement('a');
     a.href = url;
     a.download = filename;
@@ -221,7 +228,7 @@ function delFile(uuid) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "/admin/delfile",
+                url: "/files/delfile",
                 method: "post",
                 data: JSON.stringify({ uuid: uuid }),
                 contentType: "application/json;charset=utf-8",
@@ -281,9 +288,9 @@ function filestate(uuid) {
         url: "/admin/filestate",
         method: "post",
         contentType: "application/json;charset=utf-8",
+        dataType: "json",
         data: JSON.stringify({ uuid: uuid }),
         success: function (res) {
-            var res = JSON.parse(res);
             sharebutton = res.share;
             linkstate = res.link;
             console.log(linkstate);
@@ -393,8 +400,7 @@ function selectfile() {
     selecting = 1;
     functioning = 1;
     topiconhide();
-    // 隱藏 loading placeholders
-    $('.file-placeholder').hide();
+    hidePlaceholders();
     $('.edit-options').show();
     $('.modfile-icon').addClass('hide');
     $('.file-card').addClass('file-card-disable');
@@ -442,23 +448,17 @@ function func_button() {
 }
 
 function select(uuid) {
-    if (selecting === 1) {
-
-        let fileObj = $($('#' + uuid).html());
-        let filename = fileObj.find('.file-name').text();
-
-        if (selected.includes(uuid)) {
-            selected.splice(selected.indexOf(uuid), 1);
-            multi_select_ui(uuid, 1);
-        }
-        else {
-            selected.push(uuid);
-            multi_select_ui(uuid, 0);
-        }
+    if (selecting !== 1) return;
+    if (selected.includes(uuid)) {
+        selected.splice(selected.indexOf(uuid), 1);
+        multi_select_ui(uuid, 1);
+    } else {
+        selected.push(uuid);
+        multi_select_ui(uuid, 0);
     }
 }
 
-function multi_select_ui(fileID, state) {
+function multi_select_ui(uuid, state) {
     if (selected.length > 0) {
         $('#edit-options-text').text(selected.length + " Files selected");
         $('.edit-options').addClass('edit-options-open');
@@ -466,15 +466,15 @@ function multi_select_ui(fileID, state) {
         $('.edit-options').removeClass('edit-options-open');
     }
 
+    let $file = $(document.getElementById(uuid));
+    let $card = $file.find('.file-card');
+
     if (state === 1) {
-        $("#" + fileID).removeClass('file-selected');
-        $("#" + fileID + "-card").removeClass('file-card-selected');
-        $("#" + fileID + "-card").addClass('file-card-disable');
-    }
-    else {
-        $("#" + fileID).addClass('file-selected');
-        $("#" + fileID + "-card").removeClass('file-card-disable');
-        $("#" + fileID + "-card").addClass('file-card-selected');
+        $file.removeClass('file-selected');
+        $card.removeClass('file-card-selected').addClass('file-card-disable');
+    } else {
+        $file.addClass('file-selected');
+        $card.removeClass('file-card-disable').addClass('file-card-selected');
     }
 }
 
@@ -492,7 +492,7 @@ function multidelete() {
             $.ajax({
                 url: "/files/multidelete",
                 method: "post",
-                data: JSON.stringify({ uuids: selected }),
+                data: JSON.stringify({ uuids: selected, files: selected }),
                 contentType: "application/json;charset=utf-8",
                 success: function (res) {
                     if (res === "OK") {
@@ -719,7 +719,7 @@ function searchclose() {
     $('#file-list').removeClass('file-list-out');
     $('#search-input').val('');
     $('.file').show();
-    $('.no-files').hide();
+    $('.no-files').removeClass('is-visible');
     $('#clstext').removeClass('clstext-show');
     topiconshow();
 }
@@ -728,7 +728,7 @@ function clearsearchtext() {
     $('#search-input').val('');
     $('#clstext').removeClass('clstext-show');
     $('.file').show();
-    $('.no-files').hide();
+    $('.no-files').removeClass('is-visible');
 }
 
 function search(searchString) {
@@ -743,10 +743,10 @@ function search(searchString) {
     $('.file').hide();
 
     if (result.length === 0) {
-        $('.no-files').show();
+        $('.no-files').addClass('is-visible');
     }
     else {
-        $('.no-files').hide();
+        $('.no-files').removeClass('is-visible');
         result.forEach(file => {
             $('#' + file).show();
         }

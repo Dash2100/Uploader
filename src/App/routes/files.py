@@ -1,189 +1,186 @@
-from flask import Blueprint, render_template, request, send_file, send_from_directory, current_app, g, jsonify
-
-from ..models import File  # File model
-from ..database import db  # db object
-
-from datetime import datetime
-import zipfile
-import base64
-import uuid
 import io
 import os
+import uuid as uuid_lib
+import zipfile
+from datetime import datetime
 
-from .auth import login_required, current_user
+from flask import (Blueprint, current_app, g, jsonify, request, send_file,
+                   send_from_directory)
+from flask_login import current_user, login_required
+
+from ..database import db
+from ..models import File, ShortUrl
 
 files = Blueprint('files', __name__)
 
-@files.before_app_request
-def before_request_files():
-    if 'UPLOADS_DIR' in current_app.config:
-        g.files_path = current_app.config['UPLOADS_DIR']
+
+def _human_size(size_bytes):
+    if size_bytes < 1000 * 1000:
+        return f'{round(size_bytes / 1000, 3)} KB'
+    return f'{round(size_bytes / (1000 * 1000), 3)} MB'
+
+
+def _serialize(file):
+    return {
+        'uuid': file.uuid,
+        'name': file.name,
+        'date': file.date,
+        'size': file.size,
+        'downloads': file.downloads,
+        'share': file.share,
+    }
+
+
+def _can_access(file):
+    if not file:
+        return False
+    if file.share == 1:
+        return True
+    return current_user.is_authenticated
+
 
 @files.route('/list', methods=['POST'])
 def list_files():
-    if request.is_json:
-        data = request.get_json()
-    else:
-        data = {}
-    page = data.get('page', 1)  # 確保頁碼是整數，預設值為第 1 頁
-    admin_mode = data.get('admin_mode', False)  # 預設值為非管理員模式
-
-    files_per_page = 15
+    data = request.get_json(silent=True) or {}
+    page = int(data.get('page', 1))
+    admin_mode = bool(data.get('admin_mode', False))
+    per_page = 15
 
     query = File.query
-    if not admin_mode:
-        query = query.filter_by(share=1)
-    else:
-        if current_user.is_authenticated == False:            
+    if admin_mode:
+        if not current_user.is_authenticated:
             return jsonify([])
+    else:
+        query = query.filter_by(share=1)
 
-    # 使用 paginate 方法直接在資料庫層面進行分頁
-    pagination = query.order_by(File.date.desc()).paginate(page=page, per_page=files_per_page, error_out=False)
-    files = pagination.items
-
-    # 建構響應列表
-    files_list = [{'uuid': file.uuid, 'name': file.name, 'date': file.date, 'size': file.size, 'downloads': file.downloads} for file in files]
-
-    return jsonify(files_list)
+    pagination = query.order_by(File.date.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+    return jsonify([_serialize(f) for f in pagination.items])
 
 
 @files.route('/download', methods=['GET'])
 def download_file():
-    # Get file UUID from request
     file_uuid = request.args.get('file')
     file = File.query.filter_by(uuid=file_uuid).first()
-    
-    # check file and authentication
-    if not file or current_user.is_authenticated == False and file.share == 0:
+
+    if not _can_access(file):
         return jsonify({'error': 'File not exists or not shared'}), 404
-    
-    # Update downloads count
+
     file.downloads += 1
     db.session.commit()
 
-    # Return file name
-    return send_from_directory(g.files_path, f'{file_uuid}.{file.extension}', as_attachment=True, download_name=file.name)
+    return send_from_directory(
+        g.files_path, file.disk_name,
+        as_attachment=True, download_name=file.name,
+    )
 
-# 等待修改成UUID方法取得檔案
+
 @files.route('/download_zip', methods=['POST'])
 def download_zip():
-    download_files = request.get_json()['files']
+    payload = request.get_json(silent=True) or {}
+    uuids = payload.get('files') or payload.get('uuids') or []
 
     zip_buffer = io.BytesIO()
-
-    with zipfile.ZipFile(zip_buffer, 'a') as zip_file:
-        for file_name in download_files:
-            file = File.query.filter_by(name=file_name).first()
-
-            # check file and authentication
-            if not file or current_user.is_authenticated == False and file.share == 0:
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        for file_uuid in uuids:
+            file = File.query.filter_by(uuid=file_uuid).first()
+            if not _can_access(file):
                 return jsonify({'error': 'File not exists or not shared'}), 404
-            
-            # Update downloads count
-            file = File.query.filter_by(name=file_name).first()
+
             file.downloads += 1
-            db.session.commit()
+            disk_path = os.path.join(g.files_path, file.disk_name)
+            zip_file.write(disk_path, arcname=file.name)
 
-            # Add file to zip
-            file_name_physical = f'{file.uuid}.{file.extension}' if file.extension else file.uuid
-            zip_file.write(os.path.join(g.files_path, file_name_physical), file_name)
-
+    db.session.commit()
     zip_buffer.seek(0)
+    return send_file(
+        zip_buffer,
+        download_name='Uploader_Downloads.zip',
+        as_attachment=True,
+        mimetype='application/zip',
+    )
 
-    return send_file(zip_buffer,
-                     download_name='Uploader_Downloads.zip',
-                     as_attachment=True,
-                     mimetype='application/zip')
 
 @files.route('/upload', methods=['POST'])
 @login_required
 def upload():
-    # Check if request has the file part
     if 'file' not in request.files:
-        return 'No file part', 400
-    
-    # Get user upload data
+        return jsonify({'error': 'No file part'}), 400
+
     file = request.files['file']
-    share = request.form['share']
+    share = 1 if str(request.form.get('share', '0')) in ('1', 'true', 'True') else 0
 
-    print(f"[INFO] {file} uploaded")
+    if not file or file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
 
-    if file.filename == '' or not file:
-        return 'No selected file', 400
+    current_app.logger.info(f'Uploading {file.filename}')
 
-    # Generate UUID for file
-    file_uuid = uuid.uuid4().__str__()
+    file_uuid = str(uuid_lib.uuid4())
+    parts = file.filename.rsplit('.', 1)
+    extension = parts[1] if len(parts) > 1 else ''
+    disk_name = f'{file_uuid}.{extension}' if extension else file_uuid
 
-    # Get file extension
-    parts = file.filename.split(".")
-    if len(parts) > 1:
-        file_extension = parts[-1]
-    else:
-        file_extension = ''  # No extension
+    disk_path = os.path.join(g.files_path, disk_name)
+    file.save(disk_path)
 
-    # Saved file name
-    save_file_name = f'{file_uuid}.{file_extension}'
+    date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    size = _human_size(os.path.getsize(disk_path))
 
-    # Save file
-    file_path = os.path.join(g.files_path, save_file_name)
-    file.save(file_path)
-
-    # Get current date
-    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # if size less than 1 MB, show in KB
-    size_bytes = os.path.getsize(file_path)
-    if size_bytes < 1000000:
-        size = round(size_bytes / 1000, 3).__str__() + ' KB'
-    else:
-        size = round(size_bytes / 1000000, 3).__str__() + ' MB'
-
-    # Write to db 
     new_file = File(
         uuid=file_uuid,
         name=file.filename,
-        extension=file_extension,
+        extension=extension,
         date=date,
         size=size,
-        share=share
+        share=share,
+        sharedate=date if share else '',
     )
-
     db.session.add(new_file)
     db.session.commit()
 
-    return "success", 200
+    return jsonify({'state': 'success', 'uuid': file_uuid}), 200
 
-def delete_file_by_name(filename):
-    file = File.query.filter_by(name=filename).first()
+
+def _delete_by_uuid(file_uuid):
+    file = File.query.filter_by(uuid=file_uuid).first()
     if not file:
         return False
-    
+
     try:
-        os.remove(os.path.join(g.files_path, filename))
-        db.session.delete(file) # delete from db
+        disk_path = os.path.join(g.files_path, file.disk_name)
+        if os.path.exists(disk_path):
+            os.remove(disk_path)
+        ShortUrl.query.filter_by(file_uuid=file_uuid).delete()
+        db.session.delete(file)
         db.session.commit()
-    except Exception as e:
+    except OSError as exc:
+        current_app.logger.error(f'Failed deleting {file_uuid}: {exc}')
+        db.session.rollback()
         return False
-    
+
     return True
+
 
 @files.route('/delfile', methods=['POST'])
 @login_required
 def del_file():
-    filename = request.get_json()['filename']
-    if delete_file_by_name(filename):
-        return "success", 200   
-    else:
-        print(f"[ERROR] Error while deleting {filename}")
-        return jsonify({'error': 'Error while deleting file'}), 400
+    payload = request.get_json(silent=True) or {}
+    file_uuid = payload.get('uuid') or payload.get('filename')
+    if not file_uuid:
+        return jsonify({'error': 'Missing uuid'}), 400
+
+    if _delete_by_uuid(file_uuid):
+        return 'OK', 200
+    return jsonify({'error': 'Error while deleting file'}), 400
+
 
 @files.route('/multidelete', methods=['POST'])
 @login_required
 def multi_delete():
-    files = request.get_json()['files']
-    for file in files:
-        if delete_file_by_name(file) == False:
-            print(f"[ERROR] Error while deleting {file}")
-            return jsonify({'error': 'Error while deleting file'}), 400
-        
-    return "success", 200
+    payload = request.get_json(silent=True) or {}
+    uuids = payload.get('uuids') or payload.get('files') or []
+    for file_uuid in uuids:
+        if not _delete_by_uuid(file_uuid):
+            return jsonify({'error': f'Error while deleting {file_uuid}'}), 400
+    return 'OK', 200

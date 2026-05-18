@@ -1,11 +1,18 @@
-from flask_sqlalchemy import SQLAlchemy
+import hashlib
 
-from .database import db
-
-from .extensions import login_manager
 from flask_login import UserMixin
 
-import hashlib
+from .database import db
+from .extensions import login_manager
+
+
+def generate_password_hash(password):
+    return hashlib.sha256(password.encode('utf-8')).hexdigest()
+
+
+def check_password_hash(password_hash, password):
+    return password_hash == generate_password_hash(password)
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
@@ -14,7 +21,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
 
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return f'<User {self.username}>'
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -22,26 +29,29 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
 class File(db.Model):
-    uuid = db.Column(db.String(120), primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    extension = db.Column(db.String(120))
-    date = db.Column(db.String(120), nullable=False)
-    size = db.Column(db.String(120), nullable=False)
+    __tablename__ = 'file'
+    uuid = db.Column(db.String(36), primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    extension = db.Column(db.String(32), default='')
+    date = db.Column(db.String(32), nullable=False)
+    size = db.Column(db.String(32), nullable=False)
     share = db.Column(db.Integer, default=0)
-    sharedate = db.Column(db.String(120))
+    sharedate = db.Column(db.String(32), default='')
     downloads = db.Column(db.Integer, default=0)
 
+    @property
+    def disk_name(self):
+        return f'{self.uuid}.{self.extension}' if self.extension else self.uuid
+
+
 class ShortUrl(db.Model):
+    __tablename__ = 'short_url'
     url = db.Column(db.String(80), primary_key=True)
-    file = db.Column(db.String(120), nullable=False)
+    file_uuid = db.Column(db.String(36), nullable=False, index=True)
+
 
 @login_manager.user_loader
-def load_user(id):
-    return User.query.get(int(id))
-
-def generate_password_hash(password):
-    return hashlib.sha256(password.encode()).hexdigest()
-
-def check_password_hash(password_hash, password):
-    return password_hash == generate_password_hash(password)
+def load_user(user_id):
+    return User.query.get(int(user_id))

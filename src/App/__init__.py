@@ -1,37 +1,54 @@
-from flask import Flask
-
-from .database import init_db
-from .extensions import init_login_manager
 import os
 
-from .routes.main import main
-from .routes.auth import auth
-from .routes.files import files
-from .routes.preview import preview
+from flask import Flask, render_template
+
+from .database import init_db
+from .extensions import init_login_manager, register_request_helpers
+
 
 def create_app():
-    app = Flask(__name__, static_url_path='/static', instance_relative_config=True)
-    
+    app = Flask(
+        __name__,
+        static_url_path='/static',
+        instance_relative_config=True,
+    )
+
     app.config.from_pyfile('application.cfg', silent=True)
 
-    app.config['SECRET_KEY'] = os.urandom(24)
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    if not app.config.get('SECRET_KEY'):
+        app.config['SECRET_KEY'] = os.urandom(24)
+    app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', False)
+    app.config.setdefault('UPLOADS_DIR', 'Uploads')
+    app.config.setdefault('SQLALCHEMY_DATABASE_URI', 'sqlite:///database.db')
+    app.config.setdefault('QUICK_TOKEN', '')
+    app.config.setdefault('DEBUG', False)
+    app.config.setdefault('HOST', '127.0.0.1')
+    app.config.setdefault('PORT', 5090)
 
-    # Initialize the database
     init_db(app)
-
-    # Initialize Login Manager
     init_login_manager(app)
+    register_request_helpers(app)
 
-    # Create Uploads Folder
-    uploads_dir = app.config['UPLOADS_DIR']
-    if not os.path.exists(uploads_dir):
-        os.makedirs(uploads_dir)
+    os.makedirs(app.config['UPLOADS_DIR'], exist_ok=True)
 
-    # Register blueprints
-    app.register_blueprint(main, url_prefix='/')
+    from .routes.auth import auth
+    from .routes.main import main
+    from .routes.files import files
+    from .routes.preview import preview
+    from .routes.admin import admin
+
+    app.register_blueprint(main)
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(files, url_prefix='/files')
     app.register_blueprint(preview, url_prefix='/preview')
+    app.register_blueprint(admin, url_prefix='/admin')
+
+    @app.errorhandler(404)
+    def _not_found(_):
+        return render_template('404.html'), 404
+
+    @app.errorhandler(403)
+    def _forbidden(_):
+        return render_template('403.html'), 403
 
     return app

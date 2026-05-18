@@ -1,15 +1,16 @@
-# app/database.py
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 def init_db(app):
+    db.init_app(app)
     with app.app_context():
-        db.init_app(app)
+        from . import models  # noqa: F401  ensure models are registered
         db.create_all()
         init_admin_user()
-
     return db
+
 
 def init_admin_user():
     from .models import User
