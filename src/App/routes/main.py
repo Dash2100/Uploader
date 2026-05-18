@@ -1,8 +1,12 @@
-from flask import (Blueprint, g, render_template, send_from_directory)
+import os
+
+from flask import (Blueprint, g, redirect, render_template,
+                   send_from_directory)
 from flask_login import login_required
 
 from ..database import db
 from ..models import File, ShortUrl
+from ..utils import is_safe_uploads_path
 
 main = Blueprint('main', __name__)
 
@@ -23,17 +27,35 @@ def index_admin():
     return render_template('admin/index.html')
 
 
-@main.route('/<link>', methods=['GET'])
+@main.route('/favicon.ico')
+def favicon():
+    return redirect('/static/favicon.ico', code=301)
+
+
+@main.route('/<string(minlength=1,maxlength=80):link>', methods=['GET'])
 def shortlink_download(link):
-    short = ShortUrl.query.filter_by(url=link).first()
+    if '.' in link:
+        return render_template('404.html'), 404
+
+    short = db.session.get(ShortUrl, link)
     if not short:
         return render_template('404.html'), 404
 
-    file = File.query.filter_by(uuid=short.file_uuid).first()
+    file = db.session.get(File, short.file_uuid)
     if not file or file.share != 1:
         return render_template('404.html'), 404
 
-    file.downloads += 1
+    if not is_safe_uploads_path(g.files_path, file.disk_name):
+        return render_template('404.html'), 404
+
+    disk_path = os.path.join(g.files_path, file.disk_name)
+    if not os.path.isfile(disk_path):
+        return render_template('404.html'), 404
+
+    File.query.filter_by(uuid=file.uuid).update(
+        {File.downloads: File.downloads + 1},
+        synchronize_session=False,
+    )
     db.session.commit()
 
     return send_from_directory(

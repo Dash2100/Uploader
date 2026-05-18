@@ -1,33 +1,45 @@
 import hashlib
+import re
 
 from flask_login import UserMixin
+from werkzeug.security import check_password_hash as _wz_check
+from werkzeug.security import generate_password_hash as _wz_generate
 
 from .database import db
 from .extensions import login_manager
 
-
-def generate_password_hash(password):
-    return hashlib.sha256(password.encode('utf-8')).hexdigest()
+_LEGACY_SHA256_RE = re.compile(r'^[0-9a-f]{64}$')
 
 
-def check_password_hash(password_hash, password):
-    return password_hash == generate_password_hash(password)
+def _legacy_matches(password_hash, password):
+    return password_hash == hashlib.sha256(password.encode('utf-8')).hexdigest()
 
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
-    password_hash = db.Column(db.String(128))
+    password_hash = db.Column(db.String(255))
 
     def __repr__(self):
         return f'<User {self.username}>'
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = _wz_generate(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        stored = self.password_hash or ''
+        if _LEGACY_SHA256_RE.match(stored):
+            if _legacy_matches(stored, password):
+                # Transparent upgrade to salted hash on successful login
+                self.set_password(password)
+                db.session.commit()
+                return True
+            return False
+        try:
+            return _wz_check(stored, password)
+        except (ValueError, TypeError):
+            return False
 
 
 class File(db.Model):
@@ -54,4 +66,7 @@ class ShortUrl(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    try:
+        return db.session.get(User, int(user_id))
+    except (TypeError, ValueError):
+        return None

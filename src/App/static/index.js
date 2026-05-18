@@ -6,11 +6,11 @@ let files_list = {}; // filename -> uuid
 let files_names = {}; // uuid -> filename
 
 function showPlaceholders() {
-    $('.file-placeholder').addClass('is-loading');
+    $('.file-placeholder').addClass('is-loading').css('display', '');
 }
 
 function hidePlaceholders() {
-    $('.file-placeholder').removeClass('is-loading');
+    $('.file-placeholder').removeClass('is-loading').css('display', '');
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -94,9 +94,15 @@ function getFileList(opts) {
 function downloadFile(uuid) {
     let filename = files_names[uuid] || '';
     let a = document.createElement('a');
-    a.href = '/files/download?file=' + uuid;
+    a.href = '/files/download?file=' + encodeURIComponent(uuid);
     a.download = filename;
     a.click();
+}
+
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
 }
 
 function downloadzip() {
@@ -150,38 +156,40 @@ function checkPreviewable(filename) {
 function preview(uuid) {
     let filename = files_names[uuid] || '';
     let filetype = checkPreviewable(filename);
-    let link, content;
+    let link = `/preview/${encodeURIComponent(uuid)}`;
+    let content;
 
     if (!filetype) {
-        link = `/preview/${uuid}`;
         content =
             `<div class="preview-info">
                 <a class="preview-notavailable">Preview not available</a>
-                <button class="button preview-download" onclick="downloadFile('${uuid}')">Download</button>
+                <button class="button preview-download" data-uuid="${escapeHtml(uuid)}">Download</button>
             </div>`;
     } else if (filetype === 'pdf') {
-        link = `/preview/pdf_viewer?file=/preview/${uuid}`;
-        content = `<iframe class="preview-iframe" src="${link}"></iframe>`;
+        link = `/preview/pdf_viewer?file=/preview/${encodeURIComponent(uuid)}`;
+        content = `<iframe class="preview-iframe" src="${escapeHtml(link)}"></iframe>`;
     } else if (filetype === 'image') {
-        link = `/preview/${uuid}`;
-        content = `<img class="preview-img" src="${link}">`;
+        content = `<img class="preview-img" src="${escapeHtml(link)}" alt="">`;
     } else if (filetype === 'text') {
-        link = `/preview/${uuid}`;
         let text = '';
         $.ajax({
             url: link,
             async: false,
             success: function (data) { text = data; }
         });
-        content = `<textarea readonly class="preview-text">${text}</textarea>`;
+        content = `<textarea readonly class="preview-text">${escapeHtml(text)}</textarea>`;
     }
 
-    let template = $('#file-preview-template').text();
-    template = template.replace('%uuid%', uuid);
-    template = template.replace('%preview-content%', content);
-    template = template.replace('%preview-link%', link);
+    let template = $('#file-preview-template').text()
+        .split('%uuid%').join(escapeHtml(uuid))
+        .split('%filename%').join(escapeHtml(filename))
+        .split('%preview-link%').join(escapeHtml(link))
+        .replace('%preview-content%', content);
 
     template = $(template);
+    template.find('.preview-download').on('click', function () {
+        downloadFile($(this).data('uuid'));
+    });
 
     $('body').css('overflow', 'hidden');
     $('#preview-area').append(template);
@@ -274,7 +282,7 @@ function searchclose() {
     $('#search').removeClass('search-open');
     $('#file-list').removeClass('file-list-out');
     $('#search-input').val('');
-    $('.file').show();
+    $('#file-list .file').show();
     $('.no-files').removeClass('is-visible');
     $('#clstext').removeClass('clstext-show');
 }
@@ -282,7 +290,7 @@ function searchclose() {
 function clearsearchtext() {
     $('#search-input').val('');
     $('#clstext').removeClass('clstext-show');
-    $('.file').show();
+    $('#file-list .file').show();
     $('.no-files').removeClass('is-visible');
 }
 
@@ -291,7 +299,7 @@ function search(searchString) {
     const filteredKeys = keys.filter(key => key.toLowerCase().includes(searchString));
     const result = filteredKeys.map(key => files_list[key]);
 
-    $('.file').hide();
+    $('#file-list .file').hide();
     if (result.length === 0) {
         $('.no-files').addClass('is-visible');
     } else {

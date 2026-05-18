@@ -474,9 +474,10 @@ p {
     border-radius: 20px;
     padding: 20px 15px;
     margin-top: -60px;
-    min-height: 140px;
+    min-height: 220px;
     max-height: calc(100dvh - 145px);
     box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, .2);
+    position: relative;
 }
 
 .file-list-area::-webkit-scrollbar {
@@ -1049,12 +1050,26 @@ input:checked+.slider:before {
 }
 
 .no-files {
-    color: #90a6d6;
-    font-size: 18px;
-    margin: 0 auto;
-    padding: 30px 0 10px;
-    text-align: center;
     display: none;
+    color: #90a6d6;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.4px;
+    text-align: center;
+    margin: 0;
+    padding: 70px 20px 30px;
+    opacity: 0.85;
+}
+
+.no-files::before {
+    content: "\f15b";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    display: block;
+    font-size: 44px;
+    margin-bottom: 14px;
+    opacity: 0.55;
+    line-height: 1;
 }
 
 .no-files.is-visible {

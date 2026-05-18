@@ -14,11 +14,11 @@ let files_names = {}; // uuid -> filename
 const ADMIN_MODE = true;
 
 function showPlaceholders() {
-    $('.file-placeholder').addClass('is-loading');
+    $('.file-placeholder').addClass('is-loading').css('display', '');
 }
 
 function hidePlaceholders() {
-    $('.file-placeholder').removeClass('is-loading');
+    $('.file-placeholder').removeClass('is-loading').css('display', '');
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -111,19 +111,18 @@ function getFileList(opts) {
 
 function downloadFile(uuid) {
     let filename = files_names[uuid] || '';
-    let url = '/files/download?file=' + uuid;
+    let url = '/files/download?file=' + encodeURIComponent(uuid);
     let a = document.createElement('a');
     a.href = url;
     a.download = filename;
     a.click();
-};
+}
 
-function downloadURL(URL) {
-    let a = document.createElement('a');
-    a.href = URL;
-    a.download = filename;
-    a.click();
-};
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+}
 
 // popup
 function upload() {
@@ -181,7 +180,6 @@ function downloadzip() {
     $('#download-btn-loading').show();
     $('#downloadzip-btn').prop('disabled', true);
     $('#multimodify-btn').addClass('select-edit-hide');
-    // post to /admin/download_zip and save
     var data = JSON.stringify({ files: selected });
     $.ajax({
         url: "/files/download_zip",
@@ -639,59 +637,49 @@ function checkPreviewable(filename) {
 }
 
 function preview(uuid) {
-    let filename = files_names[uuid]; // 取得檔名用於顯示
+    let filename = files_names[uuid] || '';
     let filetype = checkPreviewable(filename);
+    let link = `/preview/${encodeURIComponent(uuid)}`;
+    let content;
 
     if (!filetype) {
-        var link = `/preview/${uuid}`;
-        var content =
+        content =
             `<div class="preview-info">
-                    <a class="preview-notavailable">Preview not available</a>
-                    <button class="button preview-download" onclick="downloadFile('${uuid}')">Download</button>
+                <a class="preview-notavailable">Preview not available</a>
+                <button class="button preview-download" data-uuid="${escapeHtml(uuid)}">Download</button>
             </div>`;
-    }
-
-    if (filetype === 'pdf') {
-        var link = `/preview/pdf_viewer?file=/preview/${uuid}`
-        var content = `<iframe class="preview-iframe" src="${link}"></iframe>`;
-    }
-
-    if (filetype === 'image') {
-        var link = `/preview/${uuid}`;
-        var content = `<img class="preview-img" src="${link}">`;
-    }
-
-    if (filetype === 'text') {
-        var link = `/preview/${uuid}`;
-        var text = '';
+    } else if (filetype === 'pdf') {
+        link = `/preview/pdf_viewer?file=/preview/${encodeURIComponent(uuid)}`;
+        content = `<iframe class="preview-iframe" src="${escapeHtml(link)}"></iframe>`;
+    } else if (filetype === 'image') {
+        content = `<img class="preview-img" src="${escapeHtml(link)}" alt="">`;
+    } else if (filetype === 'text') {
+        let text = '';
         $.ajax({
-            url: `/preview/${uuid}`,
+            url: link,
             async: false,
-            CORS: true,
-            success: function (data) {
-                text = data;
-            }
+            success: function (data) { text = data; }
         });
-
-        var content = `<textarea readonly class="preview-text">${text}</textarea>`;
+        content = `<textarea readonly class="preview-text">${escapeHtml(text)}</textarea>`;
     }
 
-    let template = $('#file-preview-template').text();
-    template = template.replace('%filename%', filename); // 顯示用還是用檔名
-    template = template.replace('%preview-content%', content);
-    template = template.replace('%preview-link%', link);
+    let template = $('#file-preview-template').text()
+        .split('%uuid%').join(escapeHtml(uuid))
+        .split('%filename%').join(escapeHtml(filename))
+        .split('%preview-link%').join(escapeHtml(link))
+        .replace('%preview-content%', content);
 
     template = $(template);
+    template.find('.preview-download').on('click', function () {
+        downloadFile($(this).data('uuid'));
+    });
 
-    //disable scroll
     $('body').css('overflow', 'hidden');
-
     $('#preview-area').append(template);
 
-    //for animation
     setTimeout(function () {
         template.addClass('popup--opened');
-    }, .1);
+    }, 1);
 }
 
 function previewoff() {
@@ -718,7 +706,7 @@ function searchclose() {
     $('#search').removeClass('search-open');
     $('#file-list').removeClass('file-list-out');
     $('#search-input').val('');
-    $('.file').show();
+    $('#file-list .file').show();
     $('.no-files').removeClass('is-visible');
     $('#clstext').removeClass('clstext-show');
     topiconshow();
@@ -727,7 +715,7 @@ function searchclose() {
 function clearsearchtext() {
     $('#search-input').val('');
     $('#clstext').removeClass('clstext-show');
-    $('.file').show();
+    $('#file-list .file').show();
     $('.no-files').removeClass('is-visible');
 }
 
@@ -740,7 +728,7 @@ function search(searchString) {
     }
     );
 
-    $('.file').hide();
+    $('#file-list .file').hide();
 
     if (result.length === 0) {
         $('.no-files').addClass('is-visible');

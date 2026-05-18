@@ -6,6 +6,16 @@ from .database import init_db
 from .extensions import init_login_manager, register_request_helpers
 
 
+def _normalize_sqlite_uri(uri, instance_path):
+    prefix = 'sqlite:///'
+    if not uri.startswith(prefix):
+        return uri
+    path = uri[len(prefix):]
+    if path == ':memory:' or os.path.isabs(path):
+        return uri
+    return prefix + os.path.normpath(os.path.join(instance_path, path))
+
+
 def create_app():
     app = Flask(
         __name__,
@@ -24,6 +34,15 @@ def create_app():
     app.config.setdefault('DEBUG', False)
     app.config.setdefault('HOST', '127.0.0.1')
     app.config.setdefault('PORT', 5090)
+    app.config.setdefault('SESSION_COOKIE_HTTPONLY', True)
+    app.config.setdefault('SESSION_COOKIE_SAMESITE', 'Lax')
+    if not app.config.get('DEBUG'):
+        app.config.setdefault('SESSION_COOKIE_SECURE', True)
+
+    os.makedirs(app.instance_path, exist_ok=True)
+    app.config['SQLALCHEMY_DATABASE_URI'] = _normalize_sqlite_uri(
+        app.config['SQLALCHEMY_DATABASE_URI'], app.instance_path,
+    )
 
     init_db(app)
     init_login_manager(app)
@@ -50,5 +69,10 @@ def create_app():
     @app.errorhandler(403)
     def _forbidden(_):
         return render_template('403.html'), 403
+
+    @app.errorhandler(413)
+    def _too_large(_):
+        from flask import jsonify
+        return jsonify({'error': 'File too large'}), 413
 
     return app

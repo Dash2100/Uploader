@@ -60,18 +60,16 @@
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                // check if url contain next=
                 let urlParams = new URLSearchParams(window.location.search);
-                let next = urlParams.get('next');
-
-                if (next) {
+                let next = urlParams.get('next') || '';
+                // Only allow same-origin absolute paths (no scheme, no //)
+                if (next && next.startsWith('/') && !next.startsWith('//')) {
                     window.location.href = next;
                 } else {
                     window.location.href = "/admin";
                 }
-            }
-            else {
-                window.location.href = "../";
+            } else {
+                window.location.href = "/";
             }
         })
     </script>
